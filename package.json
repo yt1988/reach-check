@@ -1,0 +1,15 @@
+{
+  "name": "reach-check",
+  "private": true,
+  "type": "module",
+  "description": "Can other people reach your website, NAS or game server? Checks from 18 regions (Globalping probes, incl. China's three carriers) and from your own browser, with DNS, TCP, TLS and first-byte timings and what to check next",
+  "scripts": {
+    "dev": "node scripts/dev.mjs"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yt1988/reach-check"
+  },
+  "homepage": "https://reach.1ms.dog"
+}

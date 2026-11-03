@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reach Check 可达性检测：别人能连上你的服务吗？</title>
+<meta name="description" content="从全球 18 个地区和中国三网检测你的网站、NAS 或游戏服务能不能连上，分段显示 DNS、TCP、TLS、首字节耗时，告诉你下一步查哪里。">
+<link rel="canonical" href="https://reach.1ms.dog/">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <span class="brand-name">Reach Check <span class="m">可达性检测</span></span>
+    <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
+  </div>
+  <header class="hero card">
+    <h1>别人能连上你的服务吗？</h1>
+    <p class="intro">从全球 18 个地区（含中国电信、联通、移动）去连你的网站、NAS 或游戏服务，再从你自己的浏览器连一次。分段显示 DNS、TCP、TLS、首字节耗时，连不上就告诉你卡在哪一步、下一步查哪里。</p>
+
+    <form id="f" class="form" autocomplete="off">
+      <div class="row">
+        <label class="fld grow"><span>地址</span>
+          <input id="target" name="t" placeholder="域名、IP 或网址，例如 nas.example.com" spellcheck="false" inputmode="url" required>
+        </label>
+        <label class="fld port"><span>端口</span>
+          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
+        </label>
+        <label class="fld ipv"><span>IP 版本</span>
+          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+        </label>
+        <button id="go" class="btn" type="submit">开始检测</button>
+      </div>
+      <div class="presets" id="presets"></div>
+      <div class="sub">
+        <button type="button" class="link" id="myip">用我现在的 IP</button>
+        <span id="myipNote" class="m"></span>
+        <span class="quota m" id="quota"></span>
+      </div>
+    </form>
+  </header>
+
+  <section id="out" hidden>
+    <div class="card verdict" id="verdict">
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">检测中…</h2></div>
+      <p class="v-sub m" id="vSub">&nbsp;</p>
+      <ol class="steps" id="vSteps"></ol>
+    </div>
+
+    <div class="card sec">
+      <div class="sec-h"><h3>从全球各地连过去</h3><span class="m" id="gpProgress"></span></div>
+      <div class="legend m">
+        <span><i class="seg s-dns"></i>DNS</span><span><i class="seg s-tcp"></i>TCP 握手</span><span><i class="seg s-tls"></i>TLS 握手</span><span><i class="seg s-fb"></i>首字节</span><span><i class="seg s-dl"></i>下载</span>
+      </div>
+      <div id="regions" class="regions"></div>
+      <p class="note m" id="gpNote">外部检测由 <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 的志愿者探针完成，从你的浏览器直接调用。</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card sec">
+        <div class="sec-h"><h3>从你这里连过去</h3></div>
+        <div id="local" class="local"></div>
+        <p class="note m">浏览器只能发 HTTPS 请求，看不到端口的具体状态，只能从「多久失败」判断。开着代理时，这里测的是代理那条路。</p>
+      </div>
+      <div class="card sec">
+        <div class="sec-h"><h3>DNS 解析</h3></div>
+        <div id="dns" class="dns"></div>
+      </div>
+    </div>
+
+    <div class="card sec invite">
+      <div class="sec-h"><h3>请朋友也测一下</h3></div>
+      <p class="m">把这个链接发给朋友，打开后会用他的浏览器连你的服务，测完他可以把结果截图或链接发回给你。</p>
+      <div class="copy"><input id="inviteUrl" readonly><button class="btn ghost" type="button" id="copyInvite">复制</button></div>
+    </div>
+  </section>
+  <footer class="foot m"><span>检测在你的浏览器里运行：外部检测由浏览器直接调用 Globalping，不经过我们的服务器。</span><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+</div>
+<script src="app.js" type="module"></script>
+</body>
+</html>
