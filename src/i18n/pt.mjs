@@ -1,14 +1,13 @@
 // Português (Brasil, você)
 export default {
   name: "Português",
-  app_name: "Reach Check",
-  tagline: "Dá para acessar de fora?",
-  seo_title: "Reach Check: outras pessoas conseguem acessar seu site, NAS ou servidor de jogo? Teste de porta aberta",
+  app_name: "Teste de acesso",
+  seo_title: "Teste de acesso: outras pessoas conseguem acessar seu site, NAS ou servidor de jogo? Teste de porta aberta",
   seo_desc: "Teste grátis a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e do seu próprio navegador. Mostra os tempos de DNS, TCP, TLS e primeiro byte, onde a conexão para e o que verificar em seguida: redirecionamento de portas, firewall, CGNAT, portas bloqueadas, certificados.",
   seo_kw: "testar porta aberta, verificar porta aberta, minha porta está aberta, acesso externo, testar redirecionamento de porta, abrir porta roteador, acesso remoto NAS, testar site de vários países, servidor Minecraft não conecta, CGNAT",
   og_sub: "De 18 regiões e do seu navegador: onde trava e o que verificar",
   h1: "Outras pessoas conseguem acessar seu serviço?",
-  intro: "O Reach Check se conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e mais uma vez do seu navegador. Você vê os tempos de DNS, TCP, TLS e primeiro byte de cada uma e, se falhar, em que etapa a conexão parou e o que verificar em seguida.",
+  intro: "O Teste de acesso se conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e mais uma vez do seu navegador. Você vê os tempos de DNS, TCP, TLS e primeiro byte de cada uma e, se falhar, em que etapa a conexão parou e o que verificar em seguida.",
   lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: "Tema: claro", th_dark: "Tema: escuro",
 
   f_target: "Endereço", f_target_ph: "Domínio, IP ou URL, ex.: nas.example.com", f_port: "Porta", f_ipv: "Versão do IP", go: "Testar",
@@ -21,7 +20,6 @@ export default {
   h_invite: "Peça para alguém testar",
   invite_p: "Mande este link para um amigo: o teste roda no navegador dele, e ele pode te mandar de volta um print ou o link.",
   copy: "Copiar", copied: "Copiado",
-  foot: "Roda no seu navegador: ele chama o Globalping diretamente, e nada passa pelos nossos servidores.",
   src_gp: "Fonte: {gp}, uma rede aberta de sondas mantida por voluntários (um projeto do jsDelivr). A cada teste, o Globalping escolhe uma sonda por região.",
   src_dns: "Fonte: os serviços DoH da AliDNS, Cloudflare e Google, consultados pelo seu navegador.",
   foot_src: "Fontes dos dados: {gp} (o teste externo e o traceroute), AliDNS, Cloudflare e Google (DNS), {ipify} e {ipsb} (seu IP).",
@@ -130,4 +128,5 @@ export default {
   f_unreach: "As sondas não têm rota até este endereço: ele pode estar digitado errado, ou a faixa não é anunciada na internet. Comum com IPv6.",
   ls_here: "**Conecta daqui, mas não de fora**: provavelmente você está na mesma rede que o serviço (o tráfego nem sai), ou está usando um proxy. Use o teste externo como referência.",
   ls_out: "**Conecta de fora, mas não daqui**: se você está na mesma rede que o serviço, talvez seu roteador não suporte NAT loopback; em casa, use o endereço local. Ou suas regras de proxy estão bloqueando.",
+  share: "Compartilhar", share_desc: "{ok} de {n} regiões acessam {target}", lk_ipv6: "Sua rede tem IPv6?", lk_asn: "De quem é este IP (consulta ASN)",
 };

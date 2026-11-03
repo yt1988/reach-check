@@ -8,7 +8,7 @@
 <meta name="description" content="免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。">
 <meta name="keywords" content="端口检测, 端口是否开放, 外网访问检测, 外网能不能访问, 端口转发检测, 公网 IP 检测, 群晖外网访问, NAS 外网访问, 网站全国测速, 国内能不能访问, Minecraft 服务器检测">
 <meta name="robots" content="index, follow">
-<meta name="application-name" content="Reach Check">
+<meta name="application-name" content="可达性检测">
 <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://reach.1ms.dog/zh-cn/">
@@ -29,25 +29,33 @@
 <meta property="og:description" content="全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里">
 <meta property="og:url" content="https://reach.1ms.dog/zh-cn/">
 <meta property="og:locale" content="zh_CN">
-<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta property="og:image" content="https://reach.1ms.dog/og/zh-cn.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="可达性检测：别人能连上你的网站、NAS 或游戏服务吗？端口检测 · 全球与三网">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://reach.1ms.dog/og/zh-cn.png">
 <meta name="twitter:title" content="可达性检测：别人能连上你的网站、NAS 或游戏服务吗？端口检测 · 全球与三网">
 <meta name="twitter:description" content="全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<link rel="stylesheet" href="/assets/app.c3ae8275dd.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/app.852031f554.css">
 </head>
 <body>
 <div class="app">
   <div class="top">
-    <a class="brand" href="/zh-cn/"><span class="brand-name">Reach Check</span><span class="brand-sub" data-i="tagline">可达性检测</span></a>
+    <a class="brand" href="/zh-cn/"><span class="logo"><img class="logo-light" src="/assets/logo-light.svg" width="90" height="36" alt="1ms" loading="lazy"><img class="logo-dark" src="/assets/logo-dark.svg" width="90" height="36" alt="1ms" loading="lazy"></span><span class="brand-name">可达性检测</span></a>
     <div class="top-acts">
       <label class="sel"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="sr" data-i="lang_label">语言</span>
         <select id="lang"><option value="en">English</option><option value="zh-CN" selected>简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option></select></label>
+      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
       <button class="icon-btn" id="theme" type="button" aria-label="主题">
         <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8.5" rx="1.5"/><path d="M6 14h4M8 11.5V14"/></svg>
         <svg class="i-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
         <svg class="i-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
       </button>
-      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
     </div>
   </div>
 
@@ -79,7 +87,7 @@
 
   <section id="out" hidden>
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">分享</button></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
       <ol class="steps" id="vSteps"></ol>
     </div>
@@ -113,10 +121,10 @@
       <div class="copy"><input id="inviteUrl" readonly aria-label="请朋友也测一下"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">复制</button></div>
     </div>
   </section>
-  <footer class="foot m"><p><span data-i="foot">检测在你的浏览器里运行：浏览器直接调用 Globalping，不经过我们的服务器。</span><br>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 和 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 和 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-cn.f77f301791.js"></script>
-<script src="/assets/app.d69d0364fa.js"></script>
+<script src="/assets/l.zh-cn.7da805cc61.js"></script>
+<script src="/assets/app.e0d234650e.js"></script>
 </body>
 </html>

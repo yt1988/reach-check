@@ -3,7 +3,6 @@
 export default {
   name: "English",
   app_name: "Reach Check",
-  tagline: "Can others reach it",
   seo_title: "Reach Check: can other people reach your website, NAS or game server?",
   seo_desc: "Free reachability check from 18 regions, including China Telecom, Unicom and Mobile, and from your own browser. See DNS, TCP, TLS and first-byte times for each, where a failed connection stops, and what to check next: port forwarding, firewalls, CGNAT, blocked ports, certificates.",
   seo_kw: "port checker, open port check, is my port open, can others reach my server, port forwarding test, check website from multiple locations, website down from China, NAS remote access test, Minecraft server check, CGNAT check",
@@ -22,7 +21,6 @@ export default {
   h_invite: "Ask a friend to check",
   invite_p: "Send this link to a friend. It runs the check in their browser, and they can send you back a screenshot or the link.",
   copy: "Copy", copied: "Copied",
-  foot: "Runs in your browser: it calls Globalping directly, and nothing goes through our servers.",
   src_gp: "Source: {gp}, an open network of probes run by volunteers (a jsDelivr project). Each check gets one probe per region, chosen by Globalping.",
   src_dns: "Source: the DoH services of AliDNS, Cloudflare and Google, asked by your browser.",
   foot_src: "Data sources: {gp} (the outside check and trace route), AliDNS, Cloudflare and Google (DNS), {ipify} and {ipsb} (your IP).",
@@ -132,4 +130,5 @@ export default {
   f_unreach: "The probes have no route to this address: it may be mistyped, or the range isn't announced on the internet. Common with IPv6.",
   ls_here: "**It connects from here but not from outside**: most likely you're on the same network as the service (traffic never leaves), or you're using a proxy. Go by the outside check.",
   ls_out: "**It connects from outside but not from here**: if you're on the same network as the service, your router may not support NAT loopback, so use the local address at home; or your proxy rules block it.",
+  share: "Share", share_desc: "{ok} of {n} regions reach {target}", lk_ipv6: "Does your own network support IPv6?", lk_asn: "Who owns this IP (ASN lookup)",
 };

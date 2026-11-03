@@ -1,14 +1,13 @@
 // Español (neutro, para España y Latinoamérica)
 export default {
   name: "Español",
-  app_name: "Reach Check",
-  tagline: "¿Llegan desde fuera?",
-  seo_title: "Reach Check: ¿otras personas pueden conectarse a tu web, NAS o servidor de juegos? Comprobar puertos abiertos",
+  app_name: "Prueba de acceso",
+  seo_title: "Prueba de acceso: ¿otras personas pueden conectarse a tu web, NAS o servidor de juegos? Comprobar puertos abiertos",
   seo_desc: "Comprobación gratuita desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y desde tu propio navegador. Muestra los tiempos de DNS, TCP, TLS y primer byte, dónde se corta la conexión y qué revisar después: redirección de puertos, firewall, CGNAT, puertos bloqueados, certificados.",
   seo_kw: "comprobar puerto abierto, verificar puertos, mi puerto está abierto, acceso externo, probar redirección de puertos, abrir puertos router, acceso remoto NAS, comprobar web desde varios países, servidor Minecraft no conecta, CGNAT",
   og_sub: "Desde 18 regiones y tu navegador: dónde se corta y qué revisar",
   h1: "¿Otras personas pueden conectarse a tu servicio?",
-  intro: "Reach Check se conecta a tu web, NAS o servidor de juegos desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y otra vez desde tu navegador. Verás los tiempos de DNS, TCP, TLS y primer byte de cada una y, si falla, en qué paso se cortó y qué revisar después.",
+  intro: "Prueba de acceso se conecta a tu web, NAS o servidor de juegos desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y otra vez desde tu navegador. Verás los tiempos de DNS, TCP, TLS y primer byte de cada una y, si falla, en qué paso se cortó y qué revisar después.",
   lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: el del sistema", th_light: "Tema: claro", th_dark: "Tema: oscuro",
 
   f_target: "Dirección", f_target_ph: "Dominio, IP o URL, p. ej. nas.example.com", f_port: "Puerto", f_ipv: "Versión de IP", go: "Comprobar",
@@ -21,7 +20,6 @@ export default {
   h_invite: "Pide a alguien que lo compruebe",
   invite_p: "Envía este enlace a un amigo: la comprobación se ejecuta en su navegador y luego te puede mandar una captura o el enlace.",
   copy: "Copiar", copied: "Copiado",
-  foot: "Todo se ejecuta en tu navegador: llama directamente a Globalping y nada pasa por nuestros servidores.",
   src_gp: "Fuente: {gp}, una red abierta de sondas mantenida por voluntarios (un proyecto de jsDelivr). En cada comprobación, Globalping elige una sonda por región.",
   src_dns: "Fuente: los servicios DoH de AliDNS, Cloudflare y Google, consultados por tu navegador.",
   foot_src: "Fuentes de datos: {gp} (la comprobación externa y el trazado de ruta), AliDNS, Cloudflare y Google (DNS), {ipify} e {ipsb} (tu IP).",
@@ -130,4 +128,5 @@ export default {
   f_unreach: "Las sondas no tienen ruta hasta esta dirección: puede estar mal escrita, o el rango no está anunciado en internet. Pasa a menudo con IPv6.",
   ls_here: "**Conecta desde aquí, pero no desde fuera**: lo más probable es que estés en la misma red que el servicio (el tráfico no sale) o que uses un proxy. Guíate por la comprobación externa.",
   ls_out: "**Conecta desde fuera, pero no desde aquí**: si estás en la misma red que el servicio, puede que tu router no admita NAT loopback; en casa usa la dirección local. O tus reglas de proxy lo bloquean.",
+  share: "Compartir", share_desc: "{ok} de {n} regiones llegan a {target}", lk_ipv6: "¿Tu red es compatible con IPv6?", lk_asn: "De quién es esta IP (consulta ASN)",
 };

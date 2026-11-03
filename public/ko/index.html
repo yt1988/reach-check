@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("reachcheck:theme");s=localStorage.getItem("reachcheck:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}if(l&&l!=="en"&&location.pathname===P.en)location.replace(P[l]+location.search+location.hash)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reach Check: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인</title>
+<title>외부 접속 확인: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인</title>
 <meta name="description" content="무료 외부 접속 확인 도구. 전 세계 18개 지역(중국 3대 통신사 포함)과 내 브라우저에서 서비스에 접속해 DNS, TCP, TLS, 첫 바이트까지의 시간을 보여 줘요. 접속이 안 되면 어느 단계에서 막혔는지, 다음에 무엇을 확인할지 알려 줘요: 포트 포워딩, 방화벽, 공인 IP 없음(CGNAT), 통신사 포트 차단, 인증서.">
 <meta name="keywords" content="포트 열림 확인, 포트 체크, 외부 접속 확인, 포트포워딩 확인, 공인 IP 확인, NAS 외부 접속, 해외에서 사이트 접속 확인, 중국에서 접속 되는지, 마인크래프트 서버 접속 확인">
 <meta name="robots" content="index, follow">
-<meta name="application-name" content="Reach Check">
+<meta name="application-name" content="외부 접속 확인">
 <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://reach.1ms.dog/ko/">
@@ -25,29 +25,37 @@
 <link rel="alternate" hreflang="x-default" href="https://reach.1ms.dog/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="1ms.dog">
-<meta property="og:title" content="Reach Check: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
+<meta property="og:title" content="외부 접속 확인: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
 <meta property="og:description" content="전 세계 18개 지역과 내 브라우저에서: 어디서 막히는지, 다음에 무엇을 볼지">
 <meta property="og:url" content="https://reach.1ms.dog/ko/">
 <meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Reach Check: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta property="og:image" content="https://reach.1ms.dog/og/ko.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="외부 접속 확인: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://reach.1ms.dog/og/ko.png">
+<meta name="twitter:title" content="외부 접속 확인: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
 <meta name="twitter:description" content="전 세계 18개 지역과 내 브라우저에서: 어디서 막히는지, 다음에 무엇을 볼지">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/ko/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 외부 접속 확인 도구. 전 세계 18개 지역(중국 3대 통신사 포함)과 내 브라우저에서 서비스에 접속해 DNS, TCP, TLS, 첫 바이트까지의 시간을 보여 줘요. 접속이 안 되면 어느 단계에서 막혔는지, 다음에 무엇을 확인할지 알려 줘요: 포트 포워딩, 방화벽, 공인 IP 없음(CGNAT), 통신사 포트 차단, 인증서.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
-<link rel="stylesheet" href="/assets/app.c3ae8275dd.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"외부 접속 확인 · 1ms.dog","url":"https://reach.1ms.dog/ko/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 외부 접속 확인 도구. 전 세계 18개 지역(중국 3대 통신사 포함)과 내 브라우저에서 서비스에 접속해 DNS, TCP, TLS, 첫 바이트까지의 시간을 보여 줘요. 접속이 안 되면 어느 단계에서 막혔는지, 다음에 무엇을 확인할지 알려 줘요: 포트 포워딩, 방화벽, 공인 IP 없음(CGNAT), 통신사 포트 차단, 인증서.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/app.852031f554.css">
 </head>
 <body>
 <div class="app">
   <div class="top">
-    <a class="brand" href="/ko/"><span class="brand-name">Reach Check</span><span class="brand-sub" data-i="tagline">외부 접속 확인</span></a>
+    <a class="brand" href="/ko/"><span class="logo"><img class="logo-light" src="/assets/logo-light.svg" width="90" height="36" alt="1ms" loading="lazy"><img class="logo-dark" src="/assets/logo-dark.svg" width="90" height="36" alt="1ms" loading="lazy"></span><span class="brand-name">외부 접속 확인</span></a>
     <div class="top-acts">
       <label class="sel"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="sr" data-i="lang_label">언어</span>
         <select id="lang"><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option><option value="ko" selected>한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option></select></label>
+      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
       <button class="icon-btn" id="theme" type="button" aria-label="테마">
         <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8.5" rx="1.5"/><path d="M6 14h4M8 11.5V14"/></svg>
         <svg class="i-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
         <svg class="i-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
       </button>
-      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
     </div>
   </div>
 
@@ -79,7 +87,7 @@
 
   <section id="out" hidden>
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">공유</button></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
       <ol class="steps" id="vSteps"></ol>
     </div>
@@ -113,10 +121,10 @@
       <div class="copy"><input id="inviteUrl" readonly aria-label="친구에게 확인 부탁하기"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">복사</button></div>
     </div>
   </section>
-  <footer class="foot m"><p><span data-i="foot">확인은 브라우저 안에서 실행돼요. Globalping을 직접 호출하고, 우리 서버를 거치지 않아요.</span><br>데이터 출처: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>(외부 확인과 경로 추적), AliDNS·Cloudflare·Google(DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a>와 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>(내 IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>데이터 출처: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>(외부 확인과 경로 추적), AliDNS·Cloudflare·Google(DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a>와 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>(내 IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <script type="application/json" id="data">{"lang":"ko","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.ko.34b6e1dff2.js"></script>
-<script src="/assets/app.d69d0364fa.js"></script>
+<script src="/assets/l.ko.7d39dbcf32.js"></script>
+<script src="/assets/app.e0d234650e.js"></script>
 </body>
 </html>

@@ -24,6 +24,7 @@ Can other people reach your website, NAS or game server, and if not, where does 
 - **From your browser**: two HTTPS requests to the same address. A browser only sees how long a request took before it failed, so it tells "no answer at all" from "something answered", and for HTTPS pages splits the time into connection setup and the request. Ports browsers refuse to open (22, 25, 110, …) are named as such.
 - **DNS**: the answers of AliDNS, Cloudflare and Google (over DoH, from the browser), private or carrier-grade NAT addresses in public records, Cloudflare's proxy (which only forwards a few HTTP ports), resolvers that disagree, and China's probes resolving the name differently from everyone else.
 - **A verdict with next steps**: port forwarding, firewalls, no public IPv4 (CGNAT), ports blocked by home broadband, a service listening on 127.0.0.1 only, Cloudflare 52x errors, certificates, slow TCP handshakes (lost packets), and your own view disagreeing with the outside one (NAT loopback, a proxy).
+- **Share a result**: an image, and a link that holds the whole result (`/r/<code>`), so whoever opens it sees the same check; the Worker gives the link a preview title with the verdict. The visitor's own IP is never in it.
 - **10 languages**: English, 简体中文, 繁體中文, 日本語, 한국어, Español, Français, Deutsch, Português, Русский.
 - **Trace route** from any failed region, and an **invite link**: a friend opens it and their browser checks your service.
 
@@ -31,25 +32,30 @@ UDP ports (many game servers, WireGuard) can't be checked: neither a browser nor
 
 ## Where it runs
 
-Everything runs in the visitor's browser. Data sources, named on the page: Globalping (the outside check and trace route), the DoH services of AliDNS, Cloudflare and Google (DNS), ipify and IP.SB (the visitor's own IP). The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files only; no server sees what you check.
+Everything runs in the visitor's browser. Data sources, named on the page: Globalping (the outside check and trace route), the DoH services of AliDNS, Cloudflare and Google (DNS), ipify and IP.SB (the visitor's own IP). The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files plus a small Worker that only runs for shared result links (to title their preview); no server of ours sees what you check.
 
 ## Develop
 
 ```bash
 npm run build      # src/ → public/ (commit public/)
 npm test           # every language has every string with the same placeholders; public/ is up to date
-npm run dev        # http://localhost:8787, with the production headers from public/_headers
+npm run assets     # the link-preview images, public/og/<lang>.png (needs @resvg/resvg-js; commit them)
+npx wrangler dev   # the page with the Worker (result links), as deployed
+npm run dev        # http://localhost:8787, static files only, with the production headers from public/_headers
 ```
 
-Deploy with `npx wrangler deploy` (static assets only, nothing metered), then bind a domain in the Cloudflare dashboard.
+Deploy with `npx wrangler deploy` (static assets, not metered, and the Worker for `/r/` links), then bind a domain in the Cloudflare dashboard.
 
 ```
 src/page.html       the page template
 src/app.js          regions, Globalping, the browser check, DNS, the verdict
 src/style.css       design tokens (shared with the other 1ms.dog tools) and layout
+src/code.mjs        a result in a link and back (the page and the Worker share it)
+src/worker.js       the Worker: /r/<code> gets the page with the verdict in its title; anything else is a 404
 src/i18n/*.mjs      the strings in 10 languages; en is the reference
 scripts/build.mjs   builds public/: a page per language (English at /, the others under /zh-cn/, /ja/ …), sitemap, _headers
-scripts/dev.mjs     local preview server
+scripts/assets.mjs  renders the link-preview images
+scripts/dev.mjs     local preview server (static files only)
 ```
 
 ## License

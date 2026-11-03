@@ -1,14 +1,13 @@
 // Français (vouvoiement). Espace insécable avant : ; ? ! et à l'intérieur des « ».
 export default {
   name: "Français",
-  app_name: "Reach Check",
-  tagline: "Joignable de l'extérieur ?",
-  seo_title: "Reach Check : votre site, NAS ou serveur de jeu est-il joignable par les autres ? Test de port ouvert",
+  app_name: "Test d'accessibilité",
+  seo_title: "Test d'accessibilité : votre site, NAS ou serveur de jeu est-il joignable par les autres ? Test de port ouvert",
   seo_desc: "Test gratuit depuis 18 régions (dont China Telecom, Unicom et Mobile) et depuis votre propre navigateur. Affiche les temps DNS, TCP, TLS et premier octet, l'étape où la connexion s'arrête et quoi vérifier ensuite : redirection de ports, pare-feu, CGNAT, ports bloqués, certificats.",
   seo_kw: "tester port ouvert, vérifier port ouvert, mon port est-il ouvert, accès depuis l'extérieur, tester redirection de port, ouvrir port box, accès distant NAS, tester site depuis plusieurs pays, serveur Minecraft injoignable, CGNAT",
   og_sub: "Depuis 18 régions et votre navigateur : où ça bloque, et quoi vérifier",
   h1: "Les autres peuvent-ils joindre votre service ?",
-  intro: "Reach Check se connecte à votre site, NAS ou serveur de jeu depuis 18 régions (dont China Telecom, Unicom et Mobile), puis une fois de plus depuis votre navigateur. Vous voyez les temps DNS, TCP, TLS et premier octet de chacune et, en cas d'échec, l'étape où la connexion s'est arrêtée et quoi vérifier ensuite.",
+  intro: "Test d'accessibilité se connecte à votre site, NAS ou serveur de jeu depuis 18 régions (dont China Telecom, Unicom et Mobile), puis une fois de plus depuis votre navigateur. Vous voyez les temps DNS, TCP, TLS et premier octet de chacune et, en cas d'échec, l'étape où la connexion s'est arrêtée et quoi vérifier ensuite.",
   lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
 
   f_target: "Adresse", f_target_ph: "Domaine, IP ou URL, ex. nas.example.com", f_port: "Port", f_ipv: "Version IP", go: "Tester",
@@ -21,7 +20,6 @@ export default {
   h_invite: "Demander à quelqu'un de tester",
   invite_p: "Envoyez ce lien à un ami : le test s'exécute dans son navigateur, et il peut vous renvoyer une capture d'écran ou le lien.",
   copy: "Copier", copied: "Copié",
-  foot: "Tout s'exécute dans votre navigateur : il interroge Globalping directement, rien ne passe par nos serveurs.",
   src_gp: "Source : {gp}, un réseau ouvert de sondes tenu par des bénévoles (un projet de jsDelivr). À chaque test, Globalping choisit une sonde par région.",
   src_dns: "Source : les services DoH d'AliDNS, Cloudflare et Google, interrogés par votre navigateur.",
   foot_src: "Sources des données : {gp} (le test extérieur et le traceroute), AliDNS, Cloudflare et Google (DNS), {ipify} et {ipsb} (votre IP).",
@@ -130,4 +128,5 @@ export default {
   f_unreach: "Les sondes n'ont aucune route vers cette adresse : elle est peut-être mal saisie, ou la plage n'est pas annoncée sur Internet. Fréquent en IPv6.",
   ls_here: "**Ça se connecte d'ici, mais pas de l'extérieur** : vous êtes sans doute sur le même réseau que le service (le trafic ne sort pas), ou vous utilisez un proxy. Fiez-vous au test extérieur.",
   ls_out: "**Ça se connecte de l'extérieur, mais pas d'ici** : si vous êtes sur le même réseau que le service, votre box ne gère peut-être pas le NAT loopback ; chez vous, utilisez l'adresse locale. Ou vos règles de proxy le bloquent.",
+  share: "Partager", share_desc: "{ok} régions sur {n} joignent {target}", lk_ipv6: "Votre réseau gère-t-il IPv6 ?", lk_asn: "À qui appartient cette IP (recherche ASN)",
 };

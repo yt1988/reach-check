@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /r/
 
 Sitemap: https://reach.1ms.dog/sitemap.xml

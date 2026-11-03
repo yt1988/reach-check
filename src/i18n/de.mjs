@@ -1,14 +1,13 @@
 // Deutsch (du)
 export default {
   name: "Deutsch",
-  app_name: "Reach Check",
-  tagline: "Von außen erreichbar?",
-  seo_title: "Reach Check: Ist deine Website, dein NAS oder Gameserver von außen erreichbar? Port-Check",
+  app_name: "Erreichbarkeits-Check",
+  seo_title: "Erreichbarkeits-Check: Ist deine Website, dein NAS oder Gameserver von außen erreichbar? Port-Check",
   seo_desc: "Kostenloser Erreichbarkeits-Check aus 18 Regionen (darunter China Telecom, Unicom und Mobile) und aus deinem eigenen Browser. Zeigt DNS-, TCP-, TLS- und First-Byte-Zeiten, wo die Verbindung abbricht und was du als Nächstes prüfen solltest: Portweiterleitung, Firewall, CGNAT, gesperrte Ports, Zertifikate.",
   seo_kw: "Port Check, offene Ports prüfen, ist mein Port offen, von außen erreichbar, Portweiterleitung testen, Port freigeben Router, NAS Fernzugriff, Website aus mehreren Ländern testen, Minecraft Server nicht erreichbar, DS-Lite CGNAT",
   og_sub: "Aus 18 Regionen und deinem Browser: wo es hakt und was du prüfen solltest",
   h1: "Ist dein Dienst von außen erreichbar?",
-  intro: "Reach Check verbindet sich aus 18 Regionen (darunter China Telecom, Unicom und Mobile) mit deiner Website, deinem NAS oder Gameserver und dann noch einmal aus deinem Browser. Du siehst für jede Region die DNS-, TCP-, TLS- und First-Byte-Zeit und bei einem Fehler, an welchem Schritt die Verbindung abbricht und was du als Nächstes prüfen solltest.",
+  intro: "Erreichbarkeits-Check verbindet sich aus 18 Regionen (darunter China Telecom, Unicom und Mobile) mit deiner Website, deinem NAS oder Gameserver und dann noch einmal aus deinem Browser. Du siehst für jede Region die DNS-, TCP-, TLS- und First-Byte-Zeit und bei einem Fehler, an welchem Schritt die Verbindung abbricht und was du als Nächstes prüfen solltest.",
   lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
 
   f_target: "Adresse", f_target_ph: "Domain, IP oder URL, z. B. nas.example.com", f_port: "Port", f_ipv: "IP-Version", go: "Prüfen",
@@ -21,7 +20,6 @@ export default {
   h_invite: "Jemand anderen prüfen lassen",
   invite_p: "Schick diesen Link an eine Freundin oder einen Freund: Der Check läuft dann in deren Browser, und sie können dir einen Screenshot oder den Link zurückschicken.",
   copy: "Kopieren", copied: "Kopiert",
-  foot: "Läuft in deinem Browser: Er fragt Globalping direkt, nichts geht über unsere Server.",
   src_gp: "Quelle: {gp}, ein offenes Netz von Messpunkten, betrieben von Freiwilligen (ein Projekt von jsDelivr). Für jeden Check wählt Globalping einen Messpunkt pro Region.",
   src_dns: "Quelle: die DoH-Dienste von AliDNS, Cloudflare und Google, abgefragt von deinem Browser.",
   foot_src: "Datenquellen: {gp} (Check von außen und Traceroute), AliDNS, Cloudflare und Google (DNS), {ipify} und {ipsb} (deine IP).",
@@ -130,4 +128,5 @@ export default {
   f_unreach: "Die Messpunkte haben keine Route zu dieser Adresse: Vielleicht ist sie vertippt, oder der Bereich wird im Internet nicht angekündigt. Bei IPv6 häufig.",
   ls_here: "**Von hier aus klappt es, von außen nicht**: Wahrscheinlich bist du im selben Netz wie der Dienst (der Verkehr geht gar nicht raus), oder du nutzt einen Proxy. Richte dich nach dem Check von außen.",
   ls_out: "**Von außen klappt es, von hier aus nicht**: Bist du im selben Netz wie der Dienst, unterstützt dein Router vielleicht kein NAT-Loopback; nutz zu Hause die lokale Adresse. Oder deine Proxy-Regeln blockieren es.",
+  share: "Teilen", share_desc: "{ok} von {n} Regionen erreichen {target}", lk_ipv6: "Kann dein eigenes Netz IPv6?", lk_asn: "Wem gehört diese IP (ASN-Abfrage)",
 };
