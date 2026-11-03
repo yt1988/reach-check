@@ -1,13 +1,13 @@
 // Français (vouvoiement). Espace insécable avant : ; ? ! et à l'intérieur des « ».
 export default {
   name: "Français",
-  app_name: "Test d'accessibilité",
-  seo_title: "Test d'accessibilité : votre site, NAS ou serveur de jeu est-il joignable par les autres ? Test de port ouvert",
+  app_name: "Test de joignabilité",
+  seo_title: "Test de joignabilité : votre site, NAS ou serveur de jeu est-il joignable par les autres ? Test de port ouvert",
   seo_desc: "Test gratuit depuis 18 régions (dont China Telecom, Unicom et Mobile) et depuis votre propre navigateur. Affiche les temps DNS, TCP, TLS et premier octet, l'étape où la connexion s'arrête et quoi vérifier ensuite : redirection de ports, pare-feu, CGNAT, ports bloqués, certificats.",
   seo_kw: "tester port ouvert, vérifier port ouvert, mon port est-il ouvert, accès depuis l'extérieur, tester redirection de port, ouvrir port box, accès distant NAS, tester site depuis plusieurs pays, serveur Minecraft injoignable, CGNAT",
   og_sub: "Depuis 18 régions et votre navigateur : où ça bloque, et quoi vérifier",
   h1: "Les autres peuvent-ils joindre votre service ?",
-  intro: "Test d'accessibilité se connecte à votre site, NAS ou serveur de jeu depuis 18 régions (dont China Telecom, Unicom et Mobile), puis une fois de plus depuis votre navigateur. Vous voyez les temps DNS, TCP, TLS et premier octet de chacune et, en cas d'échec, l'étape où la connexion s'est arrêtée et quoi vérifier ensuite.",
+  intro: "Le Test de joignabilité se connecte à votre site, NAS ou serveur de jeu depuis 18 régions (dont China Telecom, Unicom et Mobile), puis une fois de plus depuis votre navigateur. Vous voyez les temps DNS, TCP, TLS et premier octet de chacune et, en cas d'échec, l'étape où la connexion s'est arrêtée et quoi vérifier ensuite.",
   lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
 
   f_target: "Adresse", f_target_ph: "Domaine, IP ou URL, ex. nas.example.com", f_port: "Port", f_ipv: "Version IP", go: "Tester",
