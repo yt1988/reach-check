@@ -1,7 +1,7 @@
 // Taiwan's name is written out per the 1ms.dog tool contract (§5), in every language, never the browser's region name.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { LANGS } from "../scripts/build.mjs";
 
 const app = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
@@ -14,4 +14,11 @@ test("Taiwan's name is the contract's, for every language the page has", () => {
   assert.deepEqual(got, TW);
   for (const [lang] of LANGS) assert.ok(got[lang], `no name for ${lang}`);
   assert.match(app, /cc === "TW" \? \(TW\[lang\] \|\| TW\.en\)/);
+});
+
+test("the built script parses", () => {
+  const dir = new URL("../public/assets/", import.meta.url);
+  const js = readdirSync(dir).filter(f => /^app\.[0-9a-f]+\.js$/.test(f));
+  assert.equal(js.length, 1);
+  assert.doesNotThrow(() => new Function(readFileSync(new URL(js[0], dir), "utf8")));    // parsed, not run
 });

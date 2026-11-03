@@ -81,8 +81,8 @@ const REGIONS = [
 REGIONS.forEach(x => x.cn = x.g === "cn");
 const TW = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
 const regionName = (cc, lang) => cc === "TW" ? (TW[lang] || TW.en) : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
-const place = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
-const nameOf = x => x.carrier ? t("c_" + x.carrier) : x.city ? `${place(x.cc)} · ${t("city_" + x.city)}` : place(x.cc);
+const regionOf = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
+const nameOf = x => x.carrier ? t("c_" + x.carrier) : x.city ? `${regionOf(x.cc)} · ${t("city_" + x.city)}` : regionOf(x.cc);
 
 // Presets: the port, whether it should answer as a web page (and over TLS), what to expect otherwise
 const PRESETS = [
