@@ -193,14 +193,47 @@ function parseTarget(raw, portField) {
 
 let preset = PRESETS[0], run = 0, state;
 
-// The port field suggests the usual services (443 · Website, 5001 · Synology DSM…); the port typed picks its service
+// The port field and its list of usual services (443 · Website, 5001 · Synology DSM…), drawn by the page so it sits
+// under the field in the page's colors. Typing narrows the list to the ports that start with what was typed; the port
+// typed picks its service, named under the fields.
+const PORTS = PRESETS.filter(p => !p.udp);
+let portActive = -1, portTyped = false;   // the list narrows only once something is typed, not to the port already there
 function renderPresets() {
-  $("ports").innerHTML = PRESETS.filter(p => !p.udp).map(p => `<option value="${p.port}">${esc(presetName(p))}</option>`).join("");
+  const v = portTyped ? $("port").value.trim() : "", shown = PORTS.filter(p => !v || String(p.port).startsWith(v) || +v === p.port);
+  const list = shown.length ? shown : PORTS;
+  portActive = Math.min(portActive, list.length - 1);
+  $("portList").innerHTML = list.map((p, i) => `<li role="option" id="po${i}" data-port="${p.port}" aria-selected="${i === portActive}"><b>${p.port}</b><span>${esc(presetName(p))}</span></li>`).join("");
+  $("port").setAttribute("aria-activedescendant", portActive >= 0 ? "po" + portActive : "");
 }
-$("port").addEventListener("input", () => {
+const portOpen = open => {
+  $("portList").hidden = !open; $("port").setAttribute("aria-expanded", open);
+  if (open) { portActive = -1; portTyped = false; renderPresets(); }
+};
+const pickPort = port => {
+  $("port").value = port; portOpen(false);
+  $("port").dispatchEvent(new Event("input"));
+};
+$("port").addEventListener("input", e => {
   preset = PRESETS.find(p => p.port === +$("port").value && !p.udp) || null;
   $("portNote").textContent = preset ? presetName(preset) : "";
+  if (!$("portList").hidden && e.isTrusted) { portTyped = true; renderPresets(); }
 });
+$("port").addEventListener("focus", () => portOpen(true));
+$("port").addEventListener("click", () => portOpen(true));
+$("portBtn").addEventListener("click", () => { portOpen($("portList").hidden); $("port").focus(); });
+$("port").addEventListener("keydown", e => {
+  const items = [...$("portList").children];
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    if ($("portList").hidden) portOpen(true);
+    portActive = (portActive + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+    renderPresets(); $("po" + portActive)?.scrollIntoView({ block: "nearest" });
+  } else if (e.key === "Enter" && !$("portList").hidden && portActive >= 0) { e.preventDefault(); pickPort(items[portActive].dataset.port); }
+  else if (e.key === "Escape" || e.key === "Tab") portOpen(false);
+});
+// mousedown, not click: picking an item must happen before the field loses focus and the list closes
+$("portList").addEventListener("mousedown", e => { const li = e.target.closest("li[data-port]"); if (li) { e.preventDefault(); pickPort(li.dataset.port); } });
+document.addEventListener("pointerdown", e => { if (!e.target.closest(".combo")) portOpen(false); });
 
 async function loadQuota() {
   try {
@@ -472,7 +505,7 @@ function drawVerdict() {
   const tone = (a, n) => !n ? "" : a === n ? "ok" : a ? "warn" : "bad";
   const cnOk = cn.filter(r => good(r.c, s)).length, l = s.local;
   const ms = l?.k === "ok" || l?.k === "answered" ? ` <span class="m">· ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
-  const fact = (label, val, cls, extra = "") => `<dt>${esc(t(label))}</dt><dd><b class="${cls}">${esc(val)}</b>${extra}</dd>`;
+  const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
   $("kpis").innerHTML =
     fact("fa_world", done && rows.length ? t("fa_ok", { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
     fact("fa_cn", done && cn.length ? t("fa_ok", { ok: cnOk, n: cn.length }) : "…", done ? tone(cnOk, cn.length) : "") +

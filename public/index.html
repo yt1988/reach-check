@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="From 18 regions and your browser: where it stops, and what to check next">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Free reachability check from 18 regions, including China Telecom, Unicom and Mobile, and from your own browser. See DNS, TCP, TLS and first-byte times for each, where a failed connection stops, and what to check next: port forwarding, firewalls, CGNAT, blocked ports, certificates.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does the check work?","acceptedAnswer":{"@type":"Answer","text":"Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page. Your own browser connects too: that's the table's first line. None of it goes through our servers."}},{"@type":"Question","name":"It opens for me. Why can't others reach it?","acceptedAnswer":{"@type":"Answer","text":"If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."}},{"@type":"Question","name":"I set up port forwarding. Why does it still time out?","acceptedAnswer":{"@type":"Answer","text":"The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP. With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."}},{"@type":"Question","name":"What's the difference between refused and timed out?","acceptedAnswer":{"@type":"Answer","text":"Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port. Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."}},{"@type":"Question","name":"Can it check UDP ports for games or WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."}},{"@type":"Question","name":"Who sees the address I enter?","acceptedAnswer":{"@type":"Answer","text":"Globalping, which runs the probes. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP. Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.025a2348a4.css">
+<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
 </head>
 <body>
 <div class="app">
@@ -72,11 +72,16 @@
           <label class="fld grow"><span data-i="f_target">Address</span>
             <input id="target" name="t" placeholder="Domain, IP or URL, e.g. nas.example.com" spellcheck="false" inputmode="url" required>
           </label>
-          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
-          <label class="fld port"><span data-i="f_port">Port</span>
-            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
-            <datalist id="ports"></datalist>
-          </label>
+          <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
+               its own position, under password managers' pop-ups) -->
+          <div class="fld port"><label for="port" data-i="f_port">Port</label>
+            <div class="combo">
+              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
+              <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="Port"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+              <ul class="combo-list" id="portList" role="listbox" hidden></ul>
+            </div>
+          </div>
           <label class="fld ipv"><span data-i="f_ipv">IP version</span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -88,12 +93,12 @@
 
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <section class="verdict" id="verdict" hidden>
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
-        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Ask a friend</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Share</button></div></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <dl class="facts" id="kpis"></dl>
+      <div class="facts" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
+      <div class="v-acts"><button class="btn" id="shareBtn" type="button" hidden data-i="share">Share</button><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Ask a friend</button></div>
     </section>
   </div>
 
@@ -125,6 +130,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"en","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.en.b26c9d1671.js"></script>
-<script src="/assets/app.0bc0404d24.js"></script>
+<script src="/assets/app.56d23aa2a2.js"></script>
 </body>
 </html>

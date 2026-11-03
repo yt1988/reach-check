@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="世界 18 地域とあなたのブラウザから：どこで止まるか、次に何を見るか">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"到達性チェック · 1ms.dog","url":"https://reach.1ms.dog/ja/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料の到達性チェック。世界 18 地域（中国電信・聯通・移動を含む）とあなたのブラウザからサービスに接続し、DNS・TCP・TLS・最初の 1 バイトまでの時間を表示します。つながらなければ、どこで止まったか、次に何を確認すべきか（ポート転送、ファイアウォール、グローバル IP がない、ポートの遮断、証明書）を示します。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"どうやってチェックしていますか？","acceptedAnswer":{"@type":"Answer","text":"18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。 あなたのブラウザからも接続します（表の 1 行目）。どれも私たちのサーバーは経由しません。"}},{"@type":"Question","name":"自分では開けるのに、なぜ外からはつながらないのですか？","acceptedAnswer":{"@type":"Answer","text":"サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。"}},{"@type":"Question","name":"ポート転送を設定したのに、なぜタイムアウトするのですか？","acceptedAnswer":{"@type":"Answer","text":"よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。 IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。"}},{"@type":"Question","name":"「拒否」と「タイムアウト」の違いは？","acceptedAnswer":{"@type":"Answer","text":"拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。 タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。"}},{"@type":"Question","name":"ゲームや WireGuard の UDP ポートは確認できますか？","acceptedAnswer":{"@type":"Answer","text":"できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。"}},{"@type":"Question","name":"入力したアドレスは誰に見えますか？","acceptedAnswer":{"@type":"Answer","text":"計測を行う Globalping です。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。 Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.025a2348a4.css">
+<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
 </head>
 <body>
 <div class="app">
@@ -72,11 +72,16 @@
           <label class="fld grow"><span data-i="f_target">アドレス</span>
             <input id="target" name="t" placeholder="ドメイン、IP、URL（例：nas.example.com）" spellcheck="false" inputmode="url" required>
           </label>
-          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
-          <label class="fld port"><span data-i="f_port">ポート</span>
-            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
-            <datalist id="ports"></datalist>
-          </label>
+          <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
+               its own position, under password managers' pop-ups) -->
+          <div class="fld port"><label for="port" data-i="f_port">ポート</label>
+            <div class="combo">
+              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
+              <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="ポート"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+              <ul class="combo-list" id="portList" role="listbox" hidden></ul>
+            </div>
+          </div>
           <label class="fld ipv"><span data-i="f_ipv">IP バージョン</span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -88,12 +93,12 @@
 
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <section class="verdict" id="verdict" hidden>
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
-        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">友だちに頼む</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">共有</button></div></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <dl class="facts" id="kpis"></dl>
+      <div class="facts" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
+      <div class="v-acts"><button class="btn" id="shareBtn" type="button" hidden data-i="share">共有</button><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">友だちに頼む</button></div>
     </section>
   </div>
 
@@ -125,6 +130,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.ja.20dd1df824.js"></script>
-<script src="/assets/app.0bc0404d24.js"></script>
+<script src="/assets/app.56d23aa2a2.js"></script>
 </body>
 </html>

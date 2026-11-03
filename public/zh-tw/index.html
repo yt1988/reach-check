@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"連線可達性檢測 · 1ms.dog","url":"https://reach.1ms.dog/zh-tw/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免費的連線可達性檢測：從全球 18 個地區（含中國電信、聯通、移動）和你自己的瀏覽器連到你的服務，分段顯示 DNS、TCP、TLS、第一個位元組的耗時。連不上就告訴你卡在哪一步、接下來該查哪裡：連接埠轉送、防火牆、沒有實體 IP、電信業者封鎖連接埠、憑證。","inLanguage":"zh-TW","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"是怎麼檢測的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 個地區的志工探測點，各自連到你的位址和連接埠，送出一次 HTTP(S) 請求，並替每一步計時：DNS 解析、TCP 交握、TLS 交握、第一個位元組。失敗時，錯誤訊息會說明停在哪一步：拒絕連線、逾時、被重設、TLS 出錯，或連接埠上的不是網頁服務。 你自己的瀏覽器也會連一次，結果在表格第一列。這些請求都不經過我們的伺服器。"}},{"@type":"Question","name":"我自己打得開，為什麼別人連不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服務在同一個網路裡，流量根本沒有出去，自己打得開不代表外面連得上。開著代理時，你走的路也和別人不同。請以外部檢測為準：它和陌生人連線的方式一樣。"}},{"@type":"Question","name":"連接埠轉送設好了，為什麼還是逾時？","acceptedAnswer":{"@type":"Answer","text":"常見原因：沒有公開的 IPv4（路由器的 WAN 位址以 100.64–100.127 開頭，或和你的公開 IP 不同，就是電信業者級 NAT）；NAS、Windows 或雲端安全群組的防火牆沒有放行；電信業者封鎖家用寬頻的 80、443 等常用連接埠；轉送指向的還是設備以前的內部 IP。 使用 IPv6 時，路由器和數據機的 IPv6 防火牆預設擋下連入連線，要另外放行這個連接埠。"}},{"@type":"Question","name":"「拒絕連線」和「逾時」有什麼不同？","acceptedAnswer":{"@type":"Answer","text":"拒絕連線：封包到了那台機器，但連接埠上沒有程式在接聽。可能是服務沒開、只在 127.0.0.1 上接聽，或轉送到錯誤的連接埠。 逾時：完全沒有回應。可能是防火牆丟掉了封包、沒有設定連接埠轉送，或位址填錯了。"}},{"@type":"Question","name":"能測遊戲或 WireGuard 用的 UDP 連接埠嗎？","acceptedAnswer":{"@type":"Answer","text":"不能。UDP 服務收不到正確的訊息時通常不會回應，所以瀏覽器和公開探測點都沒有通用的方法判斷 UDP 連接埠有沒有開。可以先確認主機透過 TCP 連得上（選 SSH 或網頁連接埠），再請朋友直接用遊戲連線。"}},{"@type":"Question","name":"我填的位址誰看得到？","acceptedAnswer":{"@type":"Answer","text":"執行探測的 Globalping。我們不會保存。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。 每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.025a2348a4.css">
+<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
 </head>
 <body>
 <div class="app">
@@ -72,11 +72,16 @@
           <label class="fld grow"><span data-i="f_target">位址</span>
             <input id="target" name="t" placeholder="網域、IP 或網址，例如 nas.example.com" spellcheck="false" inputmode="url" required>
           </label>
-          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
-          <label class="fld port"><span data-i="f_port">連接埠</span>
-            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
-            <datalist id="ports"></datalist>
-          </label>
+          <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
+               its own position, under password managers' pop-ups) -->
+          <div class="fld port"><label for="port" data-i="f_port">連接埠</label>
+            <div class="combo">
+              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
+              <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="連接埠"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+              <ul class="combo-list" id="portList" role="listbox" hidden></ul>
+            </div>
+          </div>
           <label class="fld ipv"><span data-i="f_ipv">IP 版本</span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -88,12 +93,12 @@
 
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <section class="verdict" id="verdict" hidden>
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
-        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">請朋友測</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">分享</button></div></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <dl class="facts" id="kpis"></dl>
+      <div class="facts" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
+      <div class="v-acts"><button class="btn" id="shareBtn" type="button" hidden data-i="share">分享</button><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">請朋友測</button></div>
     </section>
   </div>
 
@@ -125,6 +130,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.zh-tw.cf5729b8a6.js"></script>
-<script src="/assets/app.0bc0404d24.js"></script>
+<script src="/assets/app.56d23aa2a2.js"></script>
 </body>
 </html>

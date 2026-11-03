@@ -37,11 +37,16 @@
           <label class="fld grow"><span data-i="f_target"></span>
             <input id="target" name="t" placeholder="{{a:f_target_ph}}" spellcheck="false" inputmode="url" required>
           </label>
-          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
-          <label class="fld port"><span data-i="f_port"></span>
-            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
-            <datalist id="ports"></datalist>
-          </label>
+          <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
+               its own position, under password managers' pop-ups) -->
+          <div class="fld port"><label for="port" data-i="f_port"></label>
+            <div class="combo">
+              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
+              <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="{{a:f_port}}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+              <ul class="combo-list" id="portList" role="listbox" hidden></ul>
+            </div>
+          </div>
           <label class="fld ipv"><span data-i="f_ipv"></span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -53,12 +58,12 @@
 
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <section class="verdict" id="verdict" hidden>
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
-        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite"></button><button class="btn" id="shareBtn" type="button" hidden data-i="share"></button></div></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <dl class="facts" id="kpis"></dl>
+      <div class="facts" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
+      <div class="v-acts"><button class="btn" id="shareBtn" type="button" hidden data-i="share"></button><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite"></button></div>
     </section>
   </div>
 

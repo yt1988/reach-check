@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Depuis 18 régions et votre navigateur : où ça bloque, et quoi vérifier">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Test de joignabilité · 1ms.dog","url":"https://reach.1ms.dog/fr/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Test gratuit depuis 18 régions (dont China Telecom, Unicom et Mobile) et depuis votre propre navigateur. Affiche les temps DNS, TCP, TLS et premier octet, l'étape où la connexion s'arrête et quoi vérifier ensuite : redirection de ports, pare-feu, CGNAT, ports bloqués, certificats.","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment fonctionne le test ?","acceptedAnswer":{"@type":"Answer","text":"Les sondes bénévoles de Globalping, dans 18 régions, se connectent chacune à votre adresse et à votre port et envoient une requête HTTP(S), en chronométrant chaque étape : DNS, connexion TCP, négociation TLS, premier octet. En cas d'échec, l'erreur indique où : refusée, délai dépassé, réinitialisée, problème TLS, ou service qui n'est pas une page web. Votre propre navigateur se connecte aussi : c'est la première ligne du tableau. Rien ne passe par nos serveurs."}},{"@type":"Question","name":"Ça s'ouvre chez moi. Pourquoi les autres n'y arrivent-ils pas ?","acceptedAnswer":{"@type":"Answer","text":"Si vous êtes sur le même réseau que le service, votre trafic ne sort pas de chez vous : l'ouvrir ne prouve rien pour l'extérieur. Un proxy peut aussi vous faire passer par un autre chemin que tout le monde. Fiez-vous au test extérieur : il se connecte comme le ferait un inconnu."}},{"@type":"Question","name":"J'ai configuré la redirection de port. Pourquoi le délai est-il toujours dépassé ?","acceptedAnswer":{"@type":"Answer","text":"Causes habituelles : pas d'IPv4 publique (l'adresse WAN de la box commence par 100.64–100.127 ou n'est pas votre IP publique : CGNAT) ; un pare-feu sur le NAS, dans Windows ou dans un groupe de sécurité cloud ; l'opérateur qui bloque des ports courants comme 80 et 443 sur les connexions résidentielles ; ou une redirection qui pointe encore vers l'ancienne IP locale de l'appareil. En IPv6, le pare-feu IPv6 de la box bloque les connexions entrantes tant que vous n'autorisez pas le port."}},{"@type":"Question","name":"Quelle différence entre « refusée » et « délai dépassé » ?","acceptedAnswer":{"@type":"Answer","text":"Refusée : les paquets sont arrivés à la machine, mais rien n'écoute sur ce port. Le service est arrêté, n'écoute que sur 127.0.0.1, ou la redirection vise le mauvais port. Délai dépassé : aucune réponse. Un pare-feu a jeté les paquets, il n'y a pas de redirection, ou l'adresse est fausse."}},{"@type":"Question","name":"Peut-il tester les ports UDP des jeux ou de WireGuard ?","acceptedAnswer":{"@type":"Answer","text":"Non. Un service UDP reste en général muet tant qu'il ne reçoit pas le bon message : ni un navigateur ni une sonde publique ne peuvent savoir de façon générale si un port UDP est ouvert. Vérifiez que la machine est joignable en TCP (SSH ou un port web), puis demandez à un ami de se connecter avec le jeu lui-même."}},{"@type":"Question","name":"Qui voit l'adresse que je saisis ?","acceptedAnswer":{"@type":"Answer","text":"Globalping, qui fait tourner les sondes. Nous ne la conservons pas. Un lien de résultat contient l'adresse et le résultat pour que d'autres voient le même test ; il ne contient jamais votre propre IP. Chaque IP dispose de 250 tests de région par heure chez Globalping, et un test en utilise 18 ; une fois épuisés, la page indique quand ils reviennent."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.025a2348a4.css">
+<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
 </head>
 <body>
 <div class="app">
@@ -72,11 +72,16 @@
           <label class="fld grow"><span data-i="f_target">Adresse</span>
             <input id="target" name="t" placeholder="Domaine, IP ou URL, ex. nas.example.com" spellcheck="false" inputmode="url" required>
           </label>
-          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
-          <label class="fld port"><span data-i="f_port">Port</span>
-            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
-            <datalist id="ports"></datalist>
-          </label>
+          <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
+               its own position, under password managers' pop-ups) -->
+          <div class="fld port"><label for="port" data-i="f_port">Port</label>
+            <div class="combo">
+              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
+              <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="Port"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+              <ul class="combo-list" id="portList" role="listbox" hidden></ul>
+            </div>
+          </div>
           <label class="fld ipv"><span data-i="f_ipv">Version IP</span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -88,12 +93,12 @@
 
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <section class="verdict" id="verdict" hidden>
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
-        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Demander à un ami</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Partager</button></div></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <dl class="facts" id="kpis"></dl>
+      <div class="facts" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
+      <div class="v-acts"><button class="btn" id="shareBtn" type="button" hidden data-i="share">Partager</button><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Demander à un ami</button></div>
     </section>
   </div>
 
@@ -125,6 +130,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"fr","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.fr.9d8d57493f.js"></script>
-<script src="/assets/app.0bc0404d24.js"></script>
+<script src="/assets/app.56d23aa2a2.js"></script>
 </body>
 </html>
