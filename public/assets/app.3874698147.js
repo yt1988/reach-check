@@ -64,6 +64,29 @@ const toolLink = (id, key) => { const u = tool(id); return u ? `<a class="xl" hr
 // an IP address as a value: links to ASN Lookup (who owns it), except private ones
 const ipVal = ip => { const u = tool("asn"); return u && ["public", "cf"].includes(ipKind(ip)) ? `<a class="dv" href="${esc(u)}ip/${esc(ip)}" target="_blank" rel="noopener" title="${esc(t("lk_asn"))}">${esc(ip)}</a>` : esc(ip); };
 
+// the help dialog: one answer at a time; a picker with previous / next on phones
+const all = s => [...document.querySelectorAll(s)];
+const openDlg = id => { $(id).hidden = false; document.documentElement.style.overflow = "hidden"; $(id).querySelector("[data-close]").focus(); };
+const closeDlg = () => { all(".scrim").forEach(s => { s.hidden = true; }); document.documentElement.style.overflow = ""; };
+all("[data-close]").forEach(b => { b.onclick = closeDlg; });
+all(".scrim").forEach(s => s.addEventListener("click", e => { if (e.target === s) closeDlg(); }));
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDlg(); });
+let helpIdx = 0;
+const helpQs = all("#helpNav [data-hq]");
+$("helpSel").innerHTML = helpQs.map((b, i) => `<option value="${i}">${i + 1} / ${helpQs.length} · ${esc(b.textContent)}</option>`).join("");
+const showHelp = i => {
+  helpIdx = Math.max(0, Math.min(helpQs.length - 1, i));
+  helpQs.forEach(b => b.setAttribute("aria-selected", +b.dataset.hq === helpIdx));
+  all("#helpC [data-hqb]").forEach(a => { a.hidden = +a.dataset.hqb !== helpIdx; });
+  $("helpSel").value = helpIdx;
+  all("[data-hstep]").forEach(b => { b.disabled = helpIdx + +b.dataset.hstep < 0 || helpIdx + +b.dataset.hstep >= helpQs.length; });
+  $("helpC").scrollTop = 0;
+};
+$("helpBtn").onclick = () => { showHelp(helpIdx); openDlg("help"); };
+helpQs.forEach(b => { b.onclick = () => showHelp(+b.dataset.hq); });
+$("helpSel").onchange = e => showHelp(+e.target.value);
+all("[data-hstep]").forEach(b => { b.onclick = () => showHelp(helpIdx + +b.dataset.hstep); });
+
 // One probe per region: mainland China by carrier (eyeball networks), then each continent's main hubs.
 // `loc` is a Globalping location filter; names come from the browser (Intl.DisplayNames) plus a city or carrier.
 const REGIONS = [
@@ -659,6 +682,8 @@ window.msReport = () => state && state.gpDone ? { summary: `${verdict(state, sta
 
 // ---------- start ----------
 
+// under "from here": the visitor's own connection, checked in full by Network X-Ray
+$("checkLink").innerHTML = toolLink("check", "lk_check");
 renderPresets();
 loadQuota();
 const sp = sharePath(location.pathname);

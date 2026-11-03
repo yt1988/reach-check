@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/zh-cn.png">
 <meta name="twitter:title" content="可达性检测：别人能连上你的网站、NAS 或游戏服务吗？端口检测 · 全球与三网">
 <meta name="twitter:description" content="全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"怎么检测的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。 你自己的浏览器也会连一次，并通过 DoH 向阿里 DNS、Cloudflare、Google 查询这个地址。这些请求都不经过我们的服务器。"}},{"@type":"Question","name":"我自己能打开，为什么别人连不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。"}},{"@type":"Question","name":"端口转发设好了，为什么还是超时？","acceptedAnswer":{"@type":"Answer","text":"常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。 用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。"}},{"@type":"Question","name":"「拒绝连接」和「超时」有什么区别？","acceptedAnswer":{"@type":"Answer","text":"拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。 超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。"}},{"@type":"Question","name":"能测游戏或 WireGuard 用的 UDP 端口吗？","acceptedAnswer":{"@type":"Answer","text":"不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。"}},{"@type":"Question","name":"我填的地址谁能看到？","acceptedAnswer":{"@type":"Answer","text":"运行探针的 Globalping，以及通过 DoH 查询的几家 DNS 服务。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。 每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.852031f554.css">
+<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
 </head>
 <body>
 <div class="app">
@@ -50,6 +50,9 @@
     <div class="top-acts">
       <label class="sel"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="sr" data-i="lang_label">语言</span>
         <select id="lang"><option value="en">English</option><option value="zh-CN" selected>简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option></select></label>
+      <button class="icon-btn" id="helpBtn" type="button" aria-haspopup="dialog" aria-controls="help"><span class="sr" data-i="faq_h">常见问题</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.5.2-.8.6-.8 1.1v.4M8 11.3v.1"/></svg>
+      </button>
       <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
       <button class="icon-btn" id="theme" type="button" aria-label="主题">
         <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8.5" rx="1.5"/><path d="M6 14h4M8 11.5V14"/></svg>
@@ -107,6 +110,7 @@
         <div class="sec-h"><h3 data-i="h_local">从你这里连过去</h3></div>
         <div id="local" class="local"></div>
         <p class="note m" data-i="local_note">浏览器只能发 HTTPS 请求，看不到端口的具体状态，只能从「多久失败」来判断。开着代理时，这里测的是代理那条路。</p>
+        <p class="note" id="checkLink"></p>
       </div>
       <div class="card sec">
         <div class="sec-h"><h3 data-i="h_dns">DNS 解析</h3></div>
@@ -123,8 +127,23 @@
   </section>
   <footer class="foot m"><p>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 和 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
+<div class="scrim" id="help" hidden>
+  <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
+    <div class="dlg-h"><h2 id="helpT" data-i="faq_h">常见问题</h2>
+      <button class="icon-btn" data-close type="button" aria-label="关闭"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <div class="help-b">
+      <nav class="help-nav" id="helpNav" role="tablist"><button type="button" role="tab" data-hq="0" aria-selected="true">怎么检测的？</button><button type="button" role="tab" data-hq="1" aria-selected="false">我自己能打开，为什么别人连不上？</button><button type="button" role="tab" data-hq="2" aria-selected="false">端口转发设好了，为什么还是超时？</button><button type="button" role="tab" data-hq="3" aria-selected="false">「拒绝连接」和「超时」有什么区别？</button><button type="button" role="tab" data-hq="4" aria-selected="false">能测游戏或 WireGuard 用的 UDP 端口吗？</button><button type="button" role="tab" data-hq="5" aria-selected="false">我填的地址谁能看到？</button></nav>
+      <div class="help-pick">
+        <button class="icon-btn" type="button" data-hstep="-1" aria-label="上一条"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 4L6 8l4 4"/></svg></button>
+        <select id="helpSel" aria-labelledby="helpT"></select>
+        <button class="icon-btn" type="button" data-hstep="1" aria-label="下一条"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>怎么检测的？</h3><p>Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。</p><p>你自己的浏览器也会连一次，并通过 DoH 向阿里 DNS、Cloudflare、Google 查询这个地址。这些请求都不经过我们的服务器。</p></article><article data-hqb="1" hidden><h3>我自己能打开，为什么别人连不上？</h3><p>如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。</p></article><article data-hqb="2" hidden><h3>端口转发设好了，为什么还是超时？</h3><p>常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。</p><p>用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。</p></article><article data-hqb="3" hidden><h3>「拒绝连接」和「超时」有什么区别？</h3><p>拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。</p><p>超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。</p></article><article data-hqb="4" hidden><h3>能测游戏或 WireGuard 用的 UDP 端口吗？</h3><p>不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。</p></article><article data-hqb="5" hidden><h3>我填的地址谁能看到？</h3><p>运行探针的 Globalping，以及通过 DoH 查询的几家 DNS 服务。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。</p><p>每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。</p></article></div>
+    </div>
+  </div>
+</div>
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-cn.7da805cc61.js"></script>
-<script src="/assets/app.e0d234650e.js"></script>
+<script src="/assets/l.zh-cn.f193144c1a.js"></script>
+<script src="/assets/app.3874698147.js"></script>
 </body>
 </html>

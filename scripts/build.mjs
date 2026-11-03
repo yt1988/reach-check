@@ -34,7 +34,7 @@ export async function loadI18n() {
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "intro", "lang_label", "f_target", "f_target_ph", "f_port", "f_ipv",
-  "go", "myip_btn", "h_regions", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "h_local", "local_note", "h_dns", "h_invite", "invite_p", "a_theme",
+  "go", "myip_btn", "h_regions", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "h_local", "local_note", "h_dns", "h_invite", "invite_p", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
   "src_gp", "src_dns", "foot_src"]);
 
 // Data sources named in the page link to their sites
@@ -64,9 +64,12 @@ export async function build({ check = false } = {}) {
 
     const url = SITE + pathOf(slug), title = T("seo_title"), desc = T("seo_desc");
     const alts = langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + pathOf(sl)}">`).join("\n") + `\n<link rel="alternate" hreflang="x-default" href="${SITE}/">`;
-    const graph = { "@context": "https://schema.org", "@type": "WebApplication", name: T("app_name") + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication",
+    const docs = T("docs").map(([q, a]) => ({ q, h: a.split(/\n+/).map(p => `<p>${esc(p)}</p>`).join(""), t: a.replace(/\n+/g, " ") }));
+    const faq = { "@type": "FAQPage", mainEntity: docs.map(x => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.t } })) };
+    const app = { "@type": "WebApplication", name: T("app_name") + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication",
       operatingSystem: "Any", browserRequirements: "Requires JavaScript", description: desc, inLanguage: lang, isAccessibleForFree: true,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } };
+    const graph = { "@context": "https://schema.org", "@graph": [app, faq] };
     const head = [
       `<title>${esc(title)}</title>`,
       `<meta name="description" content="${esc(desc)}">`,
@@ -87,6 +90,8 @@ export async function build({ check = false } = {}) {
       `<script type="application/ld+json">${JSON.stringify(graph).replace(/</g, "\\u003c")}</script>`,
     ].join("\n");
 
+    const helpNav = docs.map((x, i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(x.q)}</button>`).join("");
+    const helpC = docs.map((x, i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(x.q)}</h3>${x.h}</article>`).join("");
     const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
     const paths = Object.fromEntries(langs.map(([l, sl]) => [l, pathOf(sl)]));
     const html = tpl
@@ -95,6 +100,7 @@ export async function build({ check = false } = {}) {
       .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
       .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
       .replace("{{homeHref}}", pathOf(slug)).replace("{{appName}}", esc(T("app_name"))).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T("h1")))
+      .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
       .replace("{{srcGp}}", links(T("src_gp"))).replace("{{footSrc}}", links(T("foot_src")))
       .replace("{{data}}", JSON.stringify({ lang, paths }).replace(/</g, "\\u003c"));
     if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + pathOf(slug) + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
