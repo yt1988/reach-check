@@ -4,6 +4,8 @@
   "type": "module",
   "description": "Can other people reach your website, NAS or game server? Checks from 18 regions (Globalping probes, incl. China's three carriers) and from your own browser, with DNS, TCP, TLS and first-byte timings and what to check next",
   "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
     "dev": "node scripts/dev.mjs"
   },
   "license": "MIT",

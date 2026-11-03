@@ -40,26 +40,31 @@
   - Cloudflare 52x 错误、证书问题；
   - TCP 握手慢（丢包重传）；
   - 你自己看到的和外面看到的不一致（NAT 回环、代理）。
+- **10 种语言**：English、简体中文、繁體中文、日本語、한국어、Español、Français、Deutsch、Português、Русский。
 - 失败的地区可以点**追踪路由**。还有**邀请链接**：朋友打开后，用他的浏览器连你的服务。
 
 UDP 端口（很多游戏服务器、WireGuard）测不了：浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。
 
 ## 在哪里运行
 
-全部在访客的浏览器里运行。页面直接调用 Globalping 的接口，每个访客用自己的额度：每个 IP 每小时 250 个探针结果，一次检测用 18 个。额度用完时，页面会告诉你多久后恢复。站点只有静态文件，你测了什么，没有任何服务器知道。
+全部在访客的浏览器里运行。数据来源都在页面上注明：Globalping（外部检测和追踪路由），阿里 DNS、Cloudflare、Google 的 DoH 接口（DNS），ipify 和 IP.SB（访客自己的 IP）。页面直接调用 Globalping 的接口，每个访客用自己的额度：每个 IP 每小时 250 个探针结果，一次检测用 18 个。额度用完时，页面会告诉你多久后恢复。站点只有静态文件，你测了什么，没有任何服务器知道。
 
 ## 开发
 
 ```bash
+npm run build      # 从 src/ 生成 public/（public/ 要提交）
+npm test           # 每种语言都有全部文案、占位符一致；public/ 是最新的
 npm run dev        # http://localhost:8787，带上线时同样的响应头（public/_headers）
 ```
 
 用 `npx wrangler deploy` 部署（只有静态资源，不计请求数），然后在 Cloudflare 控制台绑定域名。
 
 ```
-public/index.html   页面
-public/app.js       地区、Globalping、浏览器检测、DNS、结论
-public/style.css    设计变量（和其他 1ms.dog 工具一致）和布局
+src/page.html       页面模板
+src/app.js          地区、Globalping、浏览器检测、DNS、结论
+src/style.css       设计变量（和其他 1ms.dog 工具一致）和布局
+src/i18n/*.mjs      10 种语言的文案；en 是基准
+scripts/build.mjs   生成 public/：每种语言一个页面（英文在 /，其他在 /zh-cn/、/ja/ …），sitemap、_headers
 scripts/dev.mjs     本地预览服务器
 ```
 

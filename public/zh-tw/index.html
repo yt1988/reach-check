@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-TW" data-paths="{&quot;en&quot;:&quot;/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/&quot;,&quot;ja&quot;:&quot;/ja/&quot;,&quot;ko&quot;:&quot;/ko/&quot;,&quot;es&quot;:&quot;/es/&quot;,&quot;fr&quot;:&quot;/fr/&quot;,&quot;de&quot;:&quot;/de/&quot;,&quot;pt&quot;:&quot;/pt/&quot;,&quot;ru&quot;:&quot;/ru/&quot;}">
+<head>
+<meta charset="utf-8">
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("reachcheck:theme");s=localStorage.getItem("reachcheck:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}if(l&&l!=="en"&&location.pathname===P.en)location.replace(P[l]+location.search+location.hash)})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>連線可達性檢測：別人連得到你的網站、NAS 或遊戲伺服器嗎？連接埠檢測 · 全球各地</title>
+<meta name="description" content="免費的連線可達性檢測：從全球 18 個地區（含中國電信、聯通、移動）和你自己的瀏覽器連到你的服務，分段顯示 DNS、TCP、TLS、第一個位元組的耗時。連不上就告訴你卡在哪一步、接下來該查哪裡：連接埠轉送、防火牆、沒有實體 IP、電信業者封鎖連接埠、憑證。">
+<meta name="keywords" content="連接埠檢測, 通訊埠檢查, port 有沒有開, 外部連線測試, 連接埠轉送測試, 實體 IP 檢查, 群暉外網連線, NAS 遠端存取, 網站全球測速, Minecraft 伺服器檢測">
+<meta name="robots" content="index, follow">
+<meta name="application-name" content="Reach Check">
+<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://reach.1ms.dog/zh-tw/">
+<link rel="alternate" hreflang="en" href="https://reach.1ms.dog/">
+<link rel="alternate" hreflang="zh-CN" href="https://reach.1ms.dog/zh-cn/">
+<link rel="alternate" hreflang="zh-TW" href="https://reach.1ms.dog/zh-tw/">
+<link rel="alternate" hreflang="ja" href="https://reach.1ms.dog/ja/">
+<link rel="alternate" hreflang="ko" href="https://reach.1ms.dog/ko/">
+<link rel="alternate" hreflang="es" href="https://reach.1ms.dog/es/">
+<link rel="alternate" hreflang="fr" href="https://reach.1ms.dog/fr/">
+<link rel="alternate" hreflang="de" href="https://reach.1ms.dog/de/">
+<link rel="alternate" hreflang="pt" href="https://reach.1ms.dog/pt/">
+<link rel="alternate" hreflang="ru" href="https://reach.1ms.dog/ru/">
+<link rel="alternate" hreflang="x-default" href="https://reach.1ms.dog/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="1ms.dog">
+<meta property="og:title" content="連線可達性檢測：別人連得到你的網站、NAS 或遊戲伺服器嗎？連接埠檢測 · 全球各地">
+<meta property="og:description" content="全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡">
+<meta property="og:url" content="https://reach.1ms.dog/zh-tw/">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="連線可達性檢測：別人連得到你的網站、NAS 或遊戲伺服器嗎？連接埠檢測 · 全球各地">
+<meta name="twitter:description" content="全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/zh-tw/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免費的連線可達性檢測：從全球 18 個地區（含中國電信、聯通、移動）和你自己的瀏覽器連到你的服務，分段顯示 DNS、TCP、TLS、第一個位元組的耗時。連不上就告訴你卡在哪一步、接下來該查哪裡：連接埠轉送、防火牆、沒有實體 IP、電信業者封鎖連接埠、憑證。","inLanguage":"zh-TW","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="/assets/app.c3ae8275dd.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="brand" href="/zh-tw/"><span class="brand-name">Reach Check</span><span class="brand-sub" data-i="tagline">連線可達性檢測</span></a>
+    <div class="top-acts">
+      <label class="sel"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="sr" data-i="lang_label">語言</span>
+        <select id="lang"><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW" selected>繁體中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option></select></label>
+      <button class="icon-btn" id="theme" type="button" aria-label="主題">
+        <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8.5" rx="1.5"/><path d="M6 14h4M8 11.5V14"/></svg>
+        <svg class="i-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+        <svg class="i-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+      </button>
+      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
+    </div>
+  </div>
+
+  <header class="hero card">
+    <h1>別人連得到你的服務嗎？</h1>
+    <p class="intro" data-i="intro">從全球 18 個地區（含中國電信、聯通、移動）連到你的網站、NAS 或遊戲伺服器，再從你自己的瀏覽器連一次。分段顯示 DNS、TCP、TLS、第一個位元組的耗時；連不上的話，告訴你卡在哪一步、接下來該查哪裡。</p>
+
+    <form id="f" class="form" autocomplete="off">
+      <div class="row">
+        <label class="fld grow"><span data-i="f_target">位址</span>
+          <input id="target" name="t" placeholder="網域、IP 或網址，例如 nas.example.com" spellcheck="false" inputmode="url" required>
+        </label>
+        <label class="fld port"><span data-i="f_port">連接埠</span>
+          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
+        </label>
+        <label class="fld ipv"><span data-i="f_ipv">IP 版本</span>
+          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+        </label>
+        <button id="go" class="btn" type="submit" data-i="go">開始檢測</button>
+      </div>
+      <div class="presets" id="presets"></div>
+      <div class="sub">
+        <button type="button" class="link" id="myip" data-i="myip_btn">使用我目前的 IP</button>
+        <span id="myipNote" class="m"></span>
+        <span class="quota m" id="quota"></span>
+      </div>
+    </form>
+  </header>
+
+  <section id="out" hidden>
+    <div class="card verdict" id="verdict">
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
+      <p class="v-sub m" id="vSub">&nbsp;</p>
+      <ol class="steps" id="vSteps"></ol>
+    </div>
+
+    <div class="card sec">
+      <div class="sec-h"><h3 data-i="h_regions">從全球各地連過去</h3><span class="m" id="gpProgress"></span></div>
+      <div class="legend m">
+        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 交握</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 交握</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">第一個位元組</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">下載</span></span>
+      </div>
+      <p class="src m">資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>，由志工維運的開放探測網路（jsDelivr 的專案）。每次檢測由 Globalping 在每個地區挑一個探測點。</p>
+      <div id="regions" class="regions"></div>
+      <p class="note" id="gpNote" hidden></p>
+    </div>
+
+    <div class="grid2">
+      <div class="card sec">
+        <div class="sec-h"><h3 data-i="h_local">從你這裡連過去</h3></div>
+        <div id="local" class="local"></div>
+        <p class="note m" data-i="local_note">瀏覽器只能發出 HTTPS 請求，看不到連接埠的實際狀態，只能從「多久失敗」來判斷。開著代理時，這裡測的是代理那條路。</p>
+      </div>
+      <div class="card sec">
+        <div class="sec-h"><h3 data-i="h_dns">DNS 解析</h3></div>
+        <div id="dns" class="dns"></div>
+        <p class="note m" data-i="src_dns">資料來源：AliDNS、Cloudflare、Google 的 DoH 服務，由你的瀏覽器直接查詢。</p>
+      </div>
+    </div>
+
+    <div class="card sec invite">
+      <div class="sec-h"><h3 data-i="h_invite">請朋友也測一下</h3></div>
+      <p class="m" data-i="invite_p">把這個連結傳給朋友，打開後會用他的瀏覽器連到你的服務。測完他可以把截圖或連結傳回給你。</p>
+      <div class="copy"><input id="inviteUrl" readonly aria-label="請朋友也測一下"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">複製</button></div>
+    </div>
+  </section>
+  <footer class="foot m"><p><span data-i="foot">檢測在你的瀏覽器裡執行：瀏覽器直接呼叫 Globalping，不經過我們的伺服器。</span><br>資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部檢測與路由追蹤），AliDNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 與 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+</div>
+<script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
+<script src="/assets/l.zh-tw.bb87f5dde0.js"></script>
+<script src="/assets/app.d69d0364fa.js"></script>
+</body>
+</html>

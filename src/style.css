@@ -38,10 +38,21 @@ button, input, select { font: inherit; color: inherit; }
 select option { background-color: var(--panel); color: var(--fg); }
 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand-name { font-size: 20px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brand-name .m { font-weight: 500; font-size: 15px; margin-left: 4px; }
+.brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; overflow: hidden; text-decoration: none; color: var(--fg); }
+.brand-name { font-size: 20px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; }
+.brand-sub { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-acts { display: flex; gap: 8px; align-items: center; flex: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sel { position: relative; display: flex; align-items: center; height: 34px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); padding-left: 10px; }
+.sel svg { width: 15px; height: 15px; color: var(--muted); flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.sel select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; height: 100%; padding: 0 10px 0 6px; font-size: 16px; cursor: pointer; outline: none; }
+#theme { cursor: pointer; padding: 0; }
+#theme svg { display: none; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+#theme[data-th="system"] .i-sys, #theme[data-th="light"] .i-light, #theme[data-th="dark"] .i-dark, #theme:not([data-th]) .i-sys { display: block; }
+@media (max-width: 480px) { .brand-sub { display: none; } }
 .icon-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--fg); flex: none; }
-.icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.icon-btn svg { width: 16px; height: 16px; }
+.gh svg { fill: currentColor; }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 12.5px; }
 .foot a { color: inherit; }
 .hero { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
@@ -82,6 +93,8 @@ select option { background-color: var(--panel); color: var(--fg); }
 .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .sec-h h3 { font-size: 15px; }
 .note { font-size: 12.5px; }
+.src { font-size: 12.5px; margin-top: -4px; }
+.foot p { margin: 0; }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
 @media (max-width: 760px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
 
@@ -118,6 +131,7 @@ select option { background-color: var(--panel); color: var(--fg); }
 @media (max-width: 560px) {
   .rg { grid-template-columns: minmax(0, 1fr) 64px; }
   .rg-mid { grid-column: 1 / -1; grid-row: 2; }
+  .rg-st, .segs { white-space: normal; }   /* long languages (ru, de) would lose the end of the status to an ellipsis */
 }
 
 /* local and dns */

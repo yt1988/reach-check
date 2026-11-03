@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt" data-paths="{&quot;en&quot;:&quot;/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/&quot;,&quot;ja&quot;:&quot;/ja/&quot;,&quot;ko&quot;:&quot;/ko/&quot;,&quot;es&quot;:&quot;/es/&quot;,&quot;fr&quot;:&quot;/fr/&quot;,&quot;de&quot;:&quot;/de/&quot;,&quot;pt&quot;:&quot;/pt/&quot;,&quot;ru&quot;:&quot;/ru/&quot;}">
+<head>
+<meta charset="utf-8">
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("reachcheck:theme");s=localStorage.getItem("reachcheck:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}if(l&&l!=="en"&&location.pathname===P.en)location.replace(P[l]+location.search+location.hash)})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reach Check: outras pessoas conseguem acessar seu site, NAS ou servidor de jogo? Teste de porta aberta</title>
+<meta name="description" content="Teste grátis a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e do seu próprio navegador. Mostra os tempos de DNS, TCP, TLS e primeiro byte, onde a conexão para e o que verificar em seguida: redirecionamento de portas, firewall, CGNAT, portas bloqueadas, certificados.">
+<meta name="keywords" content="testar porta aberta, verificar porta aberta, minha porta está aberta, acesso externo, testar redirecionamento de porta, abrir porta roteador, acesso remoto NAS, testar site de vários países, servidor Minecraft não conecta, CGNAT">
+<meta name="robots" content="index, follow">
+<meta name="application-name" content="Reach Check">
+<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://reach.1ms.dog/pt/">
+<link rel="alternate" hreflang="en" href="https://reach.1ms.dog/">
+<link rel="alternate" hreflang="zh-CN" href="https://reach.1ms.dog/zh-cn/">
+<link rel="alternate" hreflang="zh-TW" href="https://reach.1ms.dog/zh-tw/">
+<link rel="alternate" hreflang="ja" href="https://reach.1ms.dog/ja/">
+<link rel="alternate" hreflang="ko" href="https://reach.1ms.dog/ko/">
+<link rel="alternate" hreflang="es" href="https://reach.1ms.dog/es/">
+<link rel="alternate" hreflang="fr" href="https://reach.1ms.dog/fr/">
+<link rel="alternate" hreflang="de" href="https://reach.1ms.dog/de/">
+<link rel="alternate" hreflang="pt" href="https://reach.1ms.dog/pt/">
+<link rel="alternate" hreflang="ru" href="https://reach.1ms.dog/ru/">
+<link rel="alternate" hreflang="x-default" href="https://reach.1ms.dog/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="1ms.dog">
+<meta property="og:title" content="Reach Check: outras pessoas conseguem acessar seu site, NAS ou servidor de jogo? Teste de porta aberta">
+<meta property="og:description" content="De 18 regiões e do seu navegador: onde trava e o que verificar">
+<meta property="og:url" content="https://reach.1ms.dog/pt/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reach Check: outras pessoas conseguem acessar seu site, NAS ou servidor de jogo? Teste de porta aberta">
+<meta name="twitter:description" content="De 18 regiões e do seu navegador: onde trava e o que verificar">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/pt/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Teste grátis a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e do seu próprio navegador. Mostra os tempos de DNS, TCP, TLS e primeiro byte, onde a conexão para e o que verificar em seguida: redirecionamento de portas, firewall, CGNAT, portas bloqueadas, certificados.","inLanguage":"pt","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="/assets/app.c3ae8275dd.css">
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="brand" href="/pt/"><span class="brand-name">Reach Check</span><span class="brand-sub" data-i="tagline">Dá para acessar de fora?</span></a>
+    <div class="top-acts">
+      <label class="sel"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="sr" data-i="lang_label">Idioma</span>
+        <select id="lang"><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt" selected>Português</option><option value="ru">Русский</option></select></label>
+      <button class="icon-btn" id="theme" type="button" aria-label="Tema">
+        <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8.5" rx="1.5"/><path d="M6 14h4M8 11.5V14"/></svg>
+        <svg class="i-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+        <svg class="i-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+      </button>
+      <a class="icon-btn gh" href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
+    </div>
+  </div>
+
+  <header class="hero card">
+    <h1>Outras pessoas conseguem acessar seu serviço?</h1>
+    <p class="intro" data-i="intro">O Reach Check se conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e mais uma vez do seu navegador. Você vê os tempos de DNS, TCP, TLS e primeiro byte de cada uma e, se falhar, em que etapa a conexão parou e o que verificar em seguida.</p>
+
+    <form id="f" class="form" autocomplete="off">
+      <div class="row">
+        <label class="fld grow"><span data-i="f_target">Endereço</span>
+          <input id="target" name="t" placeholder="Domínio, IP ou URL, ex.: nas.example.com" spellcheck="false" inputmode="url" required>
+        </label>
+        <label class="fld port"><span data-i="f_port">Porta</span>
+          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
+        </label>
+        <label class="fld ipv"><span data-i="f_ipv">Versão do IP</span>
+          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+        </label>
+        <button id="go" class="btn" type="submit" data-i="go">Testar</button>
+      </div>
+      <div class="presets" id="presets"></div>
+      <div class="sub">
+        <button type="button" class="link" id="myip" data-i="myip_btn">Usar meu IP atual</button>
+        <span id="myipNote" class="m"></span>
+        <span class="quota m" id="quota"></span>
+      </div>
+    </form>
+  </header>
+
+  <section id="out" hidden>
+    <div class="card verdict" id="verdict">
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2></div>
+      <p class="v-sub m" id="vSub">&nbsp;</p>
+      <ol class="steps" id="vSteps"></ol>
+    </div>
+
+    <div class="card sec">
+      <div class="sec-h"><h3 data-i="h_regions">Do mundo todo</h3><span class="m" id="gpProgress"></span></div>
+      <div class="legend m">
+        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">Conexão TCP</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">Negociação TLS</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Primeiro byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
+      </div>
+      <p class="src m">Fonte: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>, uma rede aberta de sondas mantida por voluntários (um projeto do jsDelivr). A cada teste, o Globalping escolhe uma sonda por região.</p>
+      <div id="regions" class="regions"></div>
+      <p class="note" id="gpNote" hidden></p>
+    </div>
+
+    <div class="grid2">
+      <div class="card sec">
+        <div class="sec-h"><h3 data-i="h_local">Do seu navegador</h3></div>
+        <div id="local" class="local"></div>
+        <p class="note m" data-i="local_note">O navegador só consegue enviar requisições HTTPS e não vê o estado da porta: ele só sabe quanto tempo a requisição levou para falhar. Com um proxy ligado, aqui é testada a rota do proxy.</p>
+      </div>
+      <div class="card sec">
+        <div class="sec-h"><h3 data-i="h_dns">DNS</h3></div>
+        <div id="dns" class="dns"></div>
+        <p class="note m" data-i="src_dns">Fonte: os serviços DoH da AliDNS, Cloudflare e Google, consultados pelo seu navegador.</p>
+      </div>
+    </div>
+
+    <div class="card sec invite">
+      <div class="sec-h"><h3 data-i="h_invite">Peça para alguém testar</h3></div>
+      <p class="m" data-i="invite_p">Mande este link para um amigo: o teste roda no navegador dele, e ele pode te mandar de volta um print ou o link.</p>
+      <div class="copy"><input id="inviteUrl" readonly aria-label="Peça para alguém testar"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">Copiar</button></div>
+    </div>
+  </section>
+  <footer class="foot m"><p><span data-i="foot">Roda no seu navegador: ele chama o Globalping diretamente, e nada passa pelos nossos servidores.</span><br>Fontes dos dados: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (o teste externo e o traceroute), AliDNS, Cloudflare e Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> e <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (seu IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+</div>
+<script type="application/json" id="data">{"lang":"pt","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
+<script src="/assets/l.pt.d402af3a0f.js"></script>
+<script src="/assets/app.d69d0364fa.js"></script>
+</body>
+</html>
