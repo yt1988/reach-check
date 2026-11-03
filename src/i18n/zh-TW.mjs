@@ -7,7 +7,7 @@ export default {
   seo_kw: "連接埠檢測, 通訊埠檢查, port 有沒有開, 外部連線測試, 連接埠轉送測試, 實體 IP 檢查, 群暉外網連線, NAS 遠端存取, 網站全球測速, Minecraft 伺服器檢測",
   og_sub: "全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡",
   h1: "別人連得到你的服務嗎？",
-  intro: "從全球 18 個地區（含中國電信、聯通、移動）連到你的網站、NAS 或遊戲伺服器，再從你自己的瀏覽器連一次。分段顯示 DNS、TCP、TLS、第一個位元組的耗時；連不上的話，告訴你卡在哪一步、接下來該查哪裡。",
+  intro: "從全球 18 個地區和你自己的瀏覽器連到你的網站、NAS 或遊戲伺服器，告訴你卡在哪一步、接下來查哪裡。",
   lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_light: "主題：淺色", th_dark: "主題：深色",
 
   f_target: "位址", f_target_ph: "網域、IP 或網址，例如 nas.example.com", f_port: "連接埠", f_ipv: "IP 版本", go: "開始檢測",
@@ -15,13 +15,11 @@ export default {
   h_regions: "從全球各地連過去",
   lg_dns: "DNS", lg_tcp: "TCP 交握", lg_tls: "TLS 交握", lg_fb: "第一個位元組", lg_dl: "下載",
   h_local: "從你這裡連過去",
-  local_note: "瀏覽器只能發出 HTTPS 請求，看不到連接埠的實際狀態，只能從「多久失敗」來判斷。開著代理時，這裡測的是代理那條路。",
+
   h_dns: "DNS 解析",
-  h_invite: "請朋友也測一下",
-  invite_p: "把這個連結傳給朋友，打開後會用他的瀏覽器連到你的服務。測完他可以把截圖或連結傳回給你。",
-  copy: "複製", copied: "已複製",
-  src_gp: "資料來源：{gp}，由志工維運的開放探測網路（jsDelivr 的專案）。每次檢測由 Globalping 在每個地區挑一個探測點。",
-  src_dns: "資料來源：AliDNS、Cloudflare、Google 的 DoH 服務，由你的瀏覽器直接查詢。",
+ copied: "已複製",
+  src_gp: "資料來源：{gp} 志工探測點",
+
   foot_src: "資料來源：{gp}（外部檢測與路由追蹤），AliDNS、Cloudflare、Google（DNS），{ipify} 與 {ipsb}（你的 IP）。",
 
   sep: "、",
@@ -138,4 +136,6 @@ export default {
     ["能測遊戲或 WireGuard 用的 UDP 連接埠嗎？", "不能。UDP 服務收不到正確的訊息時通常不會回應，所以瀏覽器和公開探測點都沒有通用的方法判斷 UDP 連接埠有沒有開。可以先確認主機透過 TCP 連得上（選 SSH 或網頁連接埠），再請朋友直接用遊戲連線。"],
     ["我填的位址誰看得到？", "執行探測的 Globalping，以及透過 DoH 查詢的幾家 DNS 服務。我們不會保存。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。\n每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。"],
   ],
+  f_kind: "類型", p_custom: "其他連接埠", b_invite: "請朋友測", invite_tip: "複製一個連結，朋友打開就會用他的瀏覽器測你的服務", k_reach: "地區連得到", k_cn: "中國三家電信業者",
+  k_local: "從你這裡", ks_ok: "打得開", ks_ans: "有回應", ks_none: "連不上", ks_blocked: "測不了", more_steps: "還有 {n} 則建議", pl_open: "連接埠有開", pl_web: "不是網頁", pl_nottls: "不是 HTTPS", pl_refused: "拒絕連線", pl_timeout: "逾時", pl_dns: "解析失敗", pl_unreach: "無法連線", pl_reset: "被重設", pl_tls: "TLS 失敗", pl_slow: "無回應", pl_other: "失敗",
 };

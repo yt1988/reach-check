@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="De 18 regiões e do seu navegador: onde trava e o que verificar">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Teste de acesso · 1ms.dog","url":"https://reach.1ms.dog/pt/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Teste grátis a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e do seu próprio navegador. Mostra os tempos de DNS, TCP, TLS e primeiro byte, onde a conexão para e o que verificar em seguida: redirecionamento de portas, firewall, CGNAT, portas bloqueadas, certificados.","inLanguage":"pt","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Como o teste funciona?","acceptedAnswer":{"@type":"Answer","text":"As sondas voluntárias do Globalping em 18 regiões se conectam ao seu endereço e porta e enviam uma requisição HTTP(S), medindo cada etapa: DNS, conexão TCP, negociação TLS e primeiro byte. Se falhar, o erro mostra onde: recusada, tempo esgotado, reset, problema de TLS ou um serviço que não é uma página web. O seu próprio navegador também se conecta, e a AliDNS, a Cloudflare e o Google são consultados sobre o endereço por DoH. Nada passa pelos nossos servidores."}},{"@type":"Question","name":"Para mim abre. Por que os outros não conseguem acessar?","acceptedAnswer":{"@type":"Answer","text":"Se você está na mesma rede que o serviço, o tráfego nem sai de casa, então abrir aí não prova nada sobre o lado de fora. Um proxy também pode te mandar por um caminho diferente do resto. Use o teste externo como referência: ele se conecta do jeito que um desconhecido faria."}},{"@type":"Question","name":"Configurei o redirecionamento de portas. Por que ainda dá tempo esgotado?","acceptedAnswer":{"@type":"Answer","text":"As causas mais comuns: não ter IPv4 público (o endereço WAN do roteador começa com 100.64–100.127 ou não é o seu IP público: CGNAT); um firewall no NAS, no Windows ou num grupo de segurança da nuvem; a operadora bloqueando portas comuns como 80 e 443 em conexões residenciais; ou um redirecionamento que ainda aponta para o IP local antigo do aparelho. Com IPv6, o firewall IPv6 do roteador bloqueia conexões de entrada até você liberar a porta."}},{"@type":"Question","name":"Qual a diferença entre \"recusada\" e \"tempo esgotado\"?","acceptedAnswer":{"@type":"Answer","text":"Recusada: os pacotes chegaram à máquina, mas nada escuta naquela porta. O serviço está desligado, só escuta em 127.0.0.1 ou o redirecionamento vai para a porta errada. Tempo esgotado: nenhuma resposta. Um firewall descartou os pacotes, não há redirecionamento ou o endereço está errado."}},{"@type":"Question","name":"Dá para testar portas UDP de jogos ou do WireGuard?","acceptedAnswer":{"@type":"Answer","text":"Não. Um serviço UDP normalmente fica em silêncio se não receber a mensagem certa, então nem o navegador nem uma sonda pública conseguem saber, de forma geral, se uma porta UDP está aberta. Veja se o host responde por TCP (SSH ou uma porta web) e depois peça para um amigo entrar pelo próprio jogo."}},{"@type":"Question","name":"Quem vê o endereço que eu digito?","acceptedAnswer":{"@type":"Answer","text":"O Globalping, que roda as sondas, e os serviços DNS consultados por DoH. Nós não guardamos. O link do resultado leva o endereço e o resultado para que outros vejam o mesmo teste; ele nunca leva o seu próprio IP. Cada IP tem 250 testes de região por hora no Globalping, e cada teste usa 18; quando acabam, a página avisa quando voltam."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>Outras pessoas conseguem acessar seu serviço?</h1>
-    <p class="intro" data-i="intro">O Teste de acesso se conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e mais uma vez do seu navegador. Você vê os tempos de DNS, TCP, TLS e primeiro byte de cada uma e, se falhar, em que etapa a conexão parou e o que verificar em seguida.</p>
-
+    <p class="intro" data-i="intro">Conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões e do seu navegador, e mostra onde trava e o que verificar.</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">Endereço</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Endereço</span><button type="button" class="link" id="myip" data-i="myip_btn">Usar meu IP atual</button></span>
           <input id="target" name="t" placeholder="Domínio, IP ou URL, ex.: nas.example.com" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">Serviço</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">Porta</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">Testar</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">Usar meu IP atual</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">Compartilhar</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Pedir a um amigo</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Compartilhar</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">Do mundo todo</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">Do mundo todo</h3><span class="src m">Dados: sondas voluntárias do <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a></span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">Conexão TCP</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">Negociação TLS</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Primeiro byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
       </div>
-      <p class="src m">Fonte: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>, uma rede aberta de sondas mantida por voluntários (um projeto do jsDelivr). A cada teste, o Globalping escolhe uma sonda por região.</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">Do seu navegador</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">O navegador só consegue enviar requisições HTTPS e não vê o estado da porta: ele só sabe quanto tempo a requisição levou para falhar. Com um proxy ligado, aqui é testada a rota do proxy.</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">Fonte: os serviços DoH da AliDNS, Cloudflare e Google, consultados pelo seu navegador.</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">Peça para alguém testar</h3></div>
-      <p class="m" data-i="invite_p">Mande este link para um amigo: o teste roda no navegador dele, e ele pode te mandar de volta um print ou o link.</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="Peça para alguém testar"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">Copiar</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">Do seu navegador</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>Fontes dos dados: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (o teste externo e o traceroute), AliDNS, Cloudflare e Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> e <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (seu IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"pt","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.pt.4fb1690503.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.pt.d9ced0cb4d.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>

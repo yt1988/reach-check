@@ -8,7 +8,7 @@ export default {
   seo_kw: "port checker, open port check, is my port open, can others reach my server, port forwarding test, check website from multiple locations, website down from China, NAS remote access test, Minecraft server check, CGNAT check",
   og_sub: "From 18 regions and your browser: where it stops, and what to check next",
   h1: "Can other people reach your service?",
-  intro: "Reach Check connects to your website, NAS or game server from 18 regions, including China Telecom, Unicom and Mobile, then once more from your own browser. You get DNS, TCP, TLS and first-byte times for each, and if it fails, the step where it stopped and what to check next.",
+  intro: "Checks your website, NAS or game server from 18 regions and from your own browser, then tells you where it stops and what to check next.",
   lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
 
   f_target: "Address", f_target_ph: "Domain, IP or URL, e.g. nas.example.com", f_port: "Port", f_ipv: "IP version", go: "Check",
@@ -16,13 +16,11 @@ export default {
   h_regions: "From around the world",
   lg_dns: "DNS", lg_tcp: "TCP handshake", lg_tls: "TLS handshake", lg_fb: "First byte", lg_dl: "Download",
   h_local: "From your browser",
-  local_note: "A browser can only send HTTPS requests and can't see a port's state; it can only tell from how fast a request fails. With a proxy on, this tests the proxy's route.",
+
   h_dns: "DNS",
-  h_invite: "Ask a friend to check",
-  invite_p: "Send this link to a friend. It runs the check in their browser, and they can send you back a screenshot or the link.",
-  copy: "Copy", copied: "Copied",
-  src_gp: "Source: {gp}, an open network of probes run by volunteers (a jsDelivr project). Each check gets one probe per region, chosen by Globalping.",
-  src_dns: "Source: the DoH services of AliDNS, Cloudflare and Google, asked by your browser.",
+ copied: "Copied",
+  src_gp: "Data: {gp}'s volunteer probes",
+
   foot_src: "Data sources: {gp} (the outside check and trace route), AliDNS, Cloudflare and Google (DNS), {ipify} and {ipsb} (your IP).",
 
   // runtime
@@ -140,4 +138,6 @@ export default {
     ["Can it check UDP ports for games or WireGuard?", "No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."],
     ["Who sees the address I enter?", "Globalping, which runs the probes, and the DNS services asked over DoH. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP.\nEach IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."],
   ],
+  f_kind: "Service", p_custom: "Other port", b_invite: "Ask a friend", invite_tip: "Copies a link; a friend who opens it runs this check from their browser", k_reach: "regions connect", k_cn: "China's three carriers",
+  k_local: "From your browser", ks_ok: "Opens", ks_ans: "Answered", ks_none: "No answer", ks_blocked: "Can't test", more_steps: "{n} more suggestions", pl_open: "Open", pl_web: "Not a web page", pl_nottls: "Not HTTPS", pl_refused: "Refused", pl_timeout: "Timed out", pl_dns: "DNS failed", pl_unreach: "Unreachable", pl_reset: "Reset", pl_tls: "TLS failed", pl_slow: "No response", pl_other: "Failed",
 };

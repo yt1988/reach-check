@@ -7,7 +7,7 @@ export default {
   seo_kw: "tester port ouvert, vérifier port ouvert, mon port est-il ouvert, accès depuis l'extérieur, tester redirection de port, ouvrir port box, accès distant NAS, tester site depuis plusieurs pays, serveur Minecraft injoignable, CGNAT",
   og_sub: "Depuis 18 régions et votre navigateur : où ça bloque, et quoi vérifier",
   h1: "Les autres peuvent-ils joindre votre service ?",
-  intro: "Le Test de joignabilité se connecte à votre site, NAS ou serveur de jeu depuis 18 régions (dont China Telecom, Unicom et Mobile), puis une fois de plus depuis votre navigateur. Vous voyez les temps DNS, TCP, TLS et premier octet de chacune et, en cas d'échec, l'étape où la connexion s'est arrêtée et quoi vérifier ensuite.",
+  intro: "Se connecte à votre site, NAS ou serveur de jeu depuis 18 régions et depuis votre navigateur, puis indique où ça bloque et quoi vérifier.",
   lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
 
   f_target: "Adresse", f_target_ph: "Domaine, IP ou URL, ex. nas.example.com", f_port: "Port", f_ipv: "Version IP", go: "Tester",
@@ -15,13 +15,11 @@ export default {
   h_regions: "Depuis le monde entier",
   lg_dns: "DNS", lg_tcp: "Connexion TCP", lg_tls: "Négociation TLS", lg_fb: "Premier octet", lg_dl: "Téléchargement",
   h_local: "Depuis votre navigateur",
-  local_note: "Un navigateur ne peut envoyer que des requêtes HTTPS et ne voit pas l'état d'un port : il sait seulement en combien de temps la requête échoue. Avec un proxy actif, c'est la route du proxy qui est testée.",
+
   h_dns: "DNS",
-  h_invite: "Demander à quelqu'un de tester",
-  invite_p: "Envoyez ce lien à un ami : le test s'exécute dans son navigateur, et il peut vous renvoyer une capture d'écran ou le lien.",
-  copy: "Copier", copied: "Copié",
-  src_gp: "Source : {gp}, un réseau ouvert de sondes tenu par des bénévoles (un projet de jsDelivr). À chaque test, Globalping choisit une sonde par région.",
-  src_dns: "Source : les services DoH d'AliDNS, Cloudflare et Google, interrogés par votre navigateur.",
+ copied: "Copié",
+  src_gp: "Données : sondes bénévoles de {gp}",
+
   foot_src: "Sources des données : {gp} (le test extérieur et le traceroute), AliDNS, Cloudflare et Google (DNS), {ipify} et {ipsb} (votre IP).",
 
   sep: ", ",
@@ -138,4 +136,6 @@ export default {
     ["Peut-il tester les ports UDP des jeux ou de WireGuard ?", "Non. Un service UDP reste en général muet tant qu'il ne reçoit pas le bon message : ni un navigateur ni une sonde publique ne peuvent savoir de façon générale si un port UDP est ouvert. Vérifiez que la machine est joignable en TCP (SSH ou un port web), puis demandez à un ami de se connecter avec le jeu lui-même."],
     ["Qui voit l'adresse que je saisis ?", "Globalping, qui fait tourner les sondes, et les services DNS interrogés via DoH. Nous ne la conservons pas. Un lien de résultat contient l'adresse et le résultat pour que d'autres voient le même test ; il ne contient jamais votre propre IP.\nChaque IP dispose de 250 tests de région par heure chez Globalping, et un test en utilise 18 ; une fois épuisés, la page indique quand ils reviennent."],
   ],
+  f_kind: "Service", p_custom: "Autre port", b_invite: "Demander à un ami", invite_tip: "Copie un lien : la personne qui l'ouvre lance ce test depuis son navigateur", k_reach: "régions joignent", k_cn: "3 opérateurs chinois",
+  k_local: "Depuis votre navigateur", ks_ok: "S'ouvre", ks_ans: "Répond", ks_none: "Pas de réponse", ks_blocked: "Impossible", more_steps: "{n} autres suggestions", pl_open: "Ouvert", pl_web: "Pas une page web", pl_nottls: "Pas HTTPS", pl_refused: "Refusée", pl_timeout: "Délai dépassé", pl_dns: "Échec DNS", pl_unreach: "Injoignable", pl_reset: "Réinitialisée", pl_tls: "Échec TLS", pl_slow: "Sans réponse", pl_other: "Échec",
 };

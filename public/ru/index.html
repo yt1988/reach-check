@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Из 18 регионов и вашего браузера: где обрывается и что проверить">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Проверка доступности · 1ms.dog","url":"https://reach.1ms.dog/ru/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Бесплатная проверка доступности из 18 регионов (включая China Telecom, Unicom и Mobile) и из вашего браузера. Показывает время DNS, TCP, TLS и первого байта, на каком шаге обрывается соединение и что проверить дальше: проброс портов, файрвол, CGNAT, заблокированные порты, сертификаты.","inLanguage":"ru","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Как работает проверка?","acceptedAnswer":{"@type":"Answer","text":"Точки проверки Globalping, которые поддерживают добровольцы, в 18 регионах подключаются к вашему адресу и порту и отправляют один HTTP(S)-запрос, замеряя каждый шаг: DNS, TCP-соединение, TLS-рукопожатие, первый байт. При ошибке видно, где всё оборвалось: отказ, тайм-аут, сброс, проблема TLS или сервис, который не является веб-страницей. Ваш браузер тоже подключается, а у AliDNS, Cloudflare и Google адрес запрашивается по DoH. Через наши серверы ничего не проходит."}},{"@type":"Question","name":"У меня открывается. Почему другие не могут подключиться?","acceptedAnswer":{"@type":"Answer","text":"Если вы в одной сети с сервисом, трафик не выходит из дома, и то, что у вас открывается, ничего не говорит о доступности извне. Прокси тоже может вести вас другим путём, чем остальных. Ориентируйтесь на внешнюю проверку: она подключается так же, как посторонний человек."}},{"@type":"Question","name":"Проброс портов настроен. Почему всё равно тайм-аут?","acceptedAnswer":{"@type":"Answer","text":"Частые причины: нет белого IPv4 (WAN-адрес роутера начинается с 100.64–100.127 или не совпадает с вашим публичным IP — это CGNAT); файрвол на NAS, в Windows или в облачной группе безопасности; провайдер закрывает популярные порты вроде 80 и 443 на домашних линиях; проброс указывает на старый локальный IP устройства. Для IPv6 файрвол роутера блокирует входящие соединения, пока вы не откроете порт."}},{"@type":"Question","name":"Чем «отказ» отличается от «тайм-аута»?","acceptedAnswer":{"@type":"Answer","text":"Отказ: пакеты дошли до машины, но на порту ничего не слушает. Сервис выключен, слушает только 127.0.0.1 или проброс ведёт не на тот порт. Тайм-аут: никакого ответа. Файрвол отбросил пакеты, проброса нет или адрес неверный."}},{"@type":"Question","name":"Можно проверить UDP-порты игр или WireGuard?","acceptedAnswer":{"@type":"Answer","text":"Нет. UDP-сервис обычно молчит, пока не получит правильное сообщение, поэтому ни браузер, ни публичная точка проверки не могут в общем случае узнать, открыт ли UDP-порт. Проверьте, доступен ли хост по TCP (SSH или веб-порт), а потом попросите друга зайти в саму игру."}},{"@type":"Question","name":"Кто видит адрес, который я ввожу?","acceptedAnswer":{"@type":"Answer","text":"Globalping, который запускает проверки, и DNS-сервисы, к которым идут запросы по DoH. Мы его не храним. Ссылка на результат содержит адрес и результат, чтобы другие видели ту же проверку; вашего собственного IP в ней нет. У каждого IP в Globalping 250 проверок регионов в час, одна проверка тратит 18; когда лимит закончится, страница покажет, когда он восстановится."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>Могут ли другие подключиться к вашему сервису?</h1>
-    <p class="intro" data-i="intro">Проверка доступности подключается к вашему сайту, NAS или игровому серверу из 18 регионов (включая China Telecom, Unicom и Mobile) и ещё раз из вашего браузера. Для каждого региона видно время DNS, TCP, TLS и первого байта, а при ошибке — на каком шаге всё оборвалось и что проверить дальше.</p>
-
+    <p class="intro" data-i="intro">Подключается к вашему сайту, NAS или игровому серверу из 18 регионов и из вашего браузера и показывает, где обрывается соединение и что проверить.</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">Адрес</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Адрес</span><button type="button" class="link" id="myip" data-i="myip_btn">Подставить мой текущий IP</button></span>
           <input id="target" name="t" placeholder="Домен, IP или URL, например nas.example.com" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">Сервис</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">Порт</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">Проверить</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">Подставить мой текущий IP</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">Поделиться</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Попросить друга</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Поделиться</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">Со всего мира</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">Со всего мира</h3><span class="src m">Данные: точки проверки <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> от добровольцев</span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP-соединение</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS-рукопожатие</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Первый байт</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Загрузка</span></span>
       </div>
-      <p class="src m">Источник: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> — открытая сеть точек проверки, которую поддерживают добровольцы (проект jsDelivr). Для каждой проверки Globalping выбирает одну точку в каждом регионе.</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">Из вашего браузера</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">Браузер умеет отправлять только HTTPS-запросы и не видит состояние порта: он знает лишь, как быстро запрос завершился ошибкой. Если включён прокси, здесь проверяется маршрут через прокси.</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">Источник: DoH-сервисы AliDNS, Cloudflare и Google, к которым обращается ваш браузер.</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">Попросите проверить кого-то ещё</h3></div>
-      <p class="m" data-i="invite_p">Отправьте эту ссылку другу: проверка запустится в его браузере, а он пришлёт вам скриншот или ссылку.</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="Попросите проверить кого-то ещё"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">Копировать</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">Из вашего браузера</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>Источники данных: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (проверка извне и трассировка), AliDNS, Cloudflare и Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> и <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (ваш IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"ru","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.ru.1fa7d106a0.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.ru.3e2791fe84.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>

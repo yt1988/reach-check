@@ -7,7 +7,7 @@ export default {
   seo_kw: "comprobar puerto abierto, verificar puertos, mi puerto está abierto, acceso externo, probar redirección de puertos, abrir puertos router, acceso remoto NAS, comprobar web desde varios países, servidor Minecraft no conecta, CGNAT",
   og_sub: "Desde 18 regiones y tu navegador: dónde se corta y qué revisar",
   h1: "¿Otras personas pueden conectarse a tu servicio?",
-  intro: "Prueba de acceso se conecta a tu web, NAS o servidor de juegos desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y otra vez desde tu navegador. Verás los tiempos de DNS, TCP, TLS y primer byte de cada una y, si falla, en qué paso se cortó y qué revisar después.",
+  intro: "Se conecta a tu web, NAS o servidor de juegos desde 18 regiones y desde tu navegador, y te dice dónde se corta y qué revisar.",
   lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: el del sistema", th_light: "Tema: claro", th_dark: "Tema: oscuro",
 
   f_target: "Dirección", f_target_ph: "Dominio, IP o URL, p. ej. nas.example.com", f_port: "Puerto", f_ipv: "Versión de IP", go: "Comprobar",
@@ -15,13 +15,11 @@ export default {
   h_regions: "Desde todo el mundo",
   lg_dns: "DNS", lg_tcp: "Conexión TCP", lg_tls: "Negociación TLS", lg_fb: "Primer byte", lg_dl: "Descarga",
   h_local: "Desde tu navegador",
-  local_note: "Un navegador solo puede enviar peticiones HTTPS y no ve el estado del puerto: solo sabe cuánto tardó en fallar. Si usas un proxy, aquí se prueba la ruta del proxy.",
+
   h_dns: "DNS",
-  h_invite: "Pide a alguien que lo compruebe",
-  invite_p: "Envía este enlace a un amigo: la comprobación se ejecuta en su navegador y luego te puede mandar una captura o el enlace.",
-  copy: "Copiar", copied: "Copiado",
-  src_gp: "Fuente: {gp}, una red abierta de sondas mantenida por voluntarios (un proyecto de jsDelivr). En cada comprobación, Globalping elige una sonda por región.",
-  src_dns: "Fuente: los servicios DoH de AliDNS, Cloudflare y Google, consultados por tu navegador.",
+ copied: "Copiado",
+  src_gp: "Datos: sondas voluntarias de {gp}",
+
   foot_src: "Fuentes de datos: {gp} (la comprobación externa y el trazado de ruta), AliDNS, Cloudflare y Google (DNS), {ipify} e {ipsb} (tu IP).",
 
   sep: ", ",
@@ -138,4 +136,6 @@ export default {
     ["¿Puede comprobar puertos UDP de juegos o WireGuard?", "No. Un servicio UDP normalmente no responde si no recibe el mensaje correcto, así que ni un navegador ni una sonda pública pueden saber en general si un puerto UDP está abierto. Comprueba que el equipo responde por TCP (SSH o un puerto web) y luego pide a un amigo que entre con el propio juego."],
     ["¿Quién ve la dirección que escribo?", "Globalping, que ejecuta las sondas, y los servicios DNS consultados por DoH. Nosotros no la guardamos. Un enlace de resultado incluye la dirección y el resultado para que otros vean la misma comprobación; nunca incluye tu propia IP.\nCada IP tiene 250 comprobaciones de región por hora en Globalping y cada comprobación usa 18; si se agotan, la página indica cuándo vuelven."],
   ],
+  f_kind: "Servicio", p_custom: "Otro puerto", b_invite: "Pedir a un amigo", invite_tip: "Copia un enlace: quien lo abra ejecuta esta comprobación desde su navegador", k_reach: "regiones conectan", k_cn: "3 operadoras chinas",
+  k_local: "Desde tu navegador", ks_ok: "Abre", ks_ans: "Responde", ks_none: "Sin respuesta", ks_blocked: "No se puede", more_steps: "{n} sugerencias más", pl_open: "Abierto", pl_web: "No es web", pl_nottls: "No es HTTPS", pl_refused: "Rechazada", pl_timeout: "Tiempo agotado", pl_dns: "Falla DNS", pl_unreach: "Inalcanzable", pl_reset: "Reset", pl_tls: "Falla TLS", pl_slow: "Sin respuesta", pl_other: "Error",
 };

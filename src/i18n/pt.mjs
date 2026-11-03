@@ -7,7 +7,7 @@ export default {
   seo_kw: "testar porta aberta, verificar porta aberta, minha porta está aberta, acesso externo, testar redirecionamento de porta, abrir porta roteador, acesso remoto NAS, testar site de vários países, servidor Minecraft não conecta, CGNAT",
   og_sub: "De 18 regiões e do seu navegador: onde trava e o que verificar",
   h1: "Outras pessoas conseguem acessar seu serviço?",
-  intro: "O Teste de acesso se conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e mais uma vez do seu navegador. Você vê os tempos de DNS, TCP, TLS e primeiro byte de cada uma e, se falhar, em que etapa a conexão parou e o que verificar em seguida.",
+  intro: "Conecta ao seu site, NAS ou servidor de jogo a partir de 18 regiões e do seu navegador, e mostra onde trava e o que verificar.",
   lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: "Tema: claro", th_dark: "Tema: escuro",
 
   f_target: "Endereço", f_target_ph: "Domínio, IP ou URL, ex.: nas.example.com", f_port: "Porta", f_ipv: "Versão do IP", go: "Testar",
@@ -15,13 +15,11 @@ export default {
   h_regions: "Do mundo todo",
   lg_dns: "DNS", lg_tcp: "Conexão TCP", lg_tls: "Negociação TLS", lg_fb: "Primeiro byte", lg_dl: "Download",
   h_local: "Do seu navegador",
-  local_note: "O navegador só consegue enviar requisições HTTPS e não vê o estado da porta: ele só sabe quanto tempo a requisição levou para falhar. Com um proxy ligado, aqui é testada a rota do proxy.",
+
   h_dns: "DNS",
-  h_invite: "Peça para alguém testar",
-  invite_p: "Mande este link para um amigo: o teste roda no navegador dele, e ele pode te mandar de volta um print ou o link.",
-  copy: "Copiar", copied: "Copiado",
-  src_gp: "Fonte: {gp}, uma rede aberta de sondas mantida por voluntários (um projeto do jsDelivr). A cada teste, o Globalping escolhe uma sonda por região.",
-  src_dns: "Fonte: os serviços DoH da AliDNS, Cloudflare e Google, consultados pelo seu navegador.",
+ copied: "Copiado",
+  src_gp: "Dados: sondas voluntárias do {gp}",
+
   foot_src: "Fontes dos dados: {gp} (o teste externo e o traceroute), AliDNS, Cloudflare e Google (DNS), {ipify} e {ipsb} (seu IP).",
 
   sep: ", ",
@@ -138,4 +136,6 @@ export default {
     ["Dá para testar portas UDP de jogos ou do WireGuard?", "Não. Um serviço UDP normalmente fica em silêncio se não receber a mensagem certa, então nem o navegador nem uma sonda pública conseguem saber, de forma geral, se uma porta UDP está aberta. Veja se o host responde por TCP (SSH ou uma porta web) e depois peça para um amigo entrar pelo próprio jogo."],
     ["Quem vê o endereço que eu digito?", "O Globalping, que roda as sondas, e os serviços DNS consultados por DoH. Nós não guardamos. O link do resultado leva o endereço e o resultado para que outros vejam o mesmo teste; ele nunca leva o seu próprio IP.\nCada IP tem 250 testes de região por hora no Globalping, e cada teste usa 18; quando acabam, a página avisa quando voltam."],
   ],
+  f_kind: "Serviço", p_custom: "Outra porta", b_invite: "Pedir a um amigo", invite_tip: "Copia um link: quem abrir roda este teste no próprio navegador", k_reach: "regiões conectam", k_cn: "3 operadoras chinesas",
+  k_local: "Do seu navegador", ks_ok: "Abre", ks_ans: "Responde", ks_none: "Sem resposta", ks_blocked: "Não dá", more_steps: "Mais {n} sugestões", pl_open: "Aberta", pl_web: "Não é página", pl_nottls: "Não é HTTPS", pl_refused: "Recusada", pl_timeout: "Tempo esgotado", pl_dns: "Falha DNS", pl_unreach: "Inacessível", pl_reset: "Reset", pl_tls: "Falha TLS", pl_slow: "Sem resposta", pl_other: "Falhou",
 };

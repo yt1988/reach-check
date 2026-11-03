@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="世界 18 地域とあなたのブラウザから：どこで止まるか、次に何を見るか">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"到達性チェック · 1ms.dog","url":"https://reach.1ms.dog/ja/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料の到達性チェック。世界 18 地域（中国電信・聯通・移動を含む）とあなたのブラウザからサービスに接続し、DNS・TCP・TLS・最初の 1 バイトまでの時間を表示します。つながらなければ、どこで止まったか、次に何を確認すべきか（ポート転送、ファイアウォール、グローバル IP がない、ポートの遮断、証明書）を示します。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"どうやってチェックしていますか？","acceptedAnswer":{"@type":"Answer","text":"18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。 あなたのブラウザからも接続し、AliDNS・Cloudflare・Google に DoH でアドレスを問い合わせます。どれも私たちのサーバーは経由しません。"}},{"@type":"Question","name":"自分では開けるのに、なぜ外からはつながらないのですか？","acceptedAnswer":{"@type":"Answer","text":"サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。"}},{"@type":"Question","name":"ポート転送を設定したのに、なぜタイムアウトするのですか？","acceptedAnswer":{"@type":"Answer","text":"よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。 IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。"}},{"@type":"Question","name":"「拒否」と「タイムアウト」の違いは？","acceptedAnswer":{"@type":"Answer","text":"拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。 タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。"}},{"@type":"Question","name":"ゲームや WireGuard の UDP ポートは確認できますか？","acceptedAnswer":{"@type":"Answer","text":"できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。"}},{"@type":"Question","name":"入力したアドレスは誰に見えますか？","acceptedAnswer":{"@type":"Answer","text":"計測を行う Globalping と、DoH で問い合わせる DNS サービスです。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。 Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>あなたのサービスに、外からつながりますか？</h1>
-    <p class="intro" data-i="intro">世界 18 地域（中国電信・聯通・移動を含む）からサイト、NAS、ゲームサーバーに接続し、あなたのブラウザからももう一度つなぎます。DNS・TCP・TLS・最初の 1 バイトまでの時間を段階ごとに表示し、つながらなければ、止まった段階と次に確認することを示します。</p>
-
+    <p class="intro" data-i="intro">世界 18 地域とあなたのブラウザからサイト、NAS、ゲームサーバーに接続し、どこで止まるか、次に何を確認すべきかを示します。</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">アドレス</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">アドレス</span><button type="button" class="link" id="myip" data-i="myip_btn">今の自分の IP を使う</button></span>
           <input id="target" name="t" placeholder="ドメイン、IP、URL（例：nas.example.com）" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">種類</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">ポート</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">チェック</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">今の自分の IP を使う</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">共有</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">友だちに頼む</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">共有</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">世界各地から</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">世界各地から</h3><span class="src m">データ：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> のボランティア計測地点</span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 接続</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS ハンドシェイク</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">最初の 1 バイト</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">ダウンロード</span></span>
       </div>
-      <p class="src m">データの出典：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（jsDelivr が運営する、ボランティアによるオープンな計測ネットワーク）。チェックごとに、Globalping が各地域から計測地点を 1 つ選びます。</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">あなたのブラウザから</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">ブラウザは HTTPS のリクエストしか送れず、ポートの状態も見えません。分かるのは「どれだけ早く失敗したか」だけです。プロキシを使っている場合は、プロキシ経由の経路を測っています。</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">データの出典：AliDNS、Cloudflare、Google の DoH。ブラウザから直接問い合わせています。</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">友だちにも確認してもらう</h3></div>
-      <p class="m" data-i="invite_p">このリンクを友だちに送ると、友だちのブラウザからあなたのサービスに接続します。結果はスクリーンショットかリンクで送り返してもらえます。</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="友だちにも確認してもらう"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">コピー</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">あなたのブラウザから</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>データの出典：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部からのチェックと経路調査）、AliDNS・Cloudflare・Google（DNS）、<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> と <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（あなたの IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.ja.6094b938d7.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.ja.3de87cfea6.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>

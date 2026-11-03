@@ -161,14 +161,20 @@ function parseTarget(raw, portField) {
 
 let preset = PRESETS[0], run = 0, myIp = {}, state;
 
+// The kind of service, as one menu: picking one fills the port; typing a port picks its kind, or "other"
 function renderPresets() {
-  $("presets").innerHTML = PRESETS.map((p, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="${p === preset}">${esc(presetName(p))}${p.port ? `<small>${p.port}</small>` : ""}</button>`).join("");
+  $("kind").innerHTML = PRESETS.map((p, i) => `<option value="${i}"${p === preset ? " selected" : ""}>${esc(presetName(p))}${p.port ? ` · ${p.port}` : ""}</option>`).join("") +
+    `<option value="-1"${preset ? "" : " selected"}>${esc(t("p_custom"))}</option>`;
 }
-$("presets").addEventListener("click", e => {
-  const b = e.target.closest(".chip"); if (!b) return;
-  const p = PRESETS[+b.dataset.i];
-  if (p.udp) { $("myipNote").textContent = t("udp_note"); return; }
-  preset = p; $("port").value = p.port; renderPresets();
+$("kind").addEventListener("change", e => {
+  const p = PRESETS[+e.target.value];
+  $("myipNote").textContent = p?.udp ? t("udp_note") : "";
+  if (!p || p.udp) return;
+  preset = p; $("port").value = p.port;
+});
+$("port").addEventListener("input", () => {
+  preset = PRESETS.find(p => p.port === +$("port").value && !p.udp) || null;
+  renderPresets();
 });
 
 async function loadQuota() {
@@ -203,8 +209,13 @@ async function fetchMyIp() {
   myIp = { v4: isV4(v4) ? v4 : isV4(any) ? any : "", any: me || any || v4 };
 }
 
-$("copyInvite").addEventListener("click", () => {
-  navigator.clipboard?.writeText($("inviteUrl").value).then(() => { $("copyInvite").textContent = t("copied"); setTimeout(() => $("copyInvite").textContent = t("copy"), 1200); }, () => $("inviteUrl").select());
+// "Ask a friend": copies a link that runs the same check in the friend's browser
+let inviteUrl = "";
+$("inviteBtn").title = t("invite_tip");
+$("inviteBtn").addEventListener("click", () => {
+  const b = $("inviteBtn");
+  navigator.clipboard?.writeText(inviteUrl).then(() => { b.textContent = t("copied"); setTimeout(() => b.textContent = t("b_invite"), 1500); },
+    () => prompt(t("invite_tip"), inviteUrl));
 });
 
 // ---------- run ----------
@@ -216,7 +227,7 @@ function start() {
   const tg = parseTarget(raw, $("port").value);
   if (!tg) { $("myipNote").textContent = t("bad_target"); return; }
   tg.raw = raw;
-  if (!tg.port) tg.port = preset.port || 443;
+  if (!tg.port) tg.port = preset?.port || 443;
   const pr = PRESETS.find(p => p.port === tg.port && !p.udp);
   const proto = tg.scheme === "https" ? "HTTPS" : tg.scheme === "http" ? "HTTP" : pr ? pr.proto : [443, 8443, 5001].includes(tg.port) ? "HTTPS" : "HTTP";
   const web = tg.scheme ? true : pr ? pr.web : true;
@@ -294,15 +305,19 @@ function classify(r) {
     : /EHOSTUNREACH|ENETUNREACH/.test(raw) ? "unreach"
     : /does not match the HTTP|Expected HTTP|Parse Error/i.test(raw) ? "nothttp"
     : /wrong version number|packet length too long|unknown protocol/i.test(raw) ? "nottls"
-    : /ECONNRESET|socket hang up/i.test(raw) ? "reset"
+    : /ECONNRESET|socket hang up|other side closed/i.test(raw) ? "reset"
     : /certificate|CERT_|self[- ]signed|altnames|unable to verify|handshake|ssl|tls alert/i.test(raw) ? "tls"
     : /timed out/i.test(raw) ? "slow" : "other";
-  return { k, raw };
+  // tcp: the handshake completed, so something on that port accepted the connection before it went wrong
+  return { k, raw, tcp: r.timings?.tcp != null };
 }
 
 // Which outcomes mean "something on that port answered"
-const REACHED = new Set(["ok", "http5", "nothttp", "nottls", "tls"]);
-const good = (c, s) => c && (c.k === "ok" || (!s.web && (c.k === "nothttp" || c.k === "nottls")));
+const REACHED = new Set(["ok", "http5", "nothttp", "nottls", "tls", "reset"]);
+// A service that isn't a web page (SSH, games) often answers an HTTP request by closing the connection: for those, a
+// completed handshake is enough to call the port open
+const openish = (c, s) => !s.web && (c.k === "nothttp" || c.k === "nottls" || (c.k === "reset" && c.tcp));
+const good = (c, s) => c && (c.k === "ok" || openish(c, s));
 
 const BAD = { refused: "bad", timeout: "bad", dns: "bad", unreach: "bad", reset: "bad", tls: "warn", slow: "warn", other: "bad" };
 function rowStatus(row, s) {
@@ -316,7 +331,18 @@ function rowStatus(row, s) {
   }
   if (c.k === "nothttp") return s.web ? ["warn", t("st_open_web")] : ["ok", s.whatKey ? t("st_open_what", { what: t(s.whatKey) }) : t("st_open")];
   if (c.k === "nottls") return s.web ? ["warn", t("st_nottls_web")] : ["ok", t("st_open")];
+  if (openish(c, s)) return ["ok", t("st_open")];
   return [BAD[c.k] || "bad", t("st_" + c.k)];
+}
+
+// The short label in a region's line; the full sentence (rowStatus) is in its details
+function pillOf(row, s) {
+  const c = row.c;
+  if (c.k === "ok" || c.k === "http5") return t("st_http", { code: c.code });
+  if (c.k === "nothttp") return t(s.web ? "pl_web" : "pl_open");
+  if (c.k === "nottls") return t(s.web ? "pl_nottls" : "pl_open");
+  if (openish(c, s)) return t("pl_open");
+  return t("pl_" + c.k);
 }
 
 // ---------- inside: this browser ----------
@@ -376,38 +402,39 @@ function drawRegions() {
   const max = Math.max(200, ...s.rows.filter(drawn).map(span));
   const tcps = s.rows.filter(r => r?.c && r.res.timings?.tcp != null).map(r => r.res.timings.tcp).sort((a, b) => a - b);
   const tcpMed = tcps[Math.floor(tcps.length / 2)] || 0;
+  // One line per region: name, a short status, the time bar, the total. A click opens the details: the full status,
+  // the probe's network, the address it reached, each step's time, and trace route.
   REGIONS.forEach((x, i) => {
     if (x.g !== g) { g = x.g; html += `<div class="grp">${esc(t("g_" + g))}</div>`; }
     const row = s.rows[i];
-    let st = `<span class="rg-st m blink">${esc(t("r_queue"))}</span>`, bar = `<div class="bar"></div>`, segs = "", tot = `<div class="rg-tot wait">–</div>`, sub = "&nbsp;";
-    if (!row?.probe && (s.gpError || s.gpDone)) st = `<span class="rg-st m">${esc(t(s.gpError ? "r_notrun" : "r_noprobe"))}</span>`;
-    if (row?.probe) {
-      const p = row.probe;
-      sub = esc([p.city, p.network].filter(Boolean).join(" · "));
-      if (!row.c) st = `<span class="rg-st m blink">${esc(t("r_testing"))}</span>`;
-      else {
-        const [cls, text] = rowStatus(row, s);
-        const ip = row.res.resolvedAddress ? `<span class="ip">${ipVal(row.res.resolvedAddress)}</span>` : "";
-        st = `<span class="rg-st ${cls}" title="${esc(row.c.raw || "")}">${esc(text)}${ip}</span>`;
-        const tg = row.res.timings || {};
-        if (drawn(row)) {
-          const part = (v, c) => v ? `<i class="${c}" data-w="${(v / max * 100).toFixed(2)}"></i>` : "";
-          bar = `<div class="bar">${part(tg.dns, "s-dns")}${part(tg.tcp, "s-tcp")}${part(tg.tls, "s-tls")}${part(tg.firstByte, "s-fb")}${part(tg.download, "s-dl")}</div>`;
-          const hot = tg.tcp > 1000 && tg.tcp > tcpMed * 3;
-          segs = [["sg_dns", tg.dns], ["sg_tcp", tg.tcp, hot], ["sg_tls", tg.tls], ["sg_fb", tg.firstByte], ["sg_dl", tg.download]]
-            .filter(([, v]) => v != null).map(([n, v, h]) => `<span${h ? ` class="hot" title="${esc(t("hot_tip"))}"` : ""}>${esc(t(n))} ${v}</span>`).join(" · ");
-          if (row.res.status !== "finished") segs = esc(t(failStage(row.c.k))) + " · " + segs;
-          tot = `<div class="rg-tot">${span(row)}<small class="m"> ms</small></div>`;
-        } else {
-          bar = `<div class="bar fail"></div>`;
-          segs = esc([failStage(row.c.k) && t(failStage(row.c.k)), tg.dns != null && `${t("sg_dns")} ${tg.dns}`, tg.tcp != null && `${t("sg_tcp")} ${tg.tcp}`].filter(Boolean).join(" · "));
-          tot = `<div class="rg-tot wait">${tg.total != null ? `${(tg.total / 1000).toFixed(1)}<small> s</small>` : "✕"}</div>`;
-        }
-        if (!good(row.c, s) || tg.tcp > 1000) segs += ` <button type="button" class="link trace" data-trace="${i}"${row.trace === "" ? " disabled" : ""}>${esc(t(row.trace === "" ? "tracing" : "trace"))}</button>`;
+    let pl = `<span class="pill m blink">${esc(t("r_queue"))}</span>`, bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
+    if (!row?.probe && (s.gpError || s.gpDone)) pl = `<span class="pill m">${esc(t(s.gpError ? "r_notrun" : "r_noprobe"))}</span>`;
+    if (row?.probe && !row.c) pl = `<span class="pill m blink">${esc(t("r_testing"))}</span>`;
+    if (row?.c) {
+      const p = row.probe, tg = row.res.timings || {}, [cls, text] = rowStatus(row, s);
+      hot = tg.tcp > 1000 && tg.tcp > tcpMed * 3;
+      pl = `<span class="pill ${cls}">${esc(pillOf(row, s))}${hot ? " !" : ""}</span>`;
+      if (drawn(row)) {
+        const part = (v, c) => v ? `<i class="${c}" data-w="${(v / max * 100).toFixed(2)}"></i>` : "";
+        bar = `<div class="bar">${part(tg.dns, "s-dns")}${part(tg.tcp, "s-tcp")}${part(tg.tls, "s-tls")}${part(tg.firstByte, "s-fb")}${part(tg.download, "s-dl")}</div>`;
+        tot = `<span class="rg-tot">${span(row)}<small class="m"> ms</small></span>`;
+      } else {
+        bar = `<div class="bar fail"></div>`;
+        tot = `<span class="rg-tot wait">${tg.total != null ? `${(tg.total / 1000).toFixed(1)}<small> s</small>` : "✕"}</span>`;
+      }
+      if (row.open) {
+        const segs = [["sg_dns", tg.dns], ["sg_tcp", tg.tcp, hot], ["sg_tls", tg.tls], ["sg_fb", tg.firstByte], ["sg_dl", tg.download]]
+          .filter(([, v]) => v != null).map(([n, v, h]) => `<span${h ? ` class="hot" title="${esc(t("hot_tip"))}"` : ""}>${esc(t(n))} ${v} ms</span>`).join(" · ");
+        const where = [p.city, p.network].filter(Boolean).map(esc).join(" · ") + (row.res.resolvedAddress ? ` → ${ipVal(row.res.resolvedAddress)}` : "");
+        const stage = row.res.status !== "finished" && !good(row.c, s) && failStage(row.c.k) ? esc(t(failStage(row.c.k))) + " · " : "";
+        more = `<div class="rg-more"><p class="${cls}" title="${esc(row.c.raw || "")}">${esc(text)}</p><p class="m">${where}</p><p class="segs">${stage}${segs}` +
+          ` <button type="button" class="link trace" data-trace="${i}"${row.trace === "" ? " disabled" : ""}>${esc(t(row.trace === "" ? "tracing" : "trace"))}</button></p>` +
+          (row.trace ? `<pre class="tr">${esc(row.trace)}</pre>` : "") + `</div>`;
       }
     }
-    const trace = row?.trace ? `<pre class="tr">${esc(row.trace)}</pre>` : "";
-    html += `<div class="rg"><div class="rg-name"><b>${esc(nameOf(x))}</b><small>${sub}</small></div><div class="rg-mid">${st}${bar}<div class="segs">${segs}</div></div>${tot}${trace}</div>`;
+    const can = !!row?.c;
+    html += `<div class="rg${row?.open ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}>` +
+      `<span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
   });
   $("regions").innerHTML = html;
   for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";   // the CSP forbids style attributes, not CSSOM
@@ -417,19 +444,19 @@ function drawRegions() {
   $("gpNote").innerHTML = s.gpError ? `<span class="st-warn">${esc(s.gpError)}</span>` : "";
 }
 
+// This browser: the outcome in one line, then the numbers or what the outcome can and can't tell
 function drawLocal() {
   const s = state, l = s.local, ms = v => `${Math.round(v)} ms`;
   const url = `https://${isV6(s.t.host) ? `[${s.t.host}]` : s.t.host}:${s.t.port}`;
   let h = "";
-  if (l.k === "blocked") h = `<p><span class="st-warn">${esc(t("lc_blocked"))}</span></p><p class="m">${esc(t("lc_blocked_p", { port: s.t.port }))}</p>`;
+  if (l.k === "blocked") h = `<p class="st-warn">${esc(t("lc_blocked"))}</p><p class="m">${esc(t("lc_blocked_p", { port: s.t.port }))}</p>`;
   else if (l.k === "ok") {
     const setup = l.warm != null ? Math.max(0, l.ms - l.warm) : null;
-    h = `<p><span class="st-ok">${esc(t("lc_ok"))}</span></p><dl class="kv">
-      <dt>${esc(t("lc_first"))}</dt><dd class="mono">${ms(l.ms)}</dd>
-      ${setup != null ? `<dt>${esc(t("lc_setup"))}</dt><dd class="mono">≈ ${ms(setup)} <span class="m">${esc(t("lc_setup_n"))}</span></dd><dt>${esc(t("lc_req"))}</dt><dd class="mono">${ms(l.warm)} <span class="m">${esc(t("lc_req_n"))}</span></dd>` : ""}
-    </dl><p class="m">${esc(t("lc_tao")).replace("{h}", '<span class="mono">Timing-Allow-Origin: *</span>')}</p>`;
-  } else if (l.k === "answered") h = `<p><span class="st-warn">${esc(t("lc_ans"))}</span> <span class="mono m">${ms(l.ms)}</span></p><p class="m">${esc(t("lc_ans_p"))}${s.plainWeb ? " " + esc(t("lc_plain")) : ""}</p>`;
-  else h = `<p><span class="st-bad">${esc(t("lc_none"))}</span> <span class="mono m">${esc(t("lc_none_s", { s: LOCAL_TIMEOUT / 1000 }))}</span></p><p class="m">${esc(t("lc_none_p", { url }))}</p>`;
+    const tao = esc(t("lc_tao")).replace("{h}", "Timing-Allow-Origin: *");
+    h = `<p class="st-ok">${esc(t("lc_ok"))}</p><p class="nums" title="${tao}"><span>${esc(t("lc_first"))} <b>${ms(l.ms)}</b></span>` +
+      (setup != null ? `<span>${esc(t("lc_setup"))} <b>≈ ${ms(setup)}</b></span><span>${esc(t("lc_req"))} <b>${ms(l.warm)}</b></span>` : "") + `</p>`;
+  } else if (l.k === "answered") h = `<p class="st-warn">${esc(t("lc_ans"))} <span class="mono m">${ms(l.ms)}</span></p><p class="m">${esc(t("lc_ans_p"))}${s.plainWeb ? " " + esc(t("lc_plain")) : ""}</p>`;
+  else h = `<p class="st-bad">${esc(t("lc_none"))} <span class="mono m">${esc(t("lc_none_s", { s: LOCAL_TIMEOUT / 1000 }))}</span></p><p class="m">${esc(t("lc_none_p", { url }))}</p>`;
   $("local").innerHTML = h;
   drawVerdict();
 }
@@ -467,8 +494,26 @@ function drawVerdict() {
   $("vDot").className = "dot " + (v.cls || "");
   $("vTitle").textContent = v.title;
   $("vSub").textContent = v.sub || " ";
-  $("vSteps").innerHTML = (v.steps || []).map(x => `<li>${x}</li>`).join("");
+  // three numbers (outside, mainland China, this browser), then at most four next steps; the rest folded
+  const rows = s.rows.filter(r => r?.c), done = s.gpDone || s.gpError;
+  const cn = rows.filter(r => REGIONS[s.rows.indexOf(r)].cn), ok = rows.filter(r => good(r.c, s));
+  const tone = (a, n) => !n ? "" : a === n ? "ok" : a ? "warn" : "bad";
+  const cnOk = cn.filter(r => good(r.c, s)).length, l = s.local;
+  const kpi = (val, label, cls) => `<div class="kpi"><b class="${cls}">${esc(val)}</b><span>${esc(t(label))}</span></div>`;
+  $("kpis").innerHTML =
+    kpi(done && rows.length ? `${ok.length}/${rows.length}` : "…", "k_reach", done ? tone(ok.length, rows.length) : "") +
+    kpi(done && cn.length ? `${cnOk}/${cn.length}` : "…", "k_cn", done ? tone(cnOk, cn.length) : "") +
+    kpi(l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…", "k_local",
+      l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "");
+  const steps = v.steps || [];
+  $("vSteps").innerHTML = steps.slice(0, SHOWN_STEPS).map(x => `<li>${x}</li>`).join("");
+  const rest = steps.slice(SHOWN_STEPS);
+  $("vMore").hidden = !rest.length;
+  $("vMore").querySelector("summary").textContent = t("more_steps", { n: rest.length });
+  $("vMoreSteps").innerHTML = rest.map(x => `<li>${x}</li>`).join("");
+  $("vMoreSteps").start = SHOWN_STEPS + 1;
 }
+const SHOWN_STEPS = 4;
 
 const median = a => a.length ? a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)] : null;
 
@@ -552,6 +597,9 @@ function localSteps(s, outside) {
 
 // ---------- trace route from one region, on request ----------
 
+const toggleRow = el => { const row = state.rows[+el.dataset.row]; if (row) { row.open = !row.open; drawRegions(); } };
+$("regions").addEventListener("click", e => { const el = e.target.closest("[data-row]"); if (el && !e.target.closest("a, button, pre")) toggleRow(el); });
+$("regions").addEventListener("keydown", e => { const el = e.target.closest("[data-row]"); if (el && e.target === el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleRow(el); } });
 $("regions").addEventListener("click", async e => {
   const b = e.target.closest("[data-trace]"); if (!b) return;
   const s = state, row = s.rows[+b.dataset.trace]; if (!row?.probe) return;
@@ -573,7 +621,7 @@ $("regions").addEventListener("click", async e => {
 // ---------- share: the result in a link (src/code.mjs), a card, and someone else's result shown back ----------
 
 let recv = null;
-function showOut(tg) { $("inviteUrl").value = `${location.origin}${D.paths.en}?t=${encodeURIComponent(tg.raw)}&p=${tg.port}&from=friend`; }
+function showOut(tg) { inviteUrl = `${location.origin}${D.paths.en}?t=${encodeURIComponent(tg.raw)}&p=${tg.port}&from=friend`; }
 
 // What the page showed, compactly. Never the visitor's own IP (myIp stays out).
 function pack(s) {
@@ -605,7 +653,7 @@ function unpack(o) {
       return { probe: { city, network, asn, country },
         res: { status: fin ? "finished" : "failed", statusCode: code, resolvedAddress: ip, timings: { dns, tcp, tls: tlsT, firstByte, download, total },
           tls: tls ? { authorized: !!tls[0], expiresAt: tls[1], error: tls[2] } : undefined },
-        c: { k, code } };
+        c: { k, code, tcp: tcp != null } };
     }),
     local: o.l ? { k: o.l[0], ms: o.l[1], warm: o.l[2] } : null,
     dns: o.d ? o.d.map((d, i) => ({ rv: RESOLVERS[i], a: q(d[0]), aaaa: q(d[1]) })) : null,

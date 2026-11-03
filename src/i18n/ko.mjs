@@ -7,7 +7,7 @@ export default {
   seo_kw: "포트 열림 확인, 포트 체크, 외부 접속 확인, 포트포워딩 확인, 공인 IP 확인, NAS 외부 접속, 해외에서 사이트 접속 확인, 중국에서 접속 되는지, 마인크래프트 서버 접속 확인",
   og_sub: "전 세계 18개 지역과 내 브라우저에서: 어디서 막히는지, 다음에 무엇을 볼지",
   h1: "다른 사람이 내 서비스에 접속할 수 있을까요?",
-  intro: "전 세계 18개 지역(중국 3대 통신사 포함)에서 웹사이트, NAS, 게임 서버에 접속해 보고, 내 브라우저에서도 한 번 더 접속해요. DNS, TCP, TLS, 첫 바이트까지의 시간을 단계별로 보여 주고, 접속이 안 되면 막힌 단계와 다음에 확인할 것을 알려 줘요.",
+  intro: "전 세계 18개 지역과 내 브라우저에서 웹사이트, NAS, 게임 서버에 접속해 보고, 어디서 막히는지와 다음에 확인할 것을 알려 줘요.",
   lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_light: "테마: 라이트", th_dark: "테마: 다크",
 
   f_target: "주소", f_target_ph: "도메인, IP 또는 URL (예: nas.example.com)", f_port: "포트", f_ipv: "IP 버전", go: "확인",
@@ -15,13 +15,11 @@ export default {
   h_regions: "전 세계에서",
   lg_dns: "DNS", lg_tcp: "TCP 연결", lg_tls: "TLS 핸드셰이크", lg_fb: "첫 바이트", lg_dl: "다운로드",
   h_local: "내 브라우저에서",
-  local_note: "브라우저는 HTTPS 요청만 보낼 수 있고 포트 상태를 볼 수 없어요. 요청이 얼마나 빨리 실패했는지로만 판단해요. 프록시를 쓰고 있다면 프록시 경로를 확인하는 거예요.",
+
   h_dns: "DNS",
-  h_invite: "친구에게 확인 부탁하기",
-  invite_p: "이 링크를 친구에게 보내면, 친구의 브라우저에서 내 서비스에 접속해 봐요. 결과는 스크린샷이나 링크로 받으면 돼요.",
-  copy: "복사", copied: "복사됨",
-  src_gp: "데이터 출처: {gp}(jsDelivr가 운영하는, 자원봉사자들의 공개 측정 네트워크). 확인할 때마다 Globalping이 지역별로 측정 지점을 하나씩 골라요.",
-  src_dns: "데이터 출처: AliDNS, Cloudflare, Google의 DoH. 브라우저에서 직접 조회해요.",
+ copied: "복사됨",
+  src_gp: "데이터: {gp} 자원봉사 측정 지점",
+
   foot_src: "데이터 출처: {gp}(외부 확인과 경로 추적), AliDNS·Cloudflare·Google(DNS), {ipify}와 {ipsb}(내 IP).",
 
   sep: ", ",
@@ -138,4 +136,6 @@ export default {
     ["게임이나 WireGuard의 UDP 포트도 확인할 수 있나요?", "아니요. UDP 서비스는 올바른 메시지를 받지 않으면 보통 응답하지 않아서, 브라우저도 공개 측정 지점도 UDP 포트가 열렸는지 판단할 일반적인 방법이 없어요. 먼저 TCP로 호스트에 접속되는지(SSH나 웹 포트) 확인하고, 친구에게 게임으로 직접 접속해 달라고 하세요."],
     ["입력한 주소는 누가 볼 수 있나요?", "측정을 하는 Globalping과 DoH로 조회하는 DNS 서비스예요. 우리는 저장하지 않아요. 결과 링크에는 주소와 결과가 들어 있어 다른 사람이 같은 결과를 볼 수 있지만, 내 IP는 들어가지 않아요.\nGlobalping 한도는 IP당 시간마다 250개 지역이고, 한 번 확인에 18개를 써요. 다 쓰면 언제 다시 쓸 수 있는지 페이지에 알려 줘요."],
   ],
+  f_kind: "종류", p_custom: "다른 포트", b_invite: "친구에게 부탁", invite_tip: "링크를 복사해요. 친구가 열면 친구의 브라우저에서 이 확인을 실행해요", k_reach: "접속된 지역", k_cn: "중국 3대 통신사",
+  k_local: "내 브라우저에서", ks_ok: "열림", ks_ans: "응답 있음", ks_none: "응답 없음", ks_blocked: "확인 불가", more_steps: "제안 {n}개 더 보기", pl_open: "열림", pl_web: "웹 아님", pl_nottls: "HTTPS 아님", pl_refused: "거부", pl_timeout: "시간 초과", pl_dns: "DNS 실패", pl_unreach: "도달 불가", pl_reset: "재설정", pl_tls: "TLS 실패", pl_slow: "응답 없음", pl_other: "실패",
 };

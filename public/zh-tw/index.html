@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"連線可達性檢測 · 1ms.dog","url":"https://reach.1ms.dog/zh-tw/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免費的連線可達性檢測：從全球 18 個地區（含中國電信、聯通、移動）和你自己的瀏覽器連到你的服務，分段顯示 DNS、TCP、TLS、第一個位元組的耗時。連不上就告訴你卡在哪一步、接下來該查哪裡：連接埠轉送、防火牆、沒有實體 IP、電信業者封鎖連接埠、憑證。","inLanguage":"zh-TW","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"是怎麼檢測的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 個地區的志工探測點，各自連到你的位址和連接埠，送出一次 HTTP(S) 請求，並替每一步計時：DNS 解析、TCP 交握、TLS 交握、第一個位元組。失敗時，錯誤訊息會說明停在哪一步：拒絕連線、逾時、被重設、TLS 出錯，或連接埠上的不是網頁服務。 你自己的瀏覽器也會連一次，並透過 DoH 向 AliDNS、Cloudflare、Google 查詢這個位址。這些請求都不經過我們的伺服器。"}},{"@type":"Question","name":"我自己打得開，為什麼別人連不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服務在同一個網路裡，流量根本沒有出去，自己打得開不代表外面連得上。開著代理時，你走的路也和別人不同。請以外部檢測為準：它和陌生人連線的方式一樣。"}},{"@type":"Question","name":"連接埠轉送設好了，為什麼還是逾時？","acceptedAnswer":{"@type":"Answer","text":"常見原因：沒有公開的 IPv4（路由器的 WAN 位址以 100.64–100.127 開頭，或和你的公開 IP 不同，就是電信業者級 NAT）；NAS、Windows 或雲端安全群組的防火牆沒有放行；電信業者封鎖家用寬頻的 80、443 等常用連接埠；轉送指向的還是設備以前的內部 IP。 使用 IPv6 時，路由器和數據機的 IPv6 防火牆預設擋下連入連線，要另外放行這個連接埠。"}},{"@type":"Question","name":"「拒絕連線」和「逾時」有什麼不同？","acceptedAnswer":{"@type":"Answer","text":"拒絕連線：封包到了那台機器，但連接埠上沒有程式在接聽。可能是服務沒開、只在 127.0.0.1 上接聽，或轉送到錯誤的連接埠。 逾時：完全沒有回應。可能是防火牆丟掉了封包、沒有設定連接埠轉送，或位址填錯了。"}},{"@type":"Question","name":"能測遊戲或 WireGuard 用的 UDP 連接埠嗎？","acceptedAnswer":{"@type":"Answer","text":"不能。UDP 服務收不到正確的訊息時通常不會回應，所以瀏覽器和公開探測點都沒有通用的方法判斷 UDP 連接埠有沒有開。可以先確認主機透過 TCP 連得上（選 SSH 或網頁連接埠），再請朋友直接用遊戲連線。"}},{"@type":"Question","name":"我填的位址誰看得到？","acceptedAnswer":{"@type":"Answer","text":"執行探測的 Globalping，以及透過 DoH 查詢的幾家 DNS 服務。我們不會保存。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。 每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>別人連得到你的服務嗎？</h1>
-    <p class="intro" data-i="intro">從全球 18 個地區（含中國電信、聯通、移動）連到你的網站、NAS 或遊戲伺服器，再從你自己的瀏覽器連一次。分段顯示 DNS、TCP、TLS、第一個位元組的耗時；連不上的話，告訴你卡在哪一步、接下來該查哪裡。</p>
-
+    <p class="intro" data-i="intro">從全球 18 個地區和你自己的瀏覽器連到你的網站、NAS 或遊戲伺服器，告訴你卡在哪一步、接下來查哪裡。</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">位址</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">位址</span><button type="button" class="link" id="myip" data-i="myip_btn">使用我目前的 IP</button></span>
           <input id="target" name="t" placeholder="網域、IP 或網址，例如 nas.example.com" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">類型</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">連接埠</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">開始檢測</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">使用我目前的 IP</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">分享</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">請朋友測</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">分享</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">從全球各地連過去</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">從全球各地連過去</h3><span class="src m">資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志工探測點</span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 交握</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 交握</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">第一個位元組</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">下載</span></span>
       </div>
-      <p class="src m">資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>，由志工維運的開放探測網路（jsDelivr 的專案）。每次檢測由 Globalping 在每個地區挑一個探測點。</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">從你這裡連過去</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">瀏覽器只能發出 HTTPS 請求，看不到連接埠的實際狀態，只能從「多久失敗」來判斷。開著代理時，這裡測的是代理那條路。</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS 解析</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">資料來源：AliDNS、Cloudflare、Google 的 DoH 服務，由你的瀏覽器直接查詢。</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">請朋友也測一下</h3></div>
-      <p class="m" data-i="invite_p">把這個連結傳給朋友，打開後會用他的瀏覽器連到你的服務。測完他可以把截圖或連結傳回給你。</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="請朋友也測一下"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">複製</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">從你這裡連過去</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS 解析</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部檢測與路由追蹤），AliDNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 與 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-tw.e29d588e48.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.zh-tw.1a2062c27f.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>

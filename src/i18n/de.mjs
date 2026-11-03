@@ -7,7 +7,7 @@ export default {
   seo_kw: "Port Check, offene Ports prüfen, ist mein Port offen, von außen erreichbar, Portweiterleitung testen, Port freigeben Router, NAS Fernzugriff, Website aus mehreren Ländern testen, Minecraft Server nicht erreichbar, DS-Lite CGNAT",
   og_sub: "Aus 18 Regionen und deinem Browser: wo es hakt und was du prüfen solltest",
   h1: "Ist dein Dienst von außen erreichbar?",
-  intro: "Erreichbarkeits-Check verbindet sich aus 18 Regionen (darunter China Telecom, Unicom und Mobile) mit deiner Website, deinem NAS oder Gameserver und dann noch einmal aus deinem Browser. Du siehst für jede Region die DNS-, TCP-, TLS- und First-Byte-Zeit und bei einem Fehler, an welchem Schritt die Verbindung abbricht und was du als Nächstes prüfen solltest.",
+  intro: "Verbindet sich aus 18 Regionen und aus deinem Browser mit deiner Website, deinem NAS oder Gameserver und zeigt, wo es hakt und was du prüfen solltest.",
   lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
 
   f_target: "Adresse", f_target_ph: "Domain, IP oder URL, z. B. nas.example.com", f_port: "Port", f_ipv: "IP-Version", go: "Prüfen",
@@ -15,13 +15,11 @@ export default {
   h_regions: "Aus aller Welt",
   lg_dns: "DNS", lg_tcp: "TCP-Verbindung", lg_tls: "TLS-Handshake", lg_fb: "Erstes Byte", lg_dl: "Download",
   h_local: "Aus deinem Browser",
-  local_note: "Ein Browser kann nur HTTPS-Anfragen senden und sieht den Zustand eines Ports nicht; er weiß nur, wie schnell eine Anfrage scheitert. Mit aktivem Proxy wird hier der Weg über den Proxy getestet.",
+
   h_dns: "DNS",
-  h_invite: "Jemand anderen prüfen lassen",
-  invite_p: "Schick diesen Link an eine Freundin oder einen Freund: Der Check läuft dann in deren Browser, und sie können dir einen Screenshot oder den Link zurückschicken.",
-  copy: "Kopieren", copied: "Kopiert",
-  src_gp: "Quelle: {gp}, ein offenes Netz von Messpunkten, betrieben von Freiwilligen (ein Projekt von jsDelivr). Für jeden Check wählt Globalping einen Messpunkt pro Region.",
-  src_dns: "Quelle: die DoH-Dienste von AliDNS, Cloudflare und Google, abgefragt von deinem Browser.",
+ copied: "Kopiert",
+  src_gp: "Daten: freiwillige Messpunkte von {gp}",
+
   foot_src: "Datenquellen: {gp} (Check von außen und Traceroute), AliDNS, Cloudflare und Google (DNS), {ipify} und {ipsb} (deine IP).",
 
   sep: ", ",
@@ -138,4 +136,6 @@ export default {
     ["Kann es UDP-Ports für Spiele oder WireGuard prüfen?", "Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten."],
     ["Wer sieht die Adresse, die ich eingebe?", "Globalping, das die Messpunkte betreibt, und die DNS-Dienste, die per DoH gefragt werden. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin.\nJede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht."],
   ],
+  f_kind: "Dienst", p_custom: "Anderer Port", b_invite: "Freund fragen", invite_tip: "Kopiert einen Link: Wer ihn öffnet, startet diesen Check im eigenen Browser", k_reach: "Regionen erreichbar", k_cn: "3 chinesische Anbieter",
+  k_local: "Aus deinem Browser", ks_ok: "Lädt", ks_ans: "Antwortet", ks_none: "Keine Antwort", ks_blocked: "Nicht prüfbar", more_steps: "{n} weitere Hinweise", pl_open: "Offen", pl_web: "Keine Webseite", pl_nottls: "Kein HTTPS", pl_refused: "Abgelehnt", pl_timeout: "Zeitüberschreitung", pl_dns: "DNS-Fehler", pl_unreach: "Unerreichbar", pl_reset: "Zurückgesetzt", pl_tls: "TLS-Fehler", pl_slow: "Keine Antwort", pl_other: "Fehler",
 };

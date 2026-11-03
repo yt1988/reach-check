@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"怎么检测的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。 你自己的浏览器也会连一次，并通过 DoH 向阿里 DNS、Cloudflare、Google 查询这个地址。这些请求都不经过我们的服务器。"}},{"@type":"Question","name":"我自己能打开，为什么别人连不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。"}},{"@type":"Question","name":"端口转发设好了，为什么还是超时？","acceptedAnswer":{"@type":"Answer","text":"常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。 用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。"}},{"@type":"Question","name":"「拒绝连接」和「超时」有什么区别？","acceptedAnswer":{"@type":"Answer","text":"拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。 超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。"}},{"@type":"Question","name":"能测游戏或 WireGuard 用的 UDP 端口吗？","acceptedAnswer":{"@type":"Answer","text":"不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。"}},{"@type":"Question","name":"我填的地址谁能看到？","acceptedAnswer":{"@type":"Answer","text":"运行探针的 Globalping，以及通过 DoH 查询的几家 DNS 服务。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。 每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>别人能连上你的服务吗？</h1>
-    <p class="intro" data-i="intro">从全球 18 个地区（含中国电信、联通、移动）去连你的网站、NAS 或游戏服务，再从你自己的浏览器连一次。分段显示 DNS、TCP、TLS、首字节耗时，连不上就告诉你卡在哪一步、下一步查哪里。</p>
-
+    <p class="intro" data-i="intro">从全球 18 个地区和你自己的浏览器去连你的网站、NAS 或游戏服务，告诉你卡在哪一步、下一步查哪里。</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">地址</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">地址</span><button type="button" class="link" id="myip" data-i="myip_btn">用我现在的 IP</button></span>
           <input id="target" name="t" placeholder="域名、IP 或网址，例如 nas.example.com" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">类型</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">端口</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">开始检测</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">用我现在的 IP</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">分享</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">请朋友测</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">分享</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">从全球各地连过去</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">从全球各地连过去</h3><span class="src m">数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志愿者探针</span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 握手</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 握手</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">首字节</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">下载</span></span>
       </div>
-      <p class="src m">数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>，志愿者运行的开放探针网络（jsDelivr 的项目）。每次检测由 Globalping 在每个地区挑一个探针。</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">从你这里连过去</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">浏览器只能发 HTTPS 请求，看不到端口的具体状态，只能从「多久失败」来判断。开着代理时，这里测的是代理那条路。</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS 解析</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">数据来源：阿里 DNS、Cloudflare、Google 的 DoH 接口，由你的浏览器直接查询。</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">请朋友也测一下</h3></div>
-      <p class="m" data-i="invite_p">把这个链接发给朋友，打开后会用他的浏览器连你的服务。测完他可以把截图或链接发回给你。</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="请朋友也测一下"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">复制</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">从你这里连过去</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS 解析</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> 和 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（你的 IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-cn.f193144c1a.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.zh-cn.b7c14bc4f2.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>

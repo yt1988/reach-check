@@ -7,7 +7,7 @@ export default {
   seo_kw: "端口检测, 端口是否开放, 外网访问检测, 外网能不能访问, 端口转发检测, 公网 IP 检测, 群晖外网访问, NAS 外网访问, 网站全国测速, 国内能不能访问, Minecraft 服务器检测",
   og_sub: "全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里",
   h1: "别人能连上你的服务吗？",
-  intro: "从全球 18 个地区（含中国电信、联通、移动）去连你的网站、NAS 或游戏服务，再从你自己的浏览器连一次。分段显示 DNS、TCP、TLS、首字节耗时，连不上就告诉你卡在哪一步、下一步查哪里。",
+  intro: "从全球 18 个地区和你自己的浏览器去连你的网站、NAS 或游戏服务，告诉你卡在哪一步、下一步查哪里。",
   lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
 
   f_target: "地址", f_target_ph: "域名、IP 或网址，例如 nas.example.com", f_port: "端口", f_ipv: "IP 版本", go: "开始检测",
@@ -15,13 +15,11 @@ export default {
   h_regions: "从全球各地连过去",
   lg_dns: "DNS", lg_tcp: "TCP 握手", lg_tls: "TLS 握手", lg_fb: "首字节", lg_dl: "下载",
   h_local: "从你这里连过去",
-  local_note: "浏览器只能发 HTTPS 请求，看不到端口的具体状态，只能从「多久失败」来判断。开着代理时，这里测的是代理那条路。",
+
   h_dns: "DNS 解析",
-  h_invite: "请朋友也测一下",
-  invite_p: "把这个链接发给朋友，打开后会用他的浏览器连你的服务。测完他可以把截图或链接发回给你。",
-  copy: "复制", copied: "已复制",
-  src_gp: "数据来源：{gp}，志愿者运行的开放探针网络（jsDelivr 的项目）。每次检测由 Globalping 在每个地区挑一个探针。",
-  src_dns: "数据来源：阿里 DNS、Cloudflare、Google 的 DoH 接口，由你的浏览器直接查询。",
+ copied: "已复制",
+  src_gp: "数据来源：{gp} 志愿者探针",
+
   foot_src: "数据来源：{gp}（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），{ipify} 和 {ipsb}（你的 IP）。",
 
   sep: "、",
@@ -138,4 +136,6 @@ export default {
     ["能测游戏或 WireGuard 用的 UDP 端口吗？", "不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。"],
     ["我填的地址谁能看到？", "运行探针的 Globalping，以及通过 DoH 查询的几家 DNS 服务。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。\n每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"],
   ],
+  f_kind: "类型", p_custom: "其他端口", b_invite: "请朋友测", invite_tip: "复制一个链接，朋友打开就会用他的浏览器测你的服务", k_reach: "地区能连上", k_cn: "中国三网",
+  k_local: "从你这里", ks_ok: "能打开", ks_ans: "有回应", ks_none: "不通", ks_blocked: "测不了", more_steps: "还有 {n} 条建议", pl_open: "端口开着", pl_web: "不是网页", pl_nottls: "不是 HTTPS", pl_refused: "拒绝连接", pl_timeout: "超时", pl_dns: "解析失败", pl_unreach: "不可达", pl_reset: "被重置", pl_tls: "TLS 失败", pl_slow: "无响应", pl_other: "失败",
 };

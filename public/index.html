@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="From 18 regions and your browser: where it stops, and what to check next">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Free reachability check from 18 regions, including China Telecom, Unicom and Mobile, and from your own browser. See DNS, TCP, TLS and first-byte times for each, where a failed connection stops, and what to check next: port forwarding, firewalls, CGNAT, blocked ports, certificates.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does the check work?","acceptedAnswer":{"@type":"Answer","text":"Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page. Your own browser connects too, and AliDNS, Cloudflare and Google are asked for the address over DoH. None of it goes through our servers."}},{"@type":"Question","name":"It opens for me. Why can't others reach it?","acceptedAnswer":{"@type":"Answer","text":"If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."}},{"@type":"Question","name":"I set up port forwarding. Why does it still time out?","acceptedAnswer":{"@type":"Answer","text":"The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP. With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."}},{"@type":"Question","name":"What's the difference between refused and timed out?","acceptedAnswer":{"@type":"Answer","text":"Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port. Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."}},{"@type":"Question","name":"Can it check UDP ports for games or WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."}},{"@type":"Question","name":"Who sees the address I enter?","acceptedAnswer":{"@type":"Answer","text":"Globalping, which runs the probes, and the DNS services asked over DoH. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP. Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.924e4ea4d9.css">
+<link rel="stylesheet" href="/assets/app.4692e25b68.css">
 </head>
 <body>
 <div class="app">
@@ -62,15 +62,16 @@
     </div>
   </div>
 
+  <!-- 1. what to check: one line of fields -->
   <header class="hero card">
     <h1>Can other people reach your service?</h1>
-    <p class="intro" data-i="intro">Reach Check connects to your website, NAS or game server from 18 regions, including China Telecom, Unicom and Mobile, then once more from your own browser. You get DNS, TCP, TLS and first-byte times for each, and if it fails, the step where it stopped and what to check next.</p>
-
+    <p class="intro" data-i="intro">Checks your website, NAS or game server from 18 regions and from your own browser, then tells you where it stops and what to check next.</p>
     <form id="f" class="form" autocomplete="off">
       <div class="row">
-        <label class="fld grow"><span data-i="f_target">Address</span>
+        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Address</span><button type="button" class="link" id="myip" data-i="myip_btn">Use my current IP</button></span>
           <input id="target" name="t" placeholder="Domain, IP or URL, e.g. nas.example.com" spellcheck="false" inputmode="url" required>
         </label>
+        <label class="fld kind"><span data-i="f_kind">Service</span><select id="kind"></select></label>
         <label class="fld port"><span data-i="f_port">Port</span>
           <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
         </label>
@@ -79,50 +80,35 @@
         </label>
         <button id="go" class="btn" type="submit" data-i="go">Check</button>
       </div>
-      <div class="presets" id="presets"></div>
-      <div class="sub">
-        <button type="button" class="link" id="myip" data-i="myip_btn">Use my current IP</button>
-        <span id="myipNote" class="m"></span>
-        <span class="quota m" id="quota"></span>
-      </div>
+      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
     </form>
   </header>
 
   <section id="out" hidden>
+    <!-- 2. the answer: verdict, three numbers, at most four next steps -->
     <div class="card verdict" id="verdict">
-      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2><button class="btn share" id="shareBtn" type="button" hidden data-i="share">Share</button></div>
+      <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
+        <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Ask a friend</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Share</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
+      <div class="kpis" id="kpis"></div>
       <ol class="steps" id="vSteps"></ol>
+      <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
     </div>
 
+    <!-- 3. the evidence: one line per region, its details on demand -->
     <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">From around the world</h3><span class="m" id="gpProgress"></span></div>
+      <div class="sec-h"><h3 data-i="h_regions">From around the world</h3><span class="src m">Data: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>'s volunteer probes</span><span class="m prog" id="gpProgress"></span></div>
       <div class="legend m">
         <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP handshake</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS handshake</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">First byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
       </div>
-      <p class="src m">Source: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>, an open network of probes run by volunteers (a jsDelivr project). Each check gets one probe per region, chosen by Globalping.</p>
       <div id="regions" class="regions"></div>
       <p class="note" id="gpNote" hidden></p>
     </div>
 
-    <div class="grid2">
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_local">From your browser</h3></div>
-        <div id="local" class="local"></div>
-        <p class="note m" data-i="local_note">A browser can only send HTTPS requests and can't see a port's state; it can only tell from how fast a request fails. With a proxy on, this tests the proxy's route.</p>
-        <p class="note" id="checkLink"></p>
-      </div>
-      <div class="card sec">
-        <div class="sec-h"><h3 data-i="h_dns">DNS</h3></div>
-        <div id="dns" class="dns"></div>
-        <p class="note m" data-i="src_dns">Source: the DoH services of AliDNS, Cloudflare and Google, asked by your browser.</p>
-      </div>
-    </div>
-
-    <div class="card sec invite">
-      <div class="sec-h"><h3 data-i="h_invite">Ask a friend to check</h3></div>
-      <p class="m" data-i="invite_p">Send this link to a friend. It runs the check in their browser, and they can send you back a screenshot or the link.</p>
-      <div class="copy"><input id="inviteUrl" readonly aria-label="Ask a friend to check"><button class="btn ghost" type="button" id="copyInvite" data-i="copy">Copy</button></div>
+    <!-- 4. the rest: this browser and DNS, side by side -->
+    <div class="card sec more">
+      <div class="col"><h3 data-i="h_local">From your browser</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
+      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
     </div>
   </section>
   <footer class="foot m"><p>Data sources: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (the outside check and trace route), AliDNS, Cloudflare and Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> and <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (your IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
@@ -143,7 +129,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"en","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.en.68cd21bb5e.js"></script>
-<script src="/assets/app.3874698147.js"></script>
+<script src="/assets/l.en.01ff6f9385.js"></script>
+<script src="/assets/app.5edc1f3b66.js"></script>
 </body>
 </html>
