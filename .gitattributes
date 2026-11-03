@@ -1,0 +1,5 @@
+# LF everywhere: npm test compares public/ byte for byte with what the build writes, so a CRLF checkout would fail it
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
+*.ico binary
