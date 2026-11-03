@@ -229,7 +229,9 @@ $("port").addEventListener("keydown", e => {
     portActive = (portActive + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
     renderPresets(); $("po" + portActive)?.scrollIntoView({ block: "nearest" });
   } else if (e.key === "Enter" && !$("portList").hidden && portActive >= 0) { e.preventDefault(); pickPort(items[portActive].dataset.port); }
-  else if (e.key === "Escape" || e.key === "Tab") portOpen(false);
+  // Escape closes the list; in a search field it would also clear the port, so not that
+  else if (e.key === "Escape") { if (!$("portList").hidden) e.preventDefault(); portOpen(false); }
+  else if (e.key === "Tab") portOpen(false);
 });
 // mousedown, not click: picking an item must happen before the field loses focus and the list closes
 $("portList").addEventListener("mousedown", e => { const li = e.target.closest("li[data-port]"); if (li) { e.preventDefault(); pickPort(li.dataset.port); } });
@@ -405,30 +407,45 @@ const dnsIps = s => [...new Set(s.rows.map(r => r?.res?.resolvedAddress).filter(
 
 const failStage = k => ({ dns: "fs_dns", refused: "fs_refused", timeout: "fs_timeout", unreach: "fs_unreach", reset: "fs_reset", tls: "fs_tls", nothttp: "fs_nothttp", nottls: "fs_nottls", slow: "fs_slow" })[k];
 
+// Every bar on one fixed scale, set before the first result arrives, so a bar never shrinks when slower results
+// come in. A time past the scale fills the bar, which then fades out at its end.
+const SCALE_MS = 3000;
+function barOf(segs) {
+  let cum = 0, h = "";
+  for (const [v, c] of segs) {
+    if (!v) continue;
+    const a = Math.min(cum, SCALE_MS), b = Math.min(cum + v, SCALE_MS);
+    cum += v;
+    if (b > a) h += `<i class="${c}" data-w="${((b - a) / SCALE_MS * 100).toFixed(2)}"></i>`;
+  }
+  return `<div class="bar${cum > SCALE_MS ? " over" : ""}">${h}</div>`;
+}
+// A row's status as a dot (green: connects; amber: something's off; red: no; grey: waiting); its words in the tooltip
+// and in the row's details
+const dot = (cls, text, busy) => `<span class="sdot ${cls}${busy ? " blink" : ""}" role="img" title="${esc(text)}" aria-label="${esc(text)}"></span>`;
+
 function drawRegions() {
   const s = state; let html = "", g = "", first = true;
   // Bars for every probe that reached the port; one that stopped earlier is hatched and doesn't set the scale
   const span = r => r.res.status === "finished" ? r.res.timings.total : (r.res.timings.dns || 0) + r.res.timings.tcp + (r.res.timings.tls || 0);
   const drawn = r => r?.c && REACHED.has(r.c.k) && r.res.timings?.tcp != null;
-  const max = Math.max(200, ...s.rows.filter(drawn).map(span), s.local?.k === "ok" ? s.local.ms : 0);
   const tcps = s.rows.filter(r => r?.c && r.res.timings?.tcp != null).map(r => r.res.timings.tcp).sort((a, b) => a - b);
   const tcpMed = tcps[Math.floor(tcps.length / 2)] || 0;
   // One line per region: name, a short status, the time bar, the total. A click opens the details: the full status,
   // the probe's network, the address it reached, each step's time, and trace route.
   REGIONS.forEach((x, i) => {
-    if (first) { first = false; html += localRow(s, max); }
+    if (first) { first = false; html += localRow(s); }
     if (x.g !== g) { g = x.g; html += `<div class="grp">${esc(t("g_" + g))}</div>`; }
     const row = s.rows[i];
-    let pl = `<span class="pill m blink">${esc(t("r_queue"))}</span>`, bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
-    if (!row?.probe && (s.gpError || s.gpDone)) pl = `<span class="pill m">${esc(t(s.gpError ? "r_notrun" : "r_noprobe"))}</span>`;
-    if (row?.probe && !row.c) pl = `<span class="pill m blink">${esc(t("r_testing"))}</span>`;
+    let pl = dot("m", t("r_queue"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
+    if (!row?.probe && (s.gpError || s.gpDone)) pl = dot("m", t(s.gpError ? "r_notrun" : "r_noprobe"));
+    if (row?.probe && !row.c) pl = dot("m", t("r_testing"), true);
     if (row?.c) {
       const p = row.probe, tg = row.res.timings || {}, [cls, text] = rowStatus(row, s);
       hot = tg.tcp > 1000 && tg.tcp > tcpMed * 3;
-      pl = `<span class="pill ${cls}">${esc(pillOf(row, s))}${hot ? " !" : ""}</span>`;
+      pl = dot(cls, pillOf(row, s) + (hot ? " · " + t("hot_tip") : ""));
       if (drawn(row)) {
-        const part = (v, c) => v ? `<i class="${c}" data-w="${(v / max * 100).toFixed(2)}"></i>` : "";
-        bar = `<div class="bar">${part(tg.dns, "s-dns")}${part(tg.tcp, "s-tcp")}${part(tg.tls, "s-tls")}${part(tg.firstByte, "s-fb")}${part(tg.download, "s-dl")}</div>`;
+        bar = barOf([[tg.dns, "s-dns"], [tg.tcp, "s-tcp"], [tg.tls, "s-tls"], [tg.firstByte, "s-fb"], [tg.download, "s-dl"]]);
         tot = `<span class="rg-tot">${span(row)}<small class="m"> ms</small></span>`;
       } else {
         bar = `<div class="bar fail"></div>`;
@@ -461,16 +478,15 @@ function drawLocal() { drawRegions(); drawVerdict(); }
 
 // Its line: what the browser saw, a bar of connecting then the request, the first request's time. Its details: what
 // that outcome can and can't tell, and where to look at the visitor's own connection more closely.
-function localRow(s, max) {
+function localRow(s) {
   const l = s.local, ms = v => `${Math.round(v)} ms`;
-  let pl = `<span class="pill m blink">${esc(t("r_testing"))}</span>`, bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
+  let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
   if (l) {
     const setup = l.k === "ok" && l.warm != null ? Math.max(0, l.ms - l.warm) : null;
     const cls = { ok: "ok", answered: "warn", timeout: "bad", blocked: "m" }[l.k];
-    pl = `<span class="pill ${cls}">${esc(t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]))}</span>`;
+    pl = dot(cls, t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]));
     if (l.k === "ok") {
-      const w = v => (v / max * 100).toFixed(2);
-      bar = setup != null ? `<div class="bar"><i class="s-setup" data-w="${w(setup)}"></i><i class="s-fb" data-w="${w(l.warm)}"></i></div>` : `<div class="bar"><i class="s-setup" data-w="${w(l.ms)}"></i></div>`;
+      bar = setup != null ? barOf([[setup, "s-setup"], [l.warm, "s-fb"]]) : barOf([[l.ms, "s-setup"]]);
     } else if (l.k !== "blocked") bar = `<div class="bar fail"></div>`;
     if (l.k === "ok" || l.k === "answered") tot = `<span class="rg-tot">${Math.round(l.ms)}<small class="m"> ms</small></span>`;
     else if (l.k === "timeout") tot = `<span class="rg-tot wait">${(LOCAL_TIMEOUT / 1000).toFixed(1)}<small> s</small></span>`;

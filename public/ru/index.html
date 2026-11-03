@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Из 18 регионов и вашего браузера: где обрывается и что проверить">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Проверка доступности · 1ms.dog","url":"https://reach.1ms.dog/ru/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Бесплатная проверка доступности из 18 регионов (включая China Telecom, Unicom и Mobile) и из вашего браузера. Показывает время DNS, TCP, TLS и первого байта, на каком шаге обрывается соединение и что проверить дальше: проброс портов, файрвол, CGNAT, заблокированные порты, сертификаты.","inLanguage":"ru","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Как работает проверка?","acceptedAnswer":{"@type":"Answer","text":"Точки проверки Globalping, которые поддерживают добровольцы, в 18 регионах подключаются к вашему адресу и порту и отправляют один HTTP(S)-запрос, замеряя каждый шаг: DNS, TCP-соединение, TLS-рукопожатие, первый байт. При ошибке видно, где всё оборвалось: отказ, тайм-аут, сброс, проблема TLS или сервис, который не является веб-страницей. Ваш браузер тоже подключается — это первая строка таблицы. Через наши серверы ничего не проходит."}},{"@type":"Question","name":"У меня открывается. Почему другие не могут подключиться?","acceptedAnswer":{"@type":"Answer","text":"Если вы в одной сети с сервисом, трафик не выходит из дома, и то, что у вас открывается, ничего не говорит о доступности извне. Прокси тоже может вести вас другим путём, чем остальных. Ориентируйтесь на внешнюю проверку: она подключается так же, как посторонний человек."}},{"@type":"Question","name":"Проброс портов настроен. Почему всё равно тайм-аут?","acceptedAnswer":{"@type":"Answer","text":"Частые причины: нет белого IPv4 (WAN-адрес роутера начинается с 100.64–100.127 или не совпадает с вашим публичным IP — это CGNAT); файрвол на NAS, в Windows или в облачной группе безопасности; провайдер закрывает популярные порты вроде 80 и 443 на домашних линиях; проброс указывает на старый локальный IP устройства. Для IPv6 файрвол роутера блокирует входящие соединения, пока вы не откроете порт."}},{"@type":"Question","name":"Чем «отказ» отличается от «тайм-аута»?","acceptedAnswer":{"@type":"Answer","text":"Отказ: пакеты дошли до машины, но на порту ничего не слушает. Сервис выключен, слушает только 127.0.0.1 или проброс ведёт не на тот порт. Тайм-аут: никакого ответа. Файрвол отбросил пакеты, проброса нет или адрес неверный."}},{"@type":"Question","name":"Можно проверить UDP-порты игр или WireGuard?","acceptedAnswer":{"@type":"Answer","text":"Нет. UDP-сервис обычно молчит, пока не получит правильное сообщение, поэтому ни браузер, ни публичная точка проверки не могут в общем случае узнать, открыт ли UDP-порт. Проверьте, доступен ли хост по TCP (SSH или веб-порт), а потом попросите друга зайти в саму игру."}},{"@type":"Question","name":"Кто видит адрес, который я ввожу?","acceptedAnswer":{"@type":"Answer","text":"Globalping, который запускает проверки. Мы его не храним. Ссылка на результат содержит адрес и результат, чтобы другие видели ту же проверку; вашего собственного IP в ней нет. У каждого IP в Globalping 250 проверок регионов в час, одна проверка тратит 18; когда лимит закончится, страница покажет, когда он восстановится."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
+<link rel="stylesheet" href="/assets/app.c6c9a7419d.css">
 </head>
 <body>
 <div class="app">
@@ -70,13 +70,14 @@
       <form id="f" class="form" autocomplete="off">
         <div class="row">
           <label class="fld grow"><span data-i="f_target">Адрес</span>
-            <input id="target" name="t" placeholder="Домен, IP или URL, например nas.example.com" spellcheck="false" inputmode="url" required>
+            <input id="target" name="t" type="search" placeholder="Домен, IP или URL, например nas.example.com" spellcheck="false" autocapitalize="off" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" required>
           </label>
           <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
-               its own position, under password managers' pop-ups) -->
+               its own position, under password managers' pop-ups). type="search", and no numeric inputmode or pattern: a short field of
+               digits reads as a one-time code, and password managers (iCloud Passwords) put their pop-up on it -->
           <div class="fld port"><label for="port" data-i="f_port">Порт</label>
             <div class="combo">
-              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+              <input id="port" name="svc" type="search" placeholder="443" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"
                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
               <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="Порт"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
               <ul class="combo-list" id="portList" role="listbox" hidden></ul>
@@ -130,6 +131,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"ru","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.ru.317723f147.js"></script>
-<script src="/assets/app.56d23aa2a2.js"></script>
+<script src="/assets/app.3bd49d206d.js"></script>
 </body>
 </html>

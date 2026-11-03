@@ -35,13 +35,14 @@
       <form id="f" class="form" autocomplete="off">
         <div class="row">
           <label class="fld grow"><span data-i="f_target"></span>
-            <input id="target" name="t" placeholder="{{a:f_target_ph}}" spellcheck="false" inputmode="url" required>
+            <input id="target" name="t" type="search" placeholder="{{a:f_target_ph}}" spellcheck="false" autocapitalize="off" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" required>
           </label>
           <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
-               its own position, under password managers' pop-ups) -->
+               its own position, under password managers' pop-ups). type="search", and no numeric inputmode or pattern: a short field of
+               digits reads as a one-time code, and password managers (iCloud Passwords) put their pop-up on it -->
           <div class="fld port"><label for="port" data-i="f_port"></label>
             <div class="combo">
-              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+              <input id="port" name="svc" type="search" placeholder="443" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"
                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
               <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="{{a:f_port}}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
               <ul class="combo-list" id="portList" role="listbox" hidden></ul>

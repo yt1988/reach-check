@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="De 18 regiões e do seu navegador: onde trava e o que verificar">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Teste de acesso · 1ms.dog","url":"https://reach.1ms.dog/pt/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Teste grátis a partir de 18 regiões (incluindo China Telecom, Unicom e Mobile) e do seu próprio navegador. Mostra os tempos de DNS, TCP, TLS e primeiro byte, onde a conexão para e o que verificar em seguida: redirecionamento de portas, firewall, CGNAT, portas bloqueadas, certificados.","inLanguage":"pt","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Como o teste funciona?","acceptedAnswer":{"@type":"Answer","text":"As sondas voluntárias do Globalping em 18 regiões se conectam ao seu endereço e porta e enviam uma requisição HTTP(S), medindo cada etapa: DNS, conexão TCP, negociação TLS e primeiro byte. Se falhar, o erro mostra onde: recusada, tempo esgotado, reset, problema de TLS ou um serviço que não é uma página web. O seu próprio navegador também se conecta: é a primeira linha da tabela. Nada passa pelos nossos servidores."}},{"@type":"Question","name":"Para mim abre. Por que os outros não conseguem acessar?","acceptedAnswer":{"@type":"Answer","text":"Se você está na mesma rede que o serviço, o tráfego nem sai de casa, então abrir aí não prova nada sobre o lado de fora. Um proxy também pode te mandar por um caminho diferente do resto. Use o teste externo como referência: ele se conecta do jeito que um desconhecido faria."}},{"@type":"Question","name":"Configurei o redirecionamento de portas. Por que ainda dá tempo esgotado?","acceptedAnswer":{"@type":"Answer","text":"As causas mais comuns: não ter IPv4 público (o endereço WAN do roteador começa com 100.64–100.127 ou não é o seu IP público: CGNAT); um firewall no NAS, no Windows ou num grupo de segurança da nuvem; a operadora bloqueando portas comuns como 80 e 443 em conexões residenciais; ou um redirecionamento que ainda aponta para o IP local antigo do aparelho. Com IPv6, o firewall IPv6 do roteador bloqueia conexões de entrada até você liberar a porta."}},{"@type":"Question","name":"Qual a diferença entre \"recusada\" e \"tempo esgotado\"?","acceptedAnswer":{"@type":"Answer","text":"Recusada: os pacotes chegaram à máquina, mas nada escuta naquela porta. O serviço está desligado, só escuta em 127.0.0.1 ou o redirecionamento vai para a porta errada. Tempo esgotado: nenhuma resposta. Um firewall descartou os pacotes, não há redirecionamento ou o endereço está errado."}},{"@type":"Question","name":"Dá para testar portas UDP de jogos ou do WireGuard?","acceptedAnswer":{"@type":"Answer","text":"Não. Um serviço UDP normalmente fica em silêncio se não receber a mensagem certa, então nem o navegador nem uma sonda pública conseguem saber, de forma geral, se uma porta UDP está aberta. Veja se o host responde por TCP (SSH ou uma porta web) e depois peça para um amigo entrar pelo próprio jogo."}},{"@type":"Question","name":"Quem vê o endereço que eu digito?","acceptedAnswer":{"@type":"Answer","text":"O Globalping, que roda as sondas. Nós não guardamos. O link do resultado leva o endereço e o resultado para que outros vejam o mesmo teste; ele nunca leva o seu próprio IP. Cada IP tem 250 testes de região por hora no Globalping, e cada teste usa 18; quando acabam, a página avisa quando voltam."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4c2f96ff67.css">
+<link rel="stylesheet" href="/assets/app.c6c9a7419d.css">
 </head>
 <body>
 <div class="app">
@@ -70,13 +70,14 @@
       <form id="f" class="form" autocomplete="off">
         <div class="row">
           <label class="fld grow"><span data-i="f_target">Endereço</span>
-            <input id="target" name="t" placeholder="Domínio, IP ou URL, ex.: nas.example.com" spellcheck="false" inputmode="url" required>
+            <input id="target" name="t" type="search" placeholder="Domínio, IP ou URL, ex.: nas.example.com" spellcheck="false" autocapitalize="off" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" required>
           </label>
           <!-- the port, with the usual services in a list of our own (a native datalist is drawn by the OS: its own colors,
-               its own position, under password managers' pop-ups) -->
+               its own position, under password managers' pop-ups). type="search", and no numeric inputmode or pattern: a short field of
+               digits reads as a one-time code, and password managers (iCloud Passwords) put their pop-up on it -->
           <div class="fld port"><label for="port" data-i="f_port">Porta</label>
             <div class="combo">
-              <input id="port" name="port" inputmode="numeric" pattern="[0-9]*" placeholder="443" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+              <input id="port" name="svc" type="search" placeholder="443" autocomplete="off" enterkeyhint="go" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"
                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="portList">
               <button class="combo-btn" id="portBtn" type="button" tabindex="-1" aria-label="Porta"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
               <ul class="combo-list" id="portList" role="listbox" hidden></ul>
@@ -130,6 +131,6 @@
 </div>
 <script type="application/json" id="data">{"lang":"pt","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
 <script src="/assets/l.pt.1a71d7bb67.js"></script>
-<script src="/assets/app.56d23aa2a2.js"></script>
+<script src="/assets/app.3bd49d206d.js"></script>
 </body>
 </html>
