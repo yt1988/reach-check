@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/ja.png">
 <meta name="twitter:title" content="到達性チェック：あなたのサイト、NAS、ゲームサーバーに外からつながる？ ポート開放チェック">
 <meta name="twitter:description" content="世界 18 地域とあなたのブラウザから：どこで止まるか、次に何を見るか">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"到達性チェック · 1ms.dog","url":"https://reach.1ms.dog/ja/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料の到達性チェック。世界 18 地域（中国電信・聯通・移動を含む）とあなたのブラウザからサービスに接続し、DNS・TCP・TLS・最初の 1 バイトまでの時間を表示します。つながらなければ、どこで止まったか、次に何を確認すべきか（ポート転送、ファイアウォール、グローバル IP がない、ポートの遮断、証明書）を示します。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"どうやってチェックしていますか？","acceptedAnswer":{"@type":"Answer","text":"18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。 あなたのブラウザからも接続し、AliDNS・Cloudflare・Google に DoH でアドレスを問い合わせます。どれも私たちのサーバーは経由しません。"}},{"@type":"Question","name":"自分では開けるのに、なぜ外からはつながらないのですか？","acceptedAnswer":{"@type":"Answer","text":"サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。"}},{"@type":"Question","name":"ポート転送を設定したのに、なぜタイムアウトするのですか？","acceptedAnswer":{"@type":"Answer","text":"よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。 IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。"}},{"@type":"Question","name":"「拒否」と「タイムアウト」の違いは？","acceptedAnswer":{"@type":"Answer","text":"拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。 タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。"}},{"@type":"Question","name":"ゲームや WireGuard の UDP ポートは確認できますか？","acceptedAnswer":{"@type":"Answer","text":"できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。"}},{"@type":"Question","name":"入力したアドレスは誰に見えますか？","acceptedAnswer":{"@type":"Answer","text":"計測を行う Globalping と、DoH で問い合わせる DNS サービスです。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。 Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。"}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"到達性チェック · 1ms.dog","url":"https://reach.1ms.dog/ja/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料の到達性チェック。世界 18 地域（中国電信・聯通・移動を含む）とあなたのブラウザからサービスに接続し、DNS・TCP・TLS・最初の 1 バイトまでの時間を表示します。つながらなければ、どこで止まったか、次に何を確認すべきか（ポート転送、ファイアウォール、グローバル IP がない、ポートの遮断、証明書）を示します。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"どうやってチェックしていますか？","acceptedAnswer":{"@type":"Answer","text":"18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。 あなたのブラウザからも接続します（表の 1 行目）。どれも私たちのサーバーは経由しません。"}},{"@type":"Question","name":"自分では開けるのに、なぜ外からはつながらないのですか？","acceptedAnswer":{"@type":"Answer","text":"サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。"}},{"@type":"Question","name":"ポート転送を設定したのに、なぜタイムアウトするのですか？","acceptedAnswer":{"@type":"Answer","text":"よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。 IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。"}},{"@type":"Question","name":"「拒否」と「タイムアウト」の違いは？","acceptedAnswer":{"@type":"Answer","text":"拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。 タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。"}},{"@type":"Question","name":"ゲームや WireGuard の UDP ポートは確認できますか？","acceptedAnswer":{"@type":"Answer","text":"できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。"}},{"@type":"Question","name":"入力したアドレスは誰に見えますか？","acceptedAnswer":{"@type":"Answer","text":"計測を行う Globalping です。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。 Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4692e25b68.css">
+<link rel="stylesheet" href="/assets/app.025a2348a4.css">
 </head>
 <body>
 <div class="app">
@@ -62,56 +62,51 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>あなたのサービスに、外からつながりますか？</h1>
-    <p class="intro" data-i="intro">世界 18 地域とあなたのブラウザからサイト、NAS、ゲームサーバーに接続し、どこで止まるか、次に何を確認すべきかを示します。</p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target">アドレス</span><button type="button" class="link" id="myip" data-i="myip_btn">今の自分の IP を使う</button></span>
-          <input id="target" name="t" placeholder="ドメイン、IP、URL（例：nas.example.com）" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind">種類</span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port">ポート</span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv">IP バージョン</span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go">チェック</button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>あなたのサービスに、外からつながりますか？</h1>
+      <p class="intro" data-i="intro">世界 18 地域とあなたのブラウザからサイト、NAS、ゲームサーバーに接続し、どこで止まるか、次に何を確認すべきかを示します。</p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target">アドレス</span>
+            <input id="target" name="t" placeholder="ドメイン、IP、URL（例：nas.example.com）" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port">ポート</span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv">IP バージョン</span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go">チェック</button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">友だちに頼む</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">共有</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">世界各地から</h3><span class="src m">データ：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> のボランティア計測地点</span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 接続</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS ハンドシェイク</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">最初の 1 バイト</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">ダウンロード</span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions">世界各地から</h3><span class="src m">データ：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> のボランティア計測地点</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 接続</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS ハンドシェイク</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">最初の 1 バイト</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">ダウンロード</span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local">あなたのブラウザから</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>データの出典：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部からのチェックと経路調査）、AliDNS・Cloudflare・Google（DNS）、<a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> と <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>（あなたの IP）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>データの出典：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部からのチェックと経路調査）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -124,12 +119,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="次へ"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>どうやってチェックしていますか？</h3><p>18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。</p><p>あなたのブラウザからも接続し、AliDNS・Cloudflare・Google に DoH でアドレスを問い合わせます。どれも私たちのサーバーは経由しません。</p></article><article data-hqb="1" hidden><h3>自分では開けるのに、なぜ外からはつながらないのですか？</h3><p>サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。</p></article><article data-hqb="2" hidden><h3>ポート転送を設定したのに、なぜタイムアウトするのですか？</h3><p>よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。</p><p>IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。</p></article><article data-hqb="3" hidden><h3>「拒否」と「タイムアウト」の違いは？</h3><p>拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。</p><p>タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。</p></article><article data-hqb="4" hidden><h3>ゲームや WireGuard の UDP ポートは確認できますか？</h3><p>できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。</p></article><article data-hqb="5" hidden><h3>入力したアドレスは誰に見えますか？</h3><p>計測を行う Globalping と、DoH で問い合わせる DNS サービスです。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。</p><p>Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>どうやってチェックしていますか？</h3><p>18 地域にある Globalping のボランティアの計測地点が、それぞれあなたのアドレスとポートに接続して HTTP(S) リクエストを 1 回送り、各段階の時間を測ります：名前解決、TCP 接続、TLS ハンドシェイク、最初の 1 バイト。失敗したときは、どこで止まったか（拒否、タイムアウト、リセット、TLS の問題、Web ページではないサービス）をエラーから判断します。</p><p>あなたのブラウザからも接続します（表の 1 行目）。どれも私たちのサーバーは経由しません。</p></article><article data-hqb="1" hidden><h3>自分では開けるのに、なぜ外からはつながらないのですか？</h3><p>サービスと同じネットワークにいると、通信は家の外に出ないので、自分で開けても外からつながる証拠にはなりません。プロキシを使っていると、ほかの人とは違う経路を通ることもあります。外部チェックの結果を基準にしてください。知らない人が接続するのと同じ方法でつないでいます。</p></article><article data-hqb="2" hidden><h3>ポート転送を設定したのに、なぜタイムアウトするのですか？</h3><p>よくある原因：グローバル IPv4 がない（ルーターの WAN 側アドレスが 100.64〜100.127 で始まる、またはグローバル IP と違う：キャリアグレード NAT）。NAS、Windows、クラウドのセキュリティグループのファイアウォールが許可していない。プロバイダが家庭用回線の 80 番や 443 番を遮断している。転送先が機器の古いローカル IP のまま。</p><p>IPv6 の場合は、ルーターの IPv6 ファイアウォールが外からの接続を遮断しているので、そのポートを許可してください。</p></article><article data-hqb="3" hidden><h3>「拒否」と「タイムアウト」の違いは？</h3><p>拒否：パケットはマシンに届いたが、そのポートで待ち受けているプログラムがない状態です。サービスが止まっている、127.0.0.1 でしか待ち受けていない、または転送先のポートが違います。</p><p>タイムアウト：まったく応答がない状態です。ファイアウォールがパケットを捨てている、ポート転送がない、またはアドレスが間違っています。</p></article><article data-hqb="4" hidden><h3>ゲームや WireGuard の UDP ポートは確認できますか？</h3><p>できません。UDP のサービスは正しいメッセージを受け取らない限りふつう応答しないため、ブラウザからも公開の計測地点からも、UDP ポートが開いているかを確かめる汎用の方法がありません。まず TCP でホストにつながるか（SSH や Web のポート）を確認し、友だちにゲームから接続してもらってください。</p></article><article data-hqb="5" hidden><h3>入力したアドレスは誰に見えますか？</h3><p>計測を行う Globalping です。私たちは保存しません。結果のリンクにはアドレスと結果が入っていて、ほかの人が同じ結果を見られます。あなた自身の IP は入りません。</p><p>Globalping の利用枠は IP ごとに 1 時間 250 地域分で、1 回のチェックで 18 地域分を使います。使い切ると、いつ戻るかをページに表示します。</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.ja.3de87cfea6.js"></script>
-<script src="/assets/app.5edc1f3b66.js"></script>
+<script src="/assets/l.ja.20dd1df824.js"></script>
+<script src="/assets/app.0bc0404d24.js"></script>
 </body>
 </html>

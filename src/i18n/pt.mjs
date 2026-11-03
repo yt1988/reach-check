@@ -11,16 +11,15 @@ export default {
   lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: "Tema: claro", th_dark: "Tema: escuro",
 
   f_target: "Endereço", f_target_ph: "Domínio, IP ou URL, ex.: nas.example.com", f_port: "Porta", f_ipv: "Versão do IP", go: "Testar",
-  myip_btn: "Usar meu IP atual",
+
   h_regions: "Do mundo todo",
   lg_dns: "DNS", lg_tcp: "Conexão TCP", lg_tls: "Negociação TLS", lg_fb: "Primeiro byte", lg_dl: "Download",
   h_local: "Do seu navegador",
 
-  h_dns: "DNS",
  copied: "Copiado",
   src_gp: "Dados: sondas voluntárias do {gp}",
 
-  foot_src: "Fontes dos dados: {gp} (o teste externo e o traceroute), AliDNS, Cloudflare e Google (DNS), {ipify} e {ipsb} (seu IP).",
+  foot_src: "Fonte dos dados: {gp} (o teste externo e o traceroute).",
 
   sep: ", ",
   g_cn: "China continental", g_apac: "Ásia-Pacífico", g_emea: "Europa, Oriente Médio e África", g_am: "Américas",
@@ -28,12 +27,12 @@ export default {
   city_Tokyo: "Tóquio", city_London: "Londres", city_Frankfurt: "Frankfurt", city_LosAngeles: "Los Angeles", city_NewYork: "Nova York", city_SaoPaulo: "São Paulo",
   p_web: "Site", p_web_http: "Site (HTTP)", p_dsm: "Synology DSM", p_rdp: "Área de Trabalho Remota", p_udp: "Jogos UDP (Palworld…)",
   what_ssh: "SSH", what_rdp: "Área de Trabalho Remota", what_mc: "um servidor de Minecraft",
-  udp_note: "Portas UDP (Palworld, CS2, WireGuard…) não podem ser testadas nem pelo navegador nem por uma sonda pública: não existe um jeito geral de saber se uma porta UDP está aberta. Veja se o host responde (escolha SSH ou Site) e depois peça para um amigo entrar no jogo.",
+
   quota_ok: "Ainda restam {left} testes de região nesta hora; cada teste usa {cost}",
   quota_out: "A cota do teste externo acabou; ela volta em cerca de {min} min (250 testes de região por IP por hora)",
-  myip_wait: "Consultando…", myip_got: "Seu IP público agora: {ip}. Com um proxy ligado, pode ser o IP do proxy.", myip_none: "Não foi possível descobrir seu IP público.",
+
   bad_target: "Esse endereço não parece válido: digite um domínio, um IP ou uma URL.",
-  local_wait: "Conectando pelo seu navegador…", dns_isip: "Você digitou um IP, então não há nada para resolver.", dns_wait: "Consultando…",
+
   gp_unreach: "Não foi possível acessar a API do Globalping, então o teste externo não rodou.",
   gp_429: "A cota do teste externo acabou; ela volta em cerca de {min} min. Os resultados do seu navegador e do DNS abaixo não são afetados.",
   gp_err: "O teste externo não rodou: {msg}",
@@ -66,16 +65,10 @@ export default {
   lc_plain: "Este serviço usa HTTP sem criptografia, e uma página web só consegue se conectar por HTTPS, então só dá para saber se algo respondeu.",
   lc_none: "Sem conexão", lc_none_s: "sem resposta em {s} s", lc_none_p: "Nada respondeu em {url} a partir daqui.",
 
-  rv_ali: "AliDNS",
-  dns_failres: "Não dá para acessar este servidor DNS daqui", dns_nx: "O domínio não existe", dns_fail: "Falha na consulta ({code})", dns_none: "Nenhum",
-  dns_cname: "Apelido (CNAME): {chain}",
-  ip_private: "{ip} é um endereço privado: só funciona dentro da mesma rede local, e ninguém de fora consegue chegar nele.",
   ip_cgnat: "{ip} está em 100.64.0.0/10 (CGNAT, o NAT da operadora): não é um endereço público, então o redirecionamento de portas não vai funcionar.",
   ip_fakeip: "{ip} é um fake-ip de um app de proxy, não um endereço real. Desligue o proxy ou use as respostas do DoH como referência.",
-  ip_cf: "{ip} pertence à Cloudflare: o domínio está com o proxy ligado (nuvem laranja), então os visitantes se conectam à Cloudflare, não ao seu servidor.",
-  dns_differ: "Os servidores DNS não concordam. É normal com uma CDN ou DNS por localização; se você acabou de mudar o registro, ele ainda não chegou a todos (TTL {ttl} s).",
-  dns_cnpoison: "A resposta da AliDNS não tem nada em comum com o que as sondas fora da China receberam ({ips}). Isso acontece com CDNs que respondem por localização e também com envenenamento de DNS: veja abaixo se as três operadoras chinesas conectam.",
-  dns_ddns: "Seu IPv4 público agora é {ip}, diferente do que está no DNS. Se o serviço está com você (um NAS em casa), seu DDNS não atualizou; com um proxy ligado, pode ser o IP do proxy.",
+
+
 
   v_wait: "Testando…", v_wait_sub: "{n} de {of} regiões responderam",
   v_gpoff: "O teste externo não rodou",
@@ -129,13 +122,14 @@ export default {
   share: "Compartilhar", share_desc: "{ok} de {n} regiões acessam {target}", lk_ipv6: "Sua rede tem IPv6?", lk_asn: "De quem é este IP (consulta ASN)",
   faq_h: "Perguntas frequentes", a_close: "Fechar", a_prev: "Anterior", a_next: "Próxima", lk_check: "Fazer uma checagem completa",
   docs: [
-    ["Como o teste funciona?", "As sondas voluntárias do Globalping em 18 regiões se conectam ao seu endereço e porta e enviam uma requisição HTTP(S), medindo cada etapa: DNS, conexão TCP, negociação TLS e primeiro byte. Se falhar, o erro mostra onde: recusada, tempo esgotado, reset, problema de TLS ou um serviço que não é uma página web.\nO seu próprio navegador também se conecta, e a AliDNS, a Cloudflare e o Google são consultados sobre o endereço por DoH. Nada passa pelos nossos servidores."],
+    ["Como o teste funciona?", "As sondas voluntárias do Globalping em 18 regiões se conectam ao seu endereço e porta e enviam uma requisição HTTP(S), medindo cada etapa: DNS, conexão TCP, negociação TLS e primeiro byte. Se falhar, o erro mostra onde: recusada, tempo esgotado, reset, problema de TLS ou um serviço que não é uma página web.\nO seu próprio navegador também se conecta: é a primeira linha da tabela. Nada passa pelos nossos servidores."],
     ["Para mim abre. Por que os outros não conseguem acessar?", "Se você está na mesma rede que o serviço, o tráfego nem sai de casa, então abrir aí não prova nada sobre o lado de fora. Um proxy também pode te mandar por um caminho diferente do resto. Use o teste externo como referência: ele se conecta do jeito que um desconhecido faria."],
     ["Configurei o redirecionamento de portas. Por que ainda dá tempo esgotado?", "As causas mais comuns: não ter IPv4 público (o endereço WAN do roteador começa com 100.64–100.127 ou não é o seu IP público: CGNAT); um firewall no NAS, no Windows ou num grupo de segurança da nuvem; a operadora bloqueando portas comuns como 80 e 443 em conexões residenciais; ou um redirecionamento que ainda aponta para o IP local antigo do aparelho.\nCom IPv6, o firewall IPv6 do roteador bloqueia conexões de entrada até você liberar a porta."],
     ["Qual a diferença entre \"recusada\" e \"tempo esgotado\"?", "Recusada: os pacotes chegaram à máquina, mas nada escuta naquela porta. O serviço está desligado, só escuta em 127.0.0.1 ou o redirecionamento vai para a porta errada.\nTempo esgotado: nenhuma resposta. Um firewall descartou os pacotes, não há redirecionamento ou o endereço está errado."],
     ["Dá para testar portas UDP de jogos ou do WireGuard?", "Não. Um serviço UDP normalmente fica em silêncio se não receber a mensagem certa, então nem o navegador nem uma sonda pública conseguem saber, de forma geral, se uma porta UDP está aberta. Veja se o host responde por TCP (SSH ou uma porta web) e depois peça para um amigo entrar pelo próprio jogo."],
-    ["Quem vê o endereço que eu digito?", "O Globalping, que roda as sondas, e os serviços DNS consultados por DoH. Nós não guardamos. O link do resultado leva o endereço e o resultado para que outros vejam o mesmo teste; ele nunca leva o seu próprio IP.\nCada IP tem 250 testes de região por hora no Globalping, e cada teste usa 18; quando acabam, a página avisa quando voltam."],
+    ["Quem vê o endereço que eu digito?", "O Globalping, que roda as sondas. Nós não guardamos. O link do resultado leva o endereço e o resultado para que outros vejam o mesmo teste; ele nunca leva o seu próprio IP.\nCada IP tem 250 testes de região por hora no Globalping, e cada teste usa 18; quando acabam, a página avisa quando voltam."],
   ],
-  f_kind: "Serviço", p_custom: "Outra porta", b_invite: "Pedir a um amigo", invite_tip: "Copia um link: quem abrir roda este teste no próprio navegador", k_reach: "regiões conectam", k_cn: "3 operadoras chinesas",
-  k_local: "Do seu navegador", ks_ok: "Abre", ks_ans: "Responde", ks_none: "Sem resposta", ks_blocked: "Não dá", more_steps: "Mais {n} sugestões", pl_open: "Aberta", pl_web: "Não é página", pl_nottls: "Não é HTTPS", pl_refused: "Recusada", pl_timeout: "Tempo esgotado", pl_dns: "Falha DNS", pl_unreach: "Inacessível", pl_reset: "Reset", pl_tls: "Falha TLS", pl_slow: "Sem resposta", pl_other: "Falhou",
+ b_invite: "Pedir a um amigo", invite_tip: "Copia um link: quem abrir roda este teste no próprio navegador",
+ ks_ok: "Abre", ks_ans: "Responde", ks_none: "Sem resposta", ks_blocked: "Não dá", more_steps: "Mais {n} sugestões", pl_open: "Aberta", pl_web: "Não é página", pl_nottls: "Não é HTTPS", pl_refused: "Recusada", pl_timeout: "Tempo esgotado", pl_dns: "Falha DNS", pl_unreach: "Inacessível", pl_reset: "Reset", pl_tls: "Falha TLS", pl_slow: "Sem resposta", pl_other: "Falhou",
+  r_browser: "Seu navegador", fa_world: "Mundo", fa_cn: "Operadoras chinesas", fa_you: "Daqui", fa_ok: "{ok} de {n} conectam",
 };

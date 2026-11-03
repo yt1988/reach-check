@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/es.png">
 <meta name="twitter:title" content="Prueba de acceso: ¿otras personas pueden conectarse a tu web, NAS o servidor de juegos? Comprobar puertos abiertos">
 <meta name="twitter:description" content="Desde 18 regiones y tu navegador: dónde se corta y qué revisar">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Prueba de acceso · 1ms.dog","url":"https://reach.1ms.dog/es/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Comprobación gratuita desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y desde tu propio navegador. Muestra los tiempos de DNS, TCP, TLS y primer byte, dónde se corta la conexión y qué revisar después: redirección de puertos, firewall, CGNAT, puertos bloqueados, certificados.","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo funciona la comprobación?","acceptedAnswer":{"@type":"Answer","text":"Las sondas voluntarias de Globalping en 18 regiones se conectan a tu dirección y puerto y envían una petición HTTP(S), midiendo cada paso: DNS, conexión TCP, negociación TLS y primer byte. Si falla, el error indica dónde: rechazada, tiempo agotado, reset, un problema de TLS o un servicio que no es una web. Tu propio navegador también se conecta, y se consulta la dirección a AliDNS, Cloudflare y Google por DoH. Nada pasa por nuestros servidores."}},{"@type":"Question","name":"A mí me abre. ¿Por qué los demás no pueden conectarse?","acceptedAnswer":{"@type":"Answer","text":"Si estás en la misma red que el servicio, tu tráfico no sale de casa, así que poder abrirlo no demuestra nada sobre el exterior. Un proxy también puede llevarte por otro camino que al resto. Guíate por la comprobación externa: se conecta como lo haría cualquier desconocido."}},{"@type":"Question","name":"Configuré la redirección de puertos. ¿Por qué sigue dando tiempo agotado?","acceptedAnswer":{"@type":"Answer","text":"Las causas habituales: no tienes IPv4 pública (la dirección WAN del router empieza por 100.64–100.127 o no es tu IP pública: CGNAT); un firewall en el NAS, en Windows o en un grupo de seguridad de la nube; el operador bloquea puertos comunes como 80 y 443 en las conexiones domésticas; o la redirección apunta a la IP local antigua del equipo. Con IPv6, el firewall IPv6 del router bloquea las conexiones entrantes hasta que permitas el puerto."}},{"@type":"Question","name":"¿Qué diferencia hay entre «rechazada» y «tiempo agotado»?","acceptedAnswer":{"@type":"Answer","text":"Rechazada: los paquetes llegaron al equipo, pero nada escucha en ese puerto. El servicio está apagado, solo escucha en 127.0.0.1 o la redirección va al puerto equivocado. Tiempo agotado: ninguna respuesta. Un firewall descartó los paquetes, no hay redirección o la dirección es incorrecta."}},{"@type":"Question","name":"¿Puede comprobar puertos UDP de juegos o WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. Un servicio UDP normalmente no responde si no recibe el mensaje correcto, así que ni un navegador ni una sonda pública pueden saber en general si un puerto UDP está abierto. Comprueba que el equipo responde por TCP (SSH o un puerto web) y luego pide a un amigo que entre con el propio juego."}},{"@type":"Question","name":"¿Quién ve la dirección que escribo?","acceptedAnswer":{"@type":"Answer","text":"Globalping, que ejecuta las sondas, y los servicios DNS consultados por DoH. Nosotros no la guardamos. Un enlace de resultado incluye la dirección y el resultado para que otros vean la misma comprobación; nunca incluye tu propia IP. Cada IP tiene 250 comprobaciones de región por hora en Globalping y cada comprobación usa 18; si se agotan, la página indica cuándo vuelven."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Prueba de acceso · 1ms.dog","url":"https://reach.1ms.dog/es/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Comprobación gratuita desde 18 regiones (incluidas China Telecom, Unicom y Mobile) y desde tu propio navegador. Muestra los tiempos de DNS, TCP, TLS y primer byte, dónde se corta la conexión y qué revisar después: redirección de puertos, firewall, CGNAT, puertos bloqueados, certificados.","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo funciona la comprobación?","acceptedAnswer":{"@type":"Answer","text":"Las sondas voluntarias de Globalping en 18 regiones se conectan a tu dirección y puerto y envían una petición HTTP(S), midiendo cada paso: DNS, conexión TCP, negociación TLS y primer byte. Si falla, el error indica dónde: rechazada, tiempo agotado, reset, un problema de TLS o un servicio que no es una web. Tu propio navegador también se conecta: es la primera línea de la tabla. Nada pasa por nuestros servidores."}},{"@type":"Question","name":"A mí me abre. ¿Por qué los demás no pueden conectarse?","acceptedAnswer":{"@type":"Answer","text":"Si estás en la misma red que el servicio, tu tráfico no sale de casa, así que poder abrirlo no demuestra nada sobre el exterior. Un proxy también puede llevarte por otro camino que al resto. Guíate por la comprobación externa: se conecta como lo haría cualquier desconocido."}},{"@type":"Question","name":"Configuré la redirección de puertos. ¿Por qué sigue dando tiempo agotado?","acceptedAnswer":{"@type":"Answer","text":"Las causas habituales: no tienes IPv4 pública (la dirección WAN del router empieza por 100.64–100.127 o no es tu IP pública: CGNAT); un firewall en el NAS, en Windows o en un grupo de seguridad de la nube; el operador bloquea puertos comunes como 80 y 443 en las conexiones domésticas; o la redirección apunta a la IP local antigua del equipo. Con IPv6, el firewall IPv6 del router bloquea las conexiones entrantes hasta que permitas el puerto."}},{"@type":"Question","name":"¿Qué diferencia hay entre «rechazada» y «tiempo agotado»?","acceptedAnswer":{"@type":"Answer","text":"Rechazada: los paquetes llegaron al equipo, pero nada escucha en ese puerto. El servicio está apagado, solo escucha en 127.0.0.1 o la redirección va al puerto equivocado. Tiempo agotado: ninguna respuesta. Un firewall descartó los paquetes, no hay redirección o la dirección es incorrecta."}},{"@type":"Question","name":"¿Puede comprobar puertos UDP de juegos o WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. Un servicio UDP normalmente no responde si no recibe el mensaje correcto, así que ni un navegador ni una sonda pública pueden saber en general si un puerto UDP está abierto. Comprueba que el equipo responde por TCP (SSH o un puerto web) y luego pide a un amigo que entre con el propio juego."}},{"@type":"Question","name":"¿Quién ve la dirección que escribo?","acceptedAnswer":{"@type":"Answer","text":"Globalping, que ejecuta las sondas. Nosotros no la guardamos. Un enlace de resultado incluye la dirección y el resultado para que otros vean la misma comprobación; nunca incluye tu propia IP. Cada IP tiene 250 comprobaciones de región por hora en Globalping y cada comprobación usa 18; si se agotan, la página indica cuándo vuelven."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4692e25b68.css">
+<link rel="stylesheet" href="/assets/app.025a2348a4.css">
 </head>
 <body>
 <div class="app">
@@ -62,56 +62,51 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>¿Otras personas pueden conectarse a tu servicio?</h1>
-    <p class="intro" data-i="intro">Se conecta a tu web, NAS o servidor de juegos desde 18 regiones y desde tu navegador, y te dice dónde se corta y qué revisar.</p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Dirección</span><button type="button" class="link" id="myip" data-i="myip_btn">Usar mi IP actual</button></span>
-          <input id="target" name="t" placeholder="Dominio, IP o URL, p. ej. nas.example.com" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind">Servicio</span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port">Puerto</span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv">Versión de IP</span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go">Comprobar</button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>¿Otras personas pueden conectarse a tu servicio?</h1>
+      <p class="intro" data-i="intro">Se conecta a tu web, NAS o servidor de juegos desde 18 regiones y desde tu navegador, y te dice dónde se corta y qué revisar.</p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target">Dirección</span>
+            <input id="target" name="t" placeholder="Dominio, IP o URL, p. ej. nas.example.com" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port">Puerto</span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv">Versión de IP</span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go">Comprobar</button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Pedir a un amigo</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Compartir</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">Desde todo el mundo</h3><span class="src m">Datos: sondas voluntarias de <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a></span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">Conexión TCP</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">Negociación TLS</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Primer byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Descarga</span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions">Desde todo el mundo</h3><span class="src m">Datos: sondas voluntarias de <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a></span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">Conexión TCP</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">Negociación TLS</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Primer byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Descarga</span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local">Desde tu navegador</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>Fuentes de datos: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (la comprobación externa y el trazado de ruta), AliDNS, Cloudflare y Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> e <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (tu IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>Fuente de datos: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (la comprobación externa y el trazado de ruta).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -124,12 +119,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="Siguiente"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>¿Cómo funciona la comprobación?</h3><p>Las sondas voluntarias de Globalping en 18 regiones se conectan a tu dirección y puerto y envían una petición HTTP(S), midiendo cada paso: DNS, conexión TCP, negociación TLS y primer byte. Si falla, el error indica dónde: rechazada, tiempo agotado, reset, un problema de TLS o un servicio que no es una web.</p><p>Tu propio navegador también se conecta, y se consulta la dirección a AliDNS, Cloudflare y Google por DoH. Nada pasa por nuestros servidores.</p></article><article data-hqb="1" hidden><h3>A mí me abre. ¿Por qué los demás no pueden conectarse?</h3><p>Si estás en la misma red que el servicio, tu tráfico no sale de casa, así que poder abrirlo no demuestra nada sobre el exterior. Un proxy también puede llevarte por otro camino que al resto. Guíate por la comprobación externa: se conecta como lo haría cualquier desconocido.</p></article><article data-hqb="2" hidden><h3>Configuré la redirección de puertos. ¿Por qué sigue dando tiempo agotado?</h3><p>Las causas habituales: no tienes IPv4 pública (la dirección WAN del router empieza por 100.64–100.127 o no es tu IP pública: CGNAT); un firewall en el NAS, en Windows o en un grupo de seguridad de la nube; el operador bloquea puertos comunes como 80 y 443 en las conexiones domésticas; o la redirección apunta a la IP local antigua del equipo.</p><p>Con IPv6, el firewall IPv6 del router bloquea las conexiones entrantes hasta que permitas el puerto.</p></article><article data-hqb="3" hidden><h3>¿Qué diferencia hay entre «rechazada» y «tiempo agotado»?</h3><p>Rechazada: los paquetes llegaron al equipo, pero nada escucha en ese puerto. El servicio está apagado, solo escucha en 127.0.0.1 o la redirección va al puerto equivocado.</p><p>Tiempo agotado: ninguna respuesta. Un firewall descartó los paquetes, no hay redirección o la dirección es incorrecta.</p></article><article data-hqb="4" hidden><h3>¿Puede comprobar puertos UDP de juegos o WireGuard?</h3><p>No. Un servicio UDP normalmente no responde si no recibe el mensaje correcto, así que ni un navegador ni una sonda pública pueden saber en general si un puerto UDP está abierto. Comprueba que el equipo responde por TCP (SSH o un puerto web) y luego pide a un amigo que entre con el propio juego.</p></article><article data-hqb="5" hidden><h3>¿Quién ve la dirección que escribo?</h3><p>Globalping, que ejecuta las sondas, y los servicios DNS consultados por DoH. Nosotros no la guardamos. Un enlace de resultado incluye la dirección y el resultado para que otros vean la misma comprobación; nunca incluye tu propia IP.</p><p>Cada IP tiene 250 comprobaciones de región por hora en Globalping y cada comprobación usa 18; si se agotan, la página indica cuándo vuelven.</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>¿Cómo funciona la comprobación?</h3><p>Las sondas voluntarias de Globalping en 18 regiones se conectan a tu dirección y puerto y envían una petición HTTP(S), midiendo cada paso: DNS, conexión TCP, negociación TLS y primer byte. Si falla, el error indica dónde: rechazada, tiempo agotado, reset, un problema de TLS o un servicio que no es una web.</p><p>Tu propio navegador también se conecta: es la primera línea de la tabla. Nada pasa por nuestros servidores.</p></article><article data-hqb="1" hidden><h3>A mí me abre. ¿Por qué los demás no pueden conectarse?</h3><p>Si estás en la misma red que el servicio, tu tráfico no sale de casa, así que poder abrirlo no demuestra nada sobre el exterior. Un proxy también puede llevarte por otro camino que al resto. Guíate por la comprobación externa: se conecta como lo haría cualquier desconocido.</p></article><article data-hqb="2" hidden><h3>Configuré la redirección de puertos. ¿Por qué sigue dando tiempo agotado?</h3><p>Las causas habituales: no tienes IPv4 pública (la dirección WAN del router empieza por 100.64–100.127 o no es tu IP pública: CGNAT); un firewall en el NAS, en Windows o en un grupo de seguridad de la nube; el operador bloquea puertos comunes como 80 y 443 en las conexiones domésticas; o la redirección apunta a la IP local antigua del equipo.</p><p>Con IPv6, el firewall IPv6 del router bloquea las conexiones entrantes hasta que permitas el puerto.</p></article><article data-hqb="3" hidden><h3>¿Qué diferencia hay entre «rechazada» y «tiempo agotado»?</h3><p>Rechazada: los paquetes llegaron al equipo, pero nada escucha en ese puerto. El servicio está apagado, solo escucha en 127.0.0.1 o la redirección va al puerto equivocado.</p><p>Tiempo agotado: ninguna respuesta. Un firewall descartó los paquetes, no hay redirección o la dirección es incorrecta.</p></article><article data-hqb="4" hidden><h3>¿Puede comprobar puertos UDP de juegos o WireGuard?</h3><p>No. Un servicio UDP normalmente no responde si no recibe el mensaje correcto, así que ni un navegador ni una sonda pública pueden saber en general si un puerto UDP está abierto. Comprueba que el equipo responde por TCP (SSH o un puerto web) y luego pide a un amigo que entre con el propio juego.</p></article><article data-hqb="5" hidden><h3>¿Quién ve la dirección que escribo?</h3><p>Globalping, que ejecuta las sondas. Nosotros no la guardamos. Un enlace de resultado incluye la dirección y el resultado para que otros vean la misma comprobación; nunca incluye tu propia IP.</p><p>Cada IP tiene 250 comprobaciones de región por hora en Globalping y cada comprobación usa 18; si se agotan, la página indica cuándo vuelven.</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"es","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.es.a051201861.js"></script>
-<script src="/assets/app.5edc1f3b66.js"></script>
+<script src="/assets/l.es.ba77f40755.js"></script>
+<script src="/assets/app.0bc0404d24.js"></script>
 </body>
 </html>

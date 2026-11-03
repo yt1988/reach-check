@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/ko.png">
 <meta name="twitter:title" content="외부 접속 확인: 내 웹사이트, NAS, 게임 서버에 다른 사람이 접속할 수 있을까? 포트 열림 확인">
 <meta name="twitter:description" content="전 세계 18개 지역과 내 브라우저에서: 어디서 막히는지, 다음에 무엇을 볼지">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"외부 접속 확인 · 1ms.dog","url":"https://reach.1ms.dog/ko/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 외부 접속 확인 도구. 전 세계 18개 지역(중국 3대 통신사 포함)과 내 브라우저에서 서비스에 접속해 DNS, TCP, TLS, 첫 바이트까지의 시간을 보여 줘요. 접속이 안 되면 어느 단계에서 막혔는지, 다음에 무엇을 확인할지 알려 줘요: 포트 포워딩, 방화벽, 공인 IP 없음(CGNAT), 통신사 포트 차단, 인증서.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"어떻게 확인하나요?","acceptedAnswer":{"@type":"Answer","text":"18개 지역에 있는 Globalping 자원봉사 측정 지점이 각각 내 주소와 포트에 접속해 HTTP(S) 요청을 한 번 보내고, 단계별 시간을 재요. DNS 조회, TCP 연결, TLS 핸드셰이크, 첫 바이트. 실패하면 오류로 어디서 멈췄는지 알 수 있어요. 거부, 시간 초과, 재설정, TLS 문제, 웹 페이지가 아닌 서비스. 내 브라우저에서도 한 번 접속하고, AliDNS·Cloudflare·Google에 DoH로 주소를 물어봐요. 어느 것도 우리 서버를 거치지 않아요."}},{"@type":"Question","name":"나는 열리는데 왜 다른 사람은 접속하지 못하나요?","acceptedAnswer":{"@type":"Answer","text":"서비스와 같은 네트워크에 있으면 트래픽이 집 밖으로 나가지 않아요. 그래서 내가 열 수 있다고 밖에서도 된다는 뜻은 아니에요. 프록시를 쓰면 다른 사람과 다른 경로로 가기도 해요. 외부 확인 결과를 기준으로 보세요. 모르는 사람이 접속하는 방식 그대로 연결해요."}},{"@type":"Question","name":"포트 포워딩을 했는데 왜 여전히 시간 초과인가요?","acceptedAnswer":{"@type":"Answer","text":"흔한 원인: 공인 IPv4가 없음(공유기 WAN 주소가 100.64~100.127로 시작하거나 공인 IP와 다르면 통신사 NAT). NAS, Windows, 클라우드 보안 그룹의 방화벽이 허용하지 않음. 통신사가 가정용 회선의 80, 443 같은 포트를 막음. 포워딩이 기기의 예전 내부 IP를 가리킴. IPv6라면 공유기의 IPv6 방화벽이 들어오는 연결을 막고 있으니 그 포트를 허용하세요."}},{"@type":"Question","name":"'거부'와 '시간 초과'는 뭐가 다른가요?","acceptedAnswer":{"@type":"Answer","text":"거부: 패킷은 기기에 도착했지만 그 포트에서 기다리는 프로그램이 없어요. 서비스가 꺼져 있거나, 127.0.0.1에서만 기다리거나, 포워딩 포트가 틀렸어요. 시간 초과: 아무 응답이 없어요. 방화벽이 패킷을 버렸거나, 포트 포워딩이 없거나, 주소가 틀렸어요."}},{"@type":"Question","name":"게임이나 WireGuard의 UDP 포트도 확인할 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. UDP 서비스는 올바른 메시지를 받지 않으면 보통 응답하지 않아서, 브라우저도 공개 측정 지점도 UDP 포트가 열렸는지 판단할 일반적인 방법이 없어요. 먼저 TCP로 호스트에 접속되는지(SSH나 웹 포트) 확인하고, 친구에게 게임으로 직접 접속해 달라고 하세요."}},{"@type":"Question","name":"입력한 주소는 누가 볼 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"측정을 하는 Globalping과 DoH로 조회하는 DNS 서비스예요. 우리는 저장하지 않아요. 결과 링크에는 주소와 결과가 들어 있어 다른 사람이 같은 결과를 볼 수 있지만, 내 IP는 들어가지 않아요. Globalping 한도는 IP당 시간마다 250개 지역이고, 한 번 확인에 18개를 써요. 다 쓰면 언제 다시 쓸 수 있는지 페이지에 알려 줘요."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"외부 접속 확인 · 1ms.dog","url":"https://reach.1ms.dog/ko/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 외부 접속 확인 도구. 전 세계 18개 지역(중국 3대 통신사 포함)과 내 브라우저에서 서비스에 접속해 DNS, TCP, TLS, 첫 바이트까지의 시간을 보여 줘요. 접속이 안 되면 어느 단계에서 막혔는지, 다음에 무엇을 확인할지 알려 줘요: 포트 포워딩, 방화벽, 공인 IP 없음(CGNAT), 통신사 포트 차단, 인증서.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"어떻게 확인하나요?","acceptedAnswer":{"@type":"Answer","text":"18개 지역에 있는 Globalping 자원봉사 측정 지점이 각각 내 주소와 포트에 접속해 HTTP(S) 요청을 한 번 보내고, 단계별 시간을 재요. DNS 조회, TCP 연결, TLS 핸드셰이크, 첫 바이트. 실패하면 오류로 어디서 멈췄는지 알 수 있어요. 거부, 시간 초과, 재설정, TLS 문제, 웹 페이지가 아닌 서비스. 내 브라우저에서도 한 번 접속해요(표의 첫 줄). 어느 것도 우리 서버를 거치지 않아요."}},{"@type":"Question","name":"나는 열리는데 왜 다른 사람은 접속하지 못하나요?","acceptedAnswer":{"@type":"Answer","text":"서비스와 같은 네트워크에 있으면 트래픽이 집 밖으로 나가지 않아요. 그래서 내가 열 수 있다고 밖에서도 된다는 뜻은 아니에요. 프록시를 쓰면 다른 사람과 다른 경로로 가기도 해요. 외부 확인 결과를 기준으로 보세요. 모르는 사람이 접속하는 방식 그대로 연결해요."}},{"@type":"Question","name":"포트 포워딩을 했는데 왜 여전히 시간 초과인가요?","acceptedAnswer":{"@type":"Answer","text":"흔한 원인: 공인 IPv4가 없음(공유기 WAN 주소가 100.64~100.127로 시작하거나 공인 IP와 다르면 통신사 NAT). NAS, Windows, 클라우드 보안 그룹의 방화벽이 허용하지 않음. 통신사가 가정용 회선의 80, 443 같은 포트를 막음. 포워딩이 기기의 예전 내부 IP를 가리킴. IPv6라면 공유기의 IPv6 방화벽이 들어오는 연결을 막고 있으니 그 포트를 허용하세요."}},{"@type":"Question","name":"'거부'와 '시간 초과'는 뭐가 다른가요?","acceptedAnswer":{"@type":"Answer","text":"거부: 패킷은 기기에 도착했지만 그 포트에서 기다리는 프로그램이 없어요. 서비스가 꺼져 있거나, 127.0.0.1에서만 기다리거나, 포워딩 포트가 틀렸어요. 시간 초과: 아무 응답이 없어요. 방화벽이 패킷을 버렸거나, 포트 포워딩이 없거나, 주소가 틀렸어요."}},{"@type":"Question","name":"게임이나 WireGuard의 UDP 포트도 확인할 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. UDP 서비스는 올바른 메시지를 받지 않으면 보통 응답하지 않아서, 브라우저도 공개 측정 지점도 UDP 포트가 열렸는지 판단할 일반적인 방법이 없어요. 먼저 TCP로 호스트에 접속되는지(SSH나 웹 포트) 확인하고, 친구에게 게임으로 직접 접속해 달라고 하세요."}},{"@type":"Question","name":"입력한 주소는 누가 볼 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"측정을 하는 Globalping이에요. 우리는 저장하지 않아요. 결과 링크에는 주소와 결과가 들어 있어 다른 사람이 같은 결과를 볼 수 있지만, 내 IP는 들어가지 않아요. Globalping 한도는 IP당 시간마다 250개 지역이고, 한 번 확인에 18개를 써요. 다 쓰면 언제 다시 쓸 수 있는지 페이지에 알려 줘요."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4692e25b68.css">
+<link rel="stylesheet" href="/assets/app.025a2348a4.css">
 </head>
 <body>
 <div class="app">
@@ -62,56 +62,51 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>다른 사람이 내 서비스에 접속할 수 있을까요?</h1>
-    <p class="intro" data-i="intro">전 세계 18개 지역과 내 브라우저에서 웹사이트, NAS, 게임 서버에 접속해 보고, 어디서 막히는지와 다음에 확인할 것을 알려 줘요.</p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target">주소</span><button type="button" class="link" id="myip" data-i="myip_btn">지금 내 IP 사용</button></span>
-          <input id="target" name="t" placeholder="도메인, IP 또는 URL (예: nas.example.com)" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind">종류</span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port">포트</span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv">IP 버전</span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go">확인</button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>다른 사람이 내 서비스에 접속할 수 있을까요?</h1>
+      <p class="intro" data-i="intro">전 세계 18개 지역과 내 브라우저에서 웹사이트, NAS, 게임 서버에 접속해 보고, 어디서 막히는지와 다음에 확인할 것을 알려 줘요.</p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target">주소</span>
+            <input id="target" name="t" placeholder="도메인, IP 또는 URL (예: nas.example.com)" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port">포트</span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv">IP 버전</span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go">확인</button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">친구에게 부탁</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">공유</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">전 세계에서</h3><span class="src m">데이터: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 자원봉사 측정 지점</span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 연결</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 핸드셰이크</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">첫 바이트</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">다운로드</span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions">전 세계에서</h3><span class="src m">데이터: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 자원봉사 측정 지점</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 연결</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 핸드셰이크</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">첫 바이트</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">다운로드</span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local">내 브라우저에서</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>데이터 출처: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>(외부 확인과 경로 추적), AliDNS·Cloudflare·Google(DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a>와 <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a>(내 IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>데이터 출처: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>(외부 확인과 경로 추적).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -124,12 +119,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="다음"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>어떻게 확인하나요?</h3><p>18개 지역에 있는 Globalping 자원봉사 측정 지점이 각각 내 주소와 포트에 접속해 HTTP(S) 요청을 한 번 보내고, 단계별 시간을 재요. DNS 조회, TCP 연결, TLS 핸드셰이크, 첫 바이트. 실패하면 오류로 어디서 멈췄는지 알 수 있어요. 거부, 시간 초과, 재설정, TLS 문제, 웹 페이지가 아닌 서비스.</p><p>내 브라우저에서도 한 번 접속하고, AliDNS·Cloudflare·Google에 DoH로 주소를 물어봐요. 어느 것도 우리 서버를 거치지 않아요.</p></article><article data-hqb="1" hidden><h3>나는 열리는데 왜 다른 사람은 접속하지 못하나요?</h3><p>서비스와 같은 네트워크에 있으면 트래픽이 집 밖으로 나가지 않아요. 그래서 내가 열 수 있다고 밖에서도 된다는 뜻은 아니에요. 프록시를 쓰면 다른 사람과 다른 경로로 가기도 해요. 외부 확인 결과를 기준으로 보세요. 모르는 사람이 접속하는 방식 그대로 연결해요.</p></article><article data-hqb="2" hidden><h3>포트 포워딩을 했는데 왜 여전히 시간 초과인가요?</h3><p>흔한 원인: 공인 IPv4가 없음(공유기 WAN 주소가 100.64~100.127로 시작하거나 공인 IP와 다르면 통신사 NAT). NAS, Windows, 클라우드 보안 그룹의 방화벽이 허용하지 않음. 통신사가 가정용 회선의 80, 443 같은 포트를 막음. 포워딩이 기기의 예전 내부 IP를 가리킴.</p><p>IPv6라면 공유기의 IPv6 방화벽이 들어오는 연결을 막고 있으니 그 포트를 허용하세요.</p></article><article data-hqb="3" hidden><h3>'거부'와 '시간 초과'는 뭐가 다른가요?</h3><p>거부: 패킷은 기기에 도착했지만 그 포트에서 기다리는 프로그램이 없어요. 서비스가 꺼져 있거나, 127.0.0.1에서만 기다리거나, 포워딩 포트가 틀렸어요.</p><p>시간 초과: 아무 응답이 없어요. 방화벽이 패킷을 버렸거나, 포트 포워딩이 없거나, 주소가 틀렸어요.</p></article><article data-hqb="4" hidden><h3>게임이나 WireGuard의 UDP 포트도 확인할 수 있나요?</h3><p>아니요. UDP 서비스는 올바른 메시지를 받지 않으면 보통 응답하지 않아서, 브라우저도 공개 측정 지점도 UDP 포트가 열렸는지 판단할 일반적인 방법이 없어요. 먼저 TCP로 호스트에 접속되는지(SSH나 웹 포트) 확인하고, 친구에게 게임으로 직접 접속해 달라고 하세요.</p></article><article data-hqb="5" hidden><h3>입력한 주소는 누가 볼 수 있나요?</h3><p>측정을 하는 Globalping과 DoH로 조회하는 DNS 서비스예요. 우리는 저장하지 않아요. 결과 링크에는 주소와 결과가 들어 있어 다른 사람이 같은 결과를 볼 수 있지만, 내 IP는 들어가지 않아요.</p><p>Globalping 한도는 IP당 시간마다 250개 지역이고, 한 번 확인에 18개를 써요. 다 쓰면 언제 다시 쓸 수 있는지 페이지에 알려 줘요.</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>어떻게 확인하나요?</h3><p>18개 지역에 있는 Globalping 자원봉사 측정 지점이 각각 내 주소와 포트에 접속해 HTTP(S) 요청을 한 번 보내고, 단계별 시간을 재요. DNS 조회, TCP 연결, TLS 핸드셰이크, 첫 바이트. 실패하면 오류로 어디서 멈췄는지 알 수 있어요. 거부, 시간 초과, 재설정, TLS 문제, 웹 페이지가 아닌 서비스.</p><p>내 브라우저에서도 한 번 접속해요(표의 첫 줄). 어느 것도 우리 서버를 거치지 않아요.</p></article><article data-hqb="1" hidden><h3>나는 열리는데 왜 다른 사람은 접속하지 못하나요?</h3><p>서비스와 같은 네트워크에 있으면 트래픽이 집 밖으로 나가지 않아요. 그래서 내가 열 수 있다고 밖에서도 된다는 뜻은 아니에요. 프록시를 쓰면 다른 사람과 다른 경로로 가기도 해요. 외부 확인 결과를 기준으로 보세요. 모르는 사람이 접속하는 방식 그대로 연결해요.</p></article><article data-hqb="2" hidden><h3>포트 포워딩을 했는데 왜 여전히 시간 초과인가요?</h3><p>흔한 원인: 공인 IPv4가 없음(공유기 WAN 주소가 100.64~100.127로 시작하거나 공인 IP와 다르면 통신사 NAT). NAS, Windows, 클라우드 보안 그룹의 방화벽이 허용하지 않음. 통신사가 가정용 회선의 80, 443 같은 포트를 막음. 포워딩이 기기의 예전 내부 IP를 가리킴.</p><p>IPv6라면 공유기의 IPv6 방화벽이 들어오는 연결을 막고 있으니 그 포트를 허용하세요.</p></article><article data-hqb="3" hidden><h3>'거부'와 '시간 초과'는 뭐가 다른가요?</h3><p>거부: 패킷은 기기에 도착했지만 그 포트에서 기다리는 프로그램이 없어요. 서비스가 꺼져 있거나, 127.0.0.1에서만 기다리거나, 포워딩 포트가 틀렸어요.</p><p>시간 초과: 아무 응답이 없어요. 방화벽이 패킷을 버렸거나, 포트 포워딩이 없거나, 주소가 틀렸어요.</p></article><article data-hqb="4" hidden><h3>게임이나 WireGuard의 UDP 포트도 확인할 수 있나요?</h3><p>아니요. UDP 서비스는 올바른 메시지를 받지 않으면 보통 응답하지 않아서, 브라우저도 공개 측정 지점도 UDP 포트가 열렸는지 판단할 일반적인 방법이 없어요. 먼저 TCP로 호스트에 접속되는지(SSH나 웹 포트) 확인하고, 친구에게 게임으로 직접 접속해 달라고 하세요.</p></article><article data-hqb="5" hidden><h3>입력한 주소는 누가 볼 수 있나요?</h3><p>측정을 하는 Globalping이에요. 우리는 저장하지 않아요. 결과 링크에는 주소와 결과가 들어 있어 다른 사람이 같은 결과를 볼 수 있지만, 내 IP는 들어가지 않아요.</p><p>Globalping 한도는 IP당 시간마다 250개 지역이고, 한 번 확인에 18개를 써요. 다 쓰면 언제 다시 쓸 수 있는지 페이지에 알려 줘요.</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"ko","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.ko.8756777705.js"></script>
-<script src="/assets/app.5edc1f3b66.js"></script>
+<script src="/assets/l.ko.659824665f.js"></script>
+<script src="/assets/app.0bc0404d24.js"></script>
 </body>
 </html>

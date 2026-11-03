@@ -11,16 +11,15 @@ export default {
   lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
 
   f_target: "地址", f_target_ph: "域名、IP 或网址，例如 nas.example.com", f_port: "端口", f_ipv: "IP 版本", go: "开始检测",
-  myip_btn: "用我现在的 IP",
+
   h_regions: "从全球各地连过去",
   lg_dns: "DNS", lg_tcp: "TCP 握手", lg_tls: "TLS 握手", lg_fb: "首字节", lg_dl: "下载",
   h_local: "从你这里连过去",
 
-  h_dns: "DNS 解析",
  copied: "已复制",
   src_gp: "数据来源：{gp} 志愿者探针",
 
-  foot_src: "数据来源：{gp}（外部检测和追踪路由），阿里 DNS、Cloudflare、Google（DNS），{ipify} 和 {ipsb}（你的 IP）。",
+  foot_src: "数据来源：{gp}（外部检测和追踪路由）。",
 
   sep: "、",
   g_cn: "中国大陆", g_apac: "亚太", g_emea: "欧洲 · 中东 · 非洲", g_am: "美洲",
@@ -28,12 +27,12 @@ export default {
   city_Tokyo: "东京", city_London: "伦敦", city_Frankfurt: "法兰克福", city_LosAngeles: "洛杉矶", city_NewYork: "纽约", city_SaoPaulo: "圣保罗",
   p_web: "网站", p_web_http: "网站 HTTP", p_dsm: "群晖 DSM", p_rdp: "远程桌面", p_udp: "UDP 游戏（帕鲁等）",
   what_ssh: "SSH", what_rdp: "远程桌面", what_mc: "Minecraft 服务器",
-  udp_note: "UDP 端口（幻兽帕鲁、CS2、WireGuard 等）在浏览器和公共探针里都测不了：没有通用的办法判断 UDP 端口开没开。可以先测主机能不能连上（选 SSH 或网站），再让朋友直接用游戏连。",
+
   quota_ok: "本小时还能测 {left} 个地区次，每次检测用 {cost} 个",
   quota_out: "外部检测的额度用完了，约 {min} 分钟后恢复（每个 IP 每小时 250 个地区次）",
-  myip_wait: "查询中…", myip_got: "你现在的公网 IP：{ip}。开着代理的话，这可能是代理的 IP。", myip_none: "没查到你的公网 IP。",
+
   bad_target: "地址看不懂：请填域名、IP 或网址。",
-  local_wait: "正在从你的浏览器连接…", dns_isip: "直接填的是 IP，不需要解析。", dns_wait: "查询中…",
+
   gp_unreach: "连不上 Globalping 的接口，外部检测没有运行。",
   gp_429: "外部检测的额度用完了，约 {min} 分钟后恢复。下面「从你这里」和 DNS 的结果不受影响。",
   gp_err: "外部检测没有运行：{msg}",
@@ -66,16 +65,10 @@ export default {
   lc_plain: "这个服务是不加密的 HTTP，网页里只能用 HTTPS 去连，所以只能判断有没有回应。",
   lc_none: "不通", lc_none_s: "{s} 秒没有回应", lc_none_p: "从你这里连 {url} 没有任何回应。",
 
-  rv_ali: "阿里 DNS",
-  dns_failres: "你这里连不上这个解析服务", dns_nx: "域名不存在", dns_fail: "解析失败（{code}）", dns_none: "无",
-  dns_cname: "别名（CNAME）：{chain}",
-  ip_private: "{ip} 是内网地址，只在同一个局域网里能用，外面的人连不到。",
   ip_cgnat: "{ip} 在 100.64.0.0/10 里（运营商级 NAT）：不是公网地址，端口转发不会生效。",
   ip_fakeip: "{ip} 是代理软件的 fake-ip，不是真实地址。关掉代理，或者以 DoH 的结果为准。",
-  ip_cf: "{ip} 属于 Cloudflare：域名开着代理（橙色云），外面的人连的是 Cloudflare，不是你的服务器。",
-  dns_differ: "各家解析服务的答案不一样。用了 CDN 或按地区解析时，这是正常的；如果刚改过记录，说明还没全部生效（TTL {ttl} 秒）。",
-  dns_cnpoison: "阿里 DNS 的答案和国外探针解析到的地址（{ips}）完全不同。按地区解析的 CDN 会这样，DNS 污染也会这样：看下面中国三网能不能连上。",
-  dns_ddns: "你现在的公网 IPv4 是 {ip}，和 DNS 里的不一样。如果服务就在你这里（比如家里的 NAS），说明 DDNS 没有更新；开着代理时，这里显示的可能是代理的 IP。",
+
+
 
   v_wait: "检测中…", v_wait_sub: "已有 {n} / {of} 个地区返回结果",
   v_gpoff: "外部检测没有运行",
@@ -129,13 +122,14 @@ export default {
   share: "分享", share_desc: "{n} 个地区里有 {ok} 个能连上 {target}", lk_ipv6: "你自己的网络支持 IPv6 吗", lk_asn: "这个 IP 归谁（ASN 查询）",
   faq_h: "常见问题", a_close: "关闭", a_prev: "上一条", a_next: "下一条", lk_check: "做一次完整体检",
   docs: [
-    ["怎么检测的？", "Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。\n你自己的浏览器也会连一次，并通过 DoH 向阿里 DNS、Cloudflare、Google 查询这个地址。这些请求都不经过我们的服务器。"],
+    ["怎么检测的？", "Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。\n你自己的浏览器也会连一次，结果在表格第一行。这些请求都不经过我们的服务器。"],
     ["我自己能打开，为什么别人连不上？", "如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。"],
     ["端口转发设好了，为什么还是超时？", "常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。\n用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。"],
     ["「拒绝连接」和「超时」有什么区别？", "拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。\n超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。"],
     ["能测游戏或 WireGuard 用的 UDP 端口吗？", "不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。"],
-    ["我填的地址谁能看到？", "运行探针的 Globalping，以及通过 DoH 查询的几家 DNS 服务。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。\n每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"],
+    ["我填的地址谁能看到？", "运行探针的 Globalping。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。\n每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"],
   ],
-  f_kind: "类型", p_custom: "其他端口", b_invite: "请朋友测", invite_tip: "复制一个链接，朋友打开就会用他的浏览器测你的服务", k_reach: "地区能连上", k_cn: "中国三网",
-  k_local: "从你这里", ks_ok: "能打开", ks_ans: "有回应", ks_none: "不通", ks_blocked: "测不了", more_steps: "还有 {n} 条建议", pl_open: "端口开着", pl_web: "不是网页", pl_nottls: "不是 HTTPS", pl_refused: "拒绝连接", pl_timeout: "超时", pl_dns: "解析失败", pl_unreach: "不可达", pl_reset: "被重置", pl_tls: "TLS 失败", pl_slow: "无响应", pl_other: "失败",
+ b_invite: "请朋友测", invite_tip: "复制一个链接，朋友打开就会用他的浏览器测你的服务",
+ ks_ok: "能打开", ks_ans: "有回应", ks_none: "不通", ks_blocked: "测不了", more_steps: "还有 {n} 条建议", pl_open: "端口开着", pl_web: "不是网页", pl_nottls: "不是 HTTPS", pl_refused: "拒绝连接", pl_timeout: "超时", pl_dns: "解析失败", pl_unreach: "不可达", pl_reset: "被重置", pl_tls: "TLS 失败", pl_slow: "无响应", pl_other: "失败",
+  r_browser: "你的浏览器", fa_world: "全球", fa_cn: "中国三网", fa_you: "你这里", fa_ok: "{ok}/{n} 能连上",
 };

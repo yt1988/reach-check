@@ -27,54 +27,49 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>{{h1}}</h1>
-    <p class="intro" data-i="intro"></p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target"></span><button type="button" class="link" id="myip" data-i="myip_btn"></button></span>
-          <input id="target" name="t" placeholder="{{a:f_target_ph}}" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind"></span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port"></span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv"></span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go"></button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>{{h1}}</h1>
+      <p class="intro" data-i="intro"></p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target"></span>
+            <input id="target" name="t" placeholder="{{a:f_target_ph}}" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port"></span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv"></span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go"></button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite"></button><button class="btn" id="shareBtn" type="button" hidden data-i="share"></button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions"></h3><span class="src m">{{srcGp}}</span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns"></span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp"></span></span><span><i class="seg s-tls"></i><span data-i="lg_tls"></span></span><span><i class="seg s-fb"></i><span data-i="lg_fb"></span></span><span><i class="seg s-dl"></i><span data-i="lg_dl"></span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions"></h3><span class="src m">{{srcGp}}</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns"></span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp"></span></span><span><i class="seg s-tls"></i><span data-i="lg_tls"></span></span><span><i class="seg s-fb"></i><span data-i="lg_fb"></span></span><span><i class="seg s-dl"></i><span data-i="lg_dl"></span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local"></h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns"></h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
   <footer class="foot m"><p>{{footSrc}}</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>

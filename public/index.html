@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/en.png">
 <meta name="twitter:title" content="Reach Check: can other people reach your website, NAS or game server?">
 <meta name="twitter:description" content="From 18 regions and your browser: where it stops, and what to check next">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Free reachability check from 18 regions, including China Telecom, Unicom and Mobile, and from your own browser. See DNS, TCP, TLS and first-byte times for each, where a failed connection stops, and what to check next: port forwarding, firewalls, CGNAT, blocked ports, certificates.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does the check work?","acceptedAnswer":{"@type":"Answer","text":"Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page. Your own browser connects too, and AliDNS, Cloudflare and Google are asked for the address over DoH. None of it goes through our servers."}},{"@type":"Question","name":"It opens for me. Why can't others reach it?","acceptedAnswer":{"@type":"Answer","text":"If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."}},{"@type":"Question","name":"I set up port forwarding. Why does it still time out?","acceptedAnswer":{"@type":"Answer","text":"The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP. With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."}},{"@type":"Question","name":"What's the difference between refused and timed out?","acceptedAnswer":{"@type":"Answer","text":"Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port. Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."}},{"@type":"Question","name":"Can it check UDP ports for games or WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."}},{"@type":"Question","name":"Who sees the address I enter?","acceptedAnswer":{"@type":"Answer","text":"Globalping, which runs the probes, and the DNS services asked over DoH. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP. Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Reach Check · 1ms.dog","url":"https://reach.1ms.dog/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Free reachability check from 18 regions, including China Telecom, Unicom and Mobile, and from your own browser. See DNS, TCP, TLS and first-byte times for each, where a failed connection stops, and what to check next: port forwarding, firewalls, CGNAT, blocked ports, certificates.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does the check work?","acceptedAnswer":{"@type":"Answer","text":"Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page. Your own browser connects too: that's the table's first line. None of it goes through our servers."}},{"@type":"Question","name":"It opens for me. Why can't others reach it?","acceptedAnswer":{"@type":"Answer","text":"If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."}},{"@type":"Question","name":"I set up port forwarding. Why does it still time out?","acceptedAnswer":{"@type":"Answer","text":"The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP. With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."}},{"@type":"Question","name":"What's the difference between refused and timed out?","acceptedAnswer":{"@type":"Answer","text":"Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port. Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."}},{"@type":"Question","name":"Can it check UDP ports for games or WireGuard?","acceptedAnswer":{"@type":"Answer","text":"No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."}},{"@type":"Question","name":"Who sees the address I enter?","acceptedAnswer":{"@type":"Answer","text":"Globalping, which runs the probes. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP. Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4692e25b68.css">
+<link rel="stylesheet" href="/assets/app.025a2348a4.css">
 </head>
 <body>
 <div class="app">
@@ -62,56 +62,51 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>Can other people reach your service?</h1>
-    <p class="intro" data-i="intro">Checks your website, NAS or game server from 18 regions and from your own browser, then tells you where it stops and what to check next.</p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Address</span><button type="button" class="link" id="myip" data-i="myip_btn">Use my current IP</button></span>
-          <input id="target" name="t" placeholder="Domain, IP or URL, e.g. nas.example.com" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind">Service</span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port">Port</span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv">IP version</span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go">Check</button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>Can other people reach your service?</h1>
+      <p class="intro" data-i="intro">Checks your website, NAS or game server from 18 regions and from your own browser, then tells you where it stops and what to check next.</p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target">Address</span>
+            <input id="target" name="t" placeholder="Domain, IP or URL, e.g. nas.example.com" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port">Port</span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv">IP version</span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go">Check</button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Ask a friend</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Share</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">From around the world</h3><span class="src m">Data: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>'s volunteer probes</span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP handshake</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS handshake</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">First byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions">From around the world</h3><span class="src m">Data: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>'s volunteer probes</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP handshake</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS handshake</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">First byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local">From your browser</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>Data sources: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (the outside check and trace route), AliDNS, Cloudflare and Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> and <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (your IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>Data source: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (the outside check and trace route).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -124,12 +119,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="Next"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>How does the check work?</h3><p>Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.</p><p>Your own browser connects too, and AliDNS, Cloudflare and Google are asked for the address over DoH. None of it goes through our servers.</p></article><article data-hqb="1" hidden><h3>It opens for me. Why can't others reach it?</h3><p>If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do.</p></article><article data-hqb="2" hidden><h3>I set up port forwarding. Why does it still time out?</h3><p>The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP.</p><p>With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port.</p></article><article data-hqb="3" hidden><h3>What's the difference between refused and timed out?</h3><p>Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port.</p><p>Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong.</p></article><article data-hqb="4" hidden><h3>Can it check UDP ports for games or WireGuard?</h3><p>No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself.</p></article><article data-hqb="5" hidden><h3>Who sees the address I enter?</h3><p>Globalping, which runs the probes, and the DNS services asked over DoH. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP.</p><p>Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back.</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>How does the check work?</h3><p>Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.</p><p>Your own browser connects too: that's the table's first line. None of it goes through our servers.</p></article><article data-hqb="1" hidden><h3>It opens for me. Why can't others reach it?</h3><p>If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do.</p></article><article data-hqb="2" hidden><h3>I set up port forwarding. Why does it still time out?</h3><p>The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP.</p><p>With IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port.</p></article><article data-hqb="3" hidden><h3>What's the difference between refused and timed out?</h3><p>Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port.</p><p>Timed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong.</p></article><article data-hqb="4" hidden><h3>Can it check UDP ports for games or WireGuard?</h3><p>No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself.</p></article><article data-hqb="5" hidden><h3>Who sees the address I enter?</h3><p>Globalping, which runs the probes. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP.</p><p>Each IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back.</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"en","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.en.01ff6f9385.js"></script>
-<script src="/assets/app.5edc1f3b66.js"></script>
+<script src="/assets/l.en.b26c9d1671.js"></script>
+<script src="/assets/app.0bc0404d24.js"></script>
 </body>
 </html>

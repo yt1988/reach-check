@@ -191,22 +191,15 @@ function parseTarget(raw, portField) {
 
 // ---------- page state ----------
 
-let preset = PRESETS[0], run = 0, myIp = {}, state;
+let preset = PRESETS[0], run = 0, state;
 
-// The kind of service, as one menu: picking one fills the port; typing a port picks its kind, or "other"
+// The port field suggests the usual services (443 · Website, 5001 · Synology DSM…); the port typed picks its service
 function renderPresets() {
-  $("kind").innerHTML = PRESETS.map((p, i) => `<option value="${i}"${p === preset ? " selected" : ""}>${esc(presetName(p))}${p.port ? ` · ${p.port}` : ""}</option>`).join("") +
-    `<option value="-1"${preset ? "" : " selected"}>${esc(t("p_custom"))}</option>`;
+  $("ports").innerHTML = PRESETS.filter(p => !p.udp).map(p => `<option value="${p.port}">${esc(presetName(p))}</option>`).join("");
 }
-$("kind").addEventListener("change", e => {
-  const p = PRESETS[+e.target.value];
-  $("myipNote").textContent = p?.udp ? t("udp_note") : "";
-  if (!p || p.udp) return;
-  preset = p; $("port").value = p.port;
-});
 $("port").addEventListener("input", () => {
   preset = PRESETS.find(p => p.port === +$("port").value && !p.udp) || null;
-  renderPresets();
+  $("portNote").textContent = preset ? presetName(preset) : "";
 });
 
 async function loadQuota() {
@@ -219,26 +212,6 @@ function showQuota(left, reset) {
   if (state) state.quota = { left, reset };
   const cost = REGIONS.length;
   $("quota").textContent = left >= cost ? t("quota_ok", { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
-}
-
-$("myip").addEventListener("click", async () => {
-  $("myipNote").textContent = t("myip_wait");
-  await fetchMyIp();
-  const ip = myIp.v4 || myIp.any;
-  if (ip) { $("target").value = ip; $("myipNote").textContent = t("myip_got", { ip: list([myIp.v4, myIp.any !== myIp.v4 && myIp.any].filter(Boolean)) }); }
-  else $("myipNote").textContent = t("myip_none");
-});
-// The visitor's IP: the shell's /_ms/me first (Cloudflare's view of this connection, no third party); self-hosted it's
-// a 404, and the other address family needs an outside service anyway
-async function fetchMyIp() {
-  const get = async (u, f) => { try { const c = new AbortController(); setTimeout(() => c.abort(), 5000); return await f(await fetch(u, { signal: c.signal })); } catch { return ""; } };
-  const me = await get("/_ms/me", async r => r.ok ? (await r.json()).ip || "" : "");
-  if (isV4(me)) { myIp = { v4: me, any: me }; return; }
-  const [v4, any] = await Promise.all([
-    get("https://api.ipify.org?format=json", async r => (await r.json()).ip),
-    get("https://api.ip.sb/ip", async r => (await r.text()).trim()),
-  ]);
-  myIp = { v4: isV4(v4) ? v4 : isV4(any) ? any : "", any: me || any || v4 };
 }
 
 // "Ask a friend": copies a link that runs the same check in the friend's browser
@@ -257,7 +230,7 @@ $("f").addEventListener("submit", e => { e.preventDefault(); start(); });
 function start() {
   const raw = $("target").value.trim();
   const tg = parseTarget(raw, $("port").value);
-  if (!tg) { $("myipNote").textContent = t("bad_target"); return; }
+  if (!tg) { $("portNote").textContent = t("bad_target"); return; }
   tg.raw = raw;
   if (!tg.port) tg.port = preset?.port || 443;
   const pr = PRESETS.find(p => p.port === tg.port && !p.udp);
@@ -265,22 +238,18 @@ function start() {
   const web = tg.scheme ? true : pr ? pr.web : true;
   const id = ++run;
   state = { id, t: tg, proto, web, whatKey: pr?.what || "", home: !!pr?.home, plainWeb: proto === "HTTP" && web && (!!pr || tg.scheme === "http"),
-    ipv: $("ipv").value, rows: REGIONS.map(() => null), gpDone: false, local: null, dns: null, quota: state?.quota, ts: Date.now() };
+    ipv: $("ipv").value, rows: REGIONS.map(() => null), gpDone: false, local: null, quota: state?.quota, ts: Date.now() };
   if (recv) { recv.remove(); recv = null; }
 
   const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}`;
   history.replaceState(null, "", D.paths[D.lang] + q);    // also leaves a shared result's /r/ link
-  $("out").hidden = false;
+  $("verdict").hidden = $("table").hidden = false;
   $("go").disabled = true;
   showOut(tg);
   $("shareBtn").hidden = true;
   drawRegions(); drawVerdict();
-  $("local").innerHTML = `<p class="m blink">${esc(t("local_wait"))}</p>`;
-  $("dns").innerHTML = tg.isIp ? `<p class="m">${esc(t("dns_isip"))}</p>${ipNote(tg.host)}` : `<p class="m blink">${esc(t("dns_wait"))}</p>`;
 
   const jobs = [runGlobalping(state), runLocal(state)];
-  if (!tg.isIp) jobs.push(runDns(state));
-  if (!myIp.any) jobs.push(fetchMyIp().then(() => state.id === id && state.dns && drawDns()));
   Promise.allSettled(jobs).then(() => { if (state.id === id) { $("go").disabled = false; drawVerdict(); $("shareBtn").hidden = false; loadQuota(); } });
 }
 
@@ -310,7 +279,7 @@ async function runGlobalping(s) {
     if (m.status !== "in-progress") break;
   }
   s.gpDone = true;
-  drawRegions(); drawVerdict(); if (s.dns) drawDns();
+  drawRegions(); drawVerdict();
 }
 function gpFail(s, msg) { s.gpDone = true; s.gpError = msg; drawRegions(); drawVerdict(); }
 
@@ -396,47 +365,25 @@ async function runLocal(s) {
   drawLocal();
 }
 
-// ---------- DNS over HTTPS ----------
-
-const RESOLVERS = [
-  { name: () => t("rv_ali"), url: (n, ty) => `https://dns.alidns.com/resolve?name=${n}&type=${ty}` },
-  { name: () => "Cloudflare", url: (n, ty) => `https://cloudflare-dns.com/dns-query?name=${n}&type=${ty}`, accept: "application/dns-json" },
-  { name: () => "Google", url: (n, ty) => `https://dns.google/resolve?name=${n}&type=${ty}` },
-];
-async function runDns(s) {
-  const q = async (rv, type) => {
-    const c = new AbortController(); setTimeout(() => c.abort(), 5000);
-    try {
-      const j = await (await fetch(rv.url(encodeURIComponent(s.t.host), type), { headers: rv.accept ? { accept: rv.accept } : {}, signal: c.signal })).json();
-      const ans = j.Answer || [];
-      return { status: j.Status, ans: ans.filter(a => a.type === type).map(a => a.data), cname: ans.filter(a => a.type === 5).map(a => a.data.replace(/\.$/, "")), ttl: ans[0]?.TTL };
-    } catch { return { fail: true }; }
-  };
-  s.dns = await Promise.all(RESOLVERS.map(async rv => ({ rv, a: await q(rv, 1), aaaa: await q(rv, 28) })));
-  if (s.id === run) { drawDns(); drawVerdict(); }
-}
-const dnsIps = s => [...new Set((s.dns || []).flatMap(d => [...(d.a.ans || []), ...(d.aaaa.ans || [])]))];
-
-function ipNote(ip) {
-  const k = ipKind(ip);
-  return ["private", "cgnat", "fakeip", "cf"].includes(k) ? `<p class="flag${k === "private" || k === "cgnat" ? " bad" : ""}">${esc(t("ip_" + k, { ip }))}</p>` : "";
-}
+// The addresses the probes connected to: what DNS gave them (or the IP that was typed)
+const dnsIps = s => [...new Set(s.rows.map(r => r?.res?.resolvedAddress).filter(Boolean))];
 
 // ---------- drawing ----------
 
 const failStage = k => ({ dns: "fs_dns", refused: "fs_refused", timeout: "fs_timeout", unreach: "fs_unreach", reset: "fs_reset", tls: "fs_tls", nothttp: "fs_nothttp", nottls: "fs_nottls", slow: "fs_slow" })[k];
 
 function drawRegions() {
-  const s = state; let html = "", g = "";
+  const s = state; let html = "", g = "", first = true;
   // Bars for every probe that reached the port; one that stopped earlier is hatched and doesn't set the scale
   const span = r => r.res.status === "finished" ? r.res.timings.total : (r.res.timings.dns || 0) + r.res.timings.tcp + (r.res.timings.tls || 0);
   const drawn = r => r?.c && REACHED.has(r.c.k) && r.res.timings?.tcp != null;
-  const max = Math.max(200, ...s.rows.filter(drawn).map(span));
+  const max = Math.max(200, ...s.rows.filter(drawn).map(span), s.local?.k === "ok" ? s.local.ms : 0);
   const tcps = s.rows.filter(r => r?.c && r.res.timings?.tcp != null).map(r => r.res.timings.tcp).sort((a, b) => a - b);
   const tcpMed = tcps[Math.floor(tcps.length / 2)] || 0;
   // One line per region: name, a short status, the time bar, the total. A click opens the details: the full status,
   // the probe's network, the address it reached, each step's time, and trace route.
   REGIONS.forEach((x, i) => {
+    if (first) { first = false; html += localRow(s, max); }
     if (x.g !== g) { g = x.g; html += `<div class="grp">${esc(t("g_" + g))}</div>`; }
     const row = s.rows[i];
     let pl = `<span class="pill m blink">${esc(t("r_queue"))}</span>`, bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
@@ -476,46 +423,39 @@ function drawRegions() {
   $("gpNote").innerHTML = s.gpError ? `<span class="st-warn">${esc(s.gpError)}</span>` : "";
 }
 
-// This browser: the outcome in one line, then the numbers or what the outcome can and can't tell
-function drawLocal() {
-  const s = state, l = s.local, ms = v => `${Math.round(v)} ms`;
-  const url = `https://${isV6(s.t.host) ? `[${s.t.host}]` : s.t.host}:${s.t.port}`;
-  let h = "";
-  if (l.k === "blocked") h = `<p class="st-warn">${esc(t("lc_blocked"))}</p><p class="m">${esc(t("lc_blocked_p", { port: s.t.port }))}</p>`;
-  else if (l.k === "ok") {
-    const setup = l.warm != null ? Math.max(0, l.ms - l.warm) : null;
-    const tao = esc(t("lc_tao")).replace("{h}", "Timing-Allow-Origin: *");
-    h = `<p class="st-ok">${esc(t("lc_ok"))}</p><p class="nums" title="${tao}"><span>${esc(t("lc_first"))} <b>${ms(l.ms)}</b></span>` +
-      (setup != null ? `<span>${esc(t("lc_setup"))} <b>≈ ${ms(setup)}</b></span><span>${esc(t("lc_req"))} <b>${ms(l.warm)}</b></span>` : "") + `</p>`;
-  } else if (l.k === "answered") h = `<p class="st-warn">${esc(t("lc_ans"))} <span class="mono m">${ms(l.ms)}</span></p><p class="m">${esc(t("lc_ans_p"))}${s.plainWeb ? " " + esc(t("lc_plain")) : ""}</p>`;
-  else h = `<p class="st-bad">${esc(t("lc_none"))} <span class="mono m">${esc(t("lc_none_s", { s: LOCAL_TIMEOUT / 1000 }))}</span></p><p class="m">${esc(t("lc_none_p", { url }))}</p>`;
-  $("local").innerHTML = h;
-  drawVerdict();
-}
+// This browser is the table's first row; drawing it is drawing the table
+function drawLocal() { drawRegions(); drawVerdict(); }
 
-function drawDns() {
-  const s = state; if (!s.dns) return;
-  const cell = q => q.fail ? `<span class="m">${esc(t("dns_failres"))}</span>` : q.status === 3 ? `<span class="st-bad">${esc(t("dns_nx"))}</span>`
-    : q.status ? `<span class="st-bad">${esc(t("dns_fail", { code: q.status === 2 ? "SERVFAIL" : q.status }))}</span>`
-    : q.ans.length ? `<span class="mono">${q.ans.map(a => isV4(a) || isV6(a) ? ipVal(a) : esc(a)).join("<br>")}</span>` : `<span class="m">${esc(t("dns_none"))}</span>`;
-  let h = `<dl class="kv">`;
-  for (const d of s.dns) h += `<dt>${esc(d.rv.name())}</dt><dd>${cell(d.a)}${d.aaaa.ans?.length ? `<br>${cell(d.aaaa)}` : ""}</dd>`;
-  h += `</dl>`;
-  const cname = s.dns.find(d => d.a.cname?.length)?.a.cname;
-  if (cname) h += `<p class="m">${esc(t("dns_cname", { chain: "\u0000" })).replace("\u0000", `<span class="mono">${cname.map(esc).join(" → ")}</span>`)}</p>`;
-  const ips = dnsIps(s);
-  h += ips.map(ipNote).join("");
-  const sets = s.dns.filter(d => !d.a.fail && d.a.ans).map(d => [...d.a.ans].sort().join());
-  if (new Set(sets).size > 1) h += `<p class="flag">${esc(t("dns_differ", { ttl: s.dns.find(d => d.a.ttl)?.a.ttl ?? "?" }))}</p>`;
-  // A domestic resolver answering differently from every probe abroad: poisoned, or location-based DNS
-  const abroad = new Set(s.rows.filter((r, i) => r?.res && !REGIONS[i].cn).map(r => r.res.resolvedAddress).filter(Boolean));
-  const ali = s.dns[0].a.ans || [];
-  if (abroad.size && ali.length && !ali.some(ip => abroad.has(ip))) h += `<p class="flag">${esc(t("dns_cnpoison", { ips: list([...abroad].slice(0, 2)) }))}</p>`;
-  if (s.home && !ips.some(ip => ipKind(ip) === "cf") && myIp.v4 && !ips.includes(myIp.v4) && ips.some(isV4))
-    h += `<p class="m">${esc(t("dns_ddns", { ip: myIp.v4 }))}</p>`;
-  const l6 = toolLink("ipv6", "lk_ipv6");
-  if (l6 && (s.ipv === "6" || s.dns.some(d => d.aaaa.ans?.length))) h += `<p>${l6}</p>`;
-  $("dns").innerHTML = h;
+// Its line: what the browser saw, a bar of connecting then the request, the first request's time. Its details: what
+// that outcome can and can't tell, and where to look at the visitor's own connection more closely.
+function localRow(s, max) {
+  const l = s.local, ms = v => `${Math.round(v)} ms`;
+  let pl = `<span class="pill m blink">${esc(t("r_testing"))}</span>`, bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
+  if (l) {
+    const setup = l.k === "ok" && l.warm != null ? Math.max(0, l.ms - l.warm) : null;
+    const cls = { ok: "ok", answered: "warn", timeout: "bad", blocked: "m" }[l.k];
+    pl = `<span class="pill ${cls}">${esc(t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]))}</span>`;
+    if (l.k === "ok") {
+      const w = v => (v / max * 100).toFixed(2);
+      bar = setup != null ? `<div class="bar"><i class="s-setup" data-w="${w(setup)}"></i><i class="s-fb" data-w="${w(l.warm)}"></i></div>` : `<div class="bar"><i class="s-setup" data-w="${w(l.ms)}"></i></div>`;
+    } else if (l.k !== "blocked") bar = `<div class="bar fail"></div>`;
+    if (l.k === "ok" || l.k === "answered") tot = `<span class="rg-tot">${Math.round(l.ms)}<small class="m"> ms</small></span>`;
+    else if (l.k === "timeout") tot = `<span class="rg-tot wait">${(LOCAL_TIMEOUT / 1000).toFixed(1)}<small> s</small></span>`;
+    if (s.localOpen) {
+      const url = `https://${isV6(s.t.host) ? `[${s.t.host}]` : s.t.host}:${s.t.port}`;
+      const tao = esc(t("lc_tao")).replace("{h}", '<span class="mono">Timing-Allow-Origin: *</span>');
+      const body = l.k === "ok" ? `<p class="ok">${esc(t("lc_ok"))}</p><p class="segs">${esc(t("lc_first"))} ${ms(l.ms)}` +
+          (setup != null ? ` · ${esc(t("lc_setup"))} ≈ ${ms(setup)} · ${esc(t("lc_req"))} ${ms(l.warm)}` : "") + `</p><p class="m">${tao}</p>`
+        : l.k === "answered" ? `<p class="warn">${esc(t("lc_ans"))}</p><p class="m">${esc(t("lc_ans_p"))}${s.plainWeb ? " " + esc(t("lc_plain")) : ""}</p>`
+        : l.k === "timeout" ? `<p class="bad">${esc(t("lc_none"))}</p><p class="m">${esc(t("lc_none_p", { url }))}</p>`
+        : `<p>${esc(t("lc_blocked"))}</p><p class="m">${esc(t("lc_blocked_p", { port: s.t.port }))}</p>`;
+      const links = [toolLink("check", "lk_check"), toolLink("ipv6", "lk_ipv6")].filter(Boolean).join(" ");
+      more = `<div class="rg-more">${body}${links ? `<p class="links">${links}</p>` : ""}</div>`;
+    }
+  }
+  const can = !!l;
+  return `<div class="grp">${esc(t("h_local"))}</div><div class="rg${s.localOpen ? " open" : ""}"${can ? ` data-row="local" role="button" tabindex="0" aria-expanded="${!!s.localOpen}"` : ""}>` +
+    `<span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(t("r_browser"))}</span>${pl}${bar}${tot}${more}</div>`;
 }
 
 // ---------- verdict: can they reach it, and what to check next ----------
@@ -531,12 +471,13 @@ function drawVerdict() {
   const cn = rows.filter(r => REGIONS[s.rows.indexOf(r)].cn), ok = rows.filter(r => good(r.c, s));
   const tone = (a, n) => !n ? "" : a === n ? "ok" : a ? "warn" : "bad";
   const cnOk = cn.filter(r => good(r.c, s)).length, l = s.local;
-  const kpi = (val, label, cls) => `<div class="kpi"><b class="${cls}">${esc(val)}</b><span>${esc(t(label))}</span></div>`;
+  const ms = l?.k === "ok" || l?.k === "answered" ? ` <span class="m">· ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
+  const fact = (label, val, cls, extra = "") => `<dt>${esc(t(label))}</dt><dd><b class="${cls}">${esc(val)}</b>${extra}</dd>`;
   $("kpis").innerHTML =
-    kpi(done && rows.length ? `${ok.length}/${rows.length}` : "…", "k_reach", done ? tone(ok.length, rows.length) : "") +
-    kpi(done && cn.length ? `${cnOk}/${cn.length}` : "…", "k_cn", done ? tone(cnOk, cn.length) : "") +
-    kpi(l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…", "k_local",
-      l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "");
+    fact("fa_world", done && rows.length ? t("fa_ok", { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
+    fact("fa_cn", done && cn.length ? t("fa_ok", { ok: cnOk, n: cn.length }) : "…", done ? tone(cnOk, cn.length) : "") +
+    fact("fa_you", l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…",
+      l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "", ms);
   const steps = v.steps || [];
   $("vSteps").innerHTML = steps.slice(0, SHOWN_STEPS).map(x => `<li>${x}</li>`).join("");
   const rest = steps.slice(SHOWN_STEPS);
@@ -568,6 +509,7 @@ function verdict(s, rows) {
 
   if (cf && ![...CF_HTTP, ...CF_HTTPS].includes(port)) steps.push(tm("cf_port", { http: list(CF_HTTP), https: list(CF_HTTPS), port }));
   if (!s.t.isIp && s.ipv === "6" && rows.length && rows.every(r => r.c.k === "dns")) steps.push(tm("no_aaaa"));
+  for (const ip of allIps) if (["cgnat", "fakeip"].includes(ipKind(ip))) steps.push(tm("ip_" + ipKind(ip), { ip }));
 
   let title, cls, sub, key;
   if (ok.length === rows.length) {
@@ -581,7 +523,7 @@ function verdict(s, rows) {
     cls = "warn"; key = "v_cnfail"; title = t(key);
     sub = t("v_cnfail_sub", { why: list([...new Set(cnRows.map(r => rowStatus(r, s)[1]))]), n: wOk });
     const cnIps = cnRows.map(r => r.res.resolvedAddress).filter(Boolean), wIps = wRows.map(r => r.res.resolvedAddress).filter(Boolean);
-    const odd = !s.t.isIp && cnIps.find(ip => !wIps.includes(ip) && !ips.includes(ip));
+    const odd = !s.t.isIp && wIps.length && cnIps.find(ip => !wIps.includes(ip));   // an answer no probe abroad got
     if (odd) steps.push(tm("cn_poison", { ip: odd }));
     steps.push(tm("cn_1"), tm("cn_2"), tm("cn_3"));
   } else if (cnRows.length && cnOk === cnRows.length && !wOk) {
@@ -629,7 +571,10 @@ function localSteps(s, outside) {
 
 // ---------- trace route from one region, on request ----------
 
-const toggleRow = el => { const row = state.rows[+el.dataset.row]; if (row) { row.open = !row.open; drawRegions(); } };
+const toggleRow = el => {
+  if (el.dataset.row === "local") { state.localOpen = !state.localOpen; return drawRegions(); }
+  const row = state.rows[+el.dataset.row]; if (row) { row.open = !row.open; drawRegions(); }
+};
 $("regions").addEventListener("click", e => { const el = e.target.closest("[data-row]"); if (el && !e.target.closest("a, button, pre")) toggleRow(el); });
 $("regions").addEventListener("keydown", e => { const el = e.target.closest("[data-row]"); if (el && e.target === el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleRow(el); } });
 $("regions").addEventListener("click", async e => {
@@ -655,10 +600,9 @@ $("regions").addEventListener("click", async e => {
 let recv = null;
 function showOut(tg) { inviteUrl = `${location.origin}${D.paths.en}?t=${encodeURIComponent(tg.raw)}&p=${tg.port}&from=friend`; }
 
-// What the page showed, compactly. Never the visitor's own IP (myIp stays out).
+// What the page showed, compactly. Never the visitor's own IP.
 function pack(s) {
   const v = verdict(s, s.rows.filter(r => r?.c)), n = x => x == null ? null : Math.round(x);
-  const q = x => x.fail ? 0 : [x.status ?? 0, x.ans || [], x.cname || [], x.ttl ?? null];
   return {
     t: [s.t.host, s.t.port, s.t.path, s.t.scheme, s.ipv, s.proto, s.web ? 1 : 0, s.whatKey, s.home ? 1 : 0, s.plainWeb ? 1 : 0, s.t.raw],
     ts: s.ts, v: [v.key || "v_gpoff", v.ok || 0, v.n || 0], e: s.gpError || "",
@@ -670,12 +614,11 @@ function pack(s) {
         r.tls ? [r.tls.authorized ? 1 : 0, r.tls.expiresAt || "", r.tls.error || ""] : 0];
     }),
     l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
-    d: s.dns ? s.dns.map(d => [q(d.a), q(d.aaaa)]) : 0,
+    d: 0,
   };
 }
 function unpack(o) {
   const [host, port, path, scheme, ipv, proto, web, whatKey, home, plainWeb, raw] = o.t;
-  const q = x => x ? { status: x[0], ans: x[1], cname: x[2], ttl: x[3] } : { fail: true };
   return {
     id: ++run, shared: true, t: { host, port, path, scheme, raw: raw || host, isIp: isV4(host) || isV6(host) }, ipv, proto, web: !!web, whatKey, home: !!home,
     plainWeb: !!plainWeb, ts: o.ts, gpDone: true, gpError: o.e || "",
@@ -688,7 +631,6 @@ function unpack(o) {
         c: { k, code, tcp: tcp != null } };
     }),
     local: o.l ? { k: o.l[0], ms: o.l[1], warm: o.l[2] } : null,
-    dns: o.d ? o.d.map((d, i) => ({ rv: RESOLVERS[i], a: q(d[0]), aaaa: q(d[1]) })) : null,
   };
 }
 const resultLink = async s => `${location.origin}${D.paths[D.lang]}r/${await encodeResult(pack(s))}`;
@@ -731,7 +673,6 @@ window.msReport = () => state && state.gpDone ? { summary: `${verdict(state, sta
 // ---------- start ----------
 
 // under "from here": the visitor's own connection, checked in full by Network X-Ray
-$("checkLink").innerHTML = toolLink("check", "lk_check");
 renderPresets();
 loadQuota();
 const sp = sharePath(location.pathname);
@@ -741,9 +682,9 @@ if (sp) {
     if (!o) return;
     state = unpack(o);
     $("target").value = state.t.raw; $("port").value = state.t.port; $("ipv").value = state.ipv;
-    const p = PRESETS.find(x => x.port === state.t.port && !x.udp); if (p) { preset = p; renderPresets(); }
-    $("out").hidden = false; showOut(state.t);
-    drawRegions(); drawVerdict(); if (state.local) drawLocal(); if (state.dns) drawDns(); else $("dns").innerHTML = state.t.isIp ? `<p class="m">${esc(t("dns_isip"))}</p>${ipNote(state.t.host)}` : "";
+    const p = PRESETS.find(x => x.port === state.t.port && !x.udp); $("port").dispatchEvent(new Event("input"));
+    $("verdict").hidden = $("table").hidden = false; showOut(state.t);
+    drawRegions(); drawVerdict();
     $("shareBtn").hidden = false;
     const { received } = await import("/assets/share/share.js?v=5");
     recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });
@@ -752,7 +693,7 @@ if (sp) {
   const qs = new URLSearchParams(location.search);
   if (qs.get("t")) {
     $("target").value = qs.get("t");
-    if (qs.get("p")) { $("port").value = qs.get("p"); const p = PRESETS.find(x => x.port === +qs.get("p")); if (p) { preset = p; renderPresets(); } }
+    if (qs.get("p")) { $("port").value = qs.get("p"); const p = PRESETS.find(x => x.port === +qs.get("p")); $("port").dispatchEvent(new Event("input")); }
     if (qs.get("from") === "friend") start();
   }
 }

@@ -34,11 +34,11 @@ export async function loadI18n() {
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "intro", "lang_label", "f_target", "f_target_ph", "f_port", "f_ipv",
-  "go", "myip_btn", "h_regions", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "h_local", "local_note", "h_dns", "h_invite", "invite_p", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
+  "go", "h_regions", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
   "src_gp", "src_dns", "foot_src"]);
 
 // Data sources named in the page link to their sites
-const SOURCES = { gp: ["Globalping", "https://globalping.io"], ipify: ["ipify", "https://www.ipify.org"], ipsb: ["IP.SB", "https://ip.sb"] };
+const SOURCES = { gp: ["Globalping", "https://globalping.io"] };
 const links = s => esc(s).replace(/\{(\w+)\}/g, (m, k) => SOURCES[k] ? `<a href="${SOURCES[k][1]}" target="_blank" rel="noopener">${SOURCES[k][0]}</a>` : m);
 
 const pathOf = slug => "/" + (slug ? slug + "/" : "");
@@ -121,8 +121,7 @@ export async function build({ check = false } = {}) {
 > first-byte and download times per region. Each result is classed as a web answer, open but not HTTP, refused,
 > timed out, DNS failure, reset, TLS failure or no response, and the page names the likely cause and next steps
 > (port forwarding, firewalls, CGNAT, ports blocked by home broadband, Cloudflare's proxy ports, certificates,
-> blocking in mainland China). The browser also times two HTTPS requests itself, and asks AliDNS, Cloudflare and
-> Google over DoH. UDP ports can't be checked. Nothing is sent to this site.
+> blocking in mainland China). The browser also times two HTTPS requests itself. UDP ports can't be checked. Nothing is sent to this site.
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
 - Check an address directly: ${SITE}/?t=<domain, IP or URL>&p=<port>&from=friend

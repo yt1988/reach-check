@@ -12,16 +12,15 @@ export default {
   lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
 
   f_target: "Address", f_target_ph: "Domain, IP or URL, e.g. nas.example.com", f_port: "Port", f_ipv: "IP version", go: "Check",
-  myip_btn: "Use my current IP",
+
   h_regions: "From around the world",
   lg_dns: "DNS", lg_tcp: "TCP handshake", lg_tls: "TLS handshake", lg_fb: "First byte", lg_dl: "Download",
   h_local: "From your browser",
 
-  h_dns: "DNS",
  copied: "Copied",
   src_gp: "Data: {gp}'s volunteer probes",
 
-  foot_src: "Data sources: {gp} (the outside check and trace route), AliDNS, Cloudflare and Google (DNS), {ipify} and {ipsb} (your IP).",
+  foot_src: "Data source: {gp} (the outside check and trace route).",
 
   // runtime
   sep: ", ",
@@ -30,12 +29,12 @@ export default {
   city_Tokyo: "Tokyo", city_London: "London", city_Frankfurt: "Frankfurt", city_LosAngeles: "Los Angeles", city_NewYork: "New York", city_SaoPaulo: "São Paulo",
   p_web: "Website", p_web_http: "Website (HTTP)", p_dsm: "Synology DSM", p_rdp: "Remote Desktop", p_udp: "UDP games (Palworld…)",
   what_ssh: "SSH", what_rdp: "Remote Desktop", what_mc: "a Minecraft server",
-  udp_note: "UDP ports (Palworld, CS2, WireGuard…) can't be checked from a browser or a public probe: there's no general way to tell whether a UDP port is open. Check that the host is reachable (pick SSH or Website), then ask a friend to join the game.",
+
   quota_ok: "{left} region checks left this hour; one check uses {cost}",
   quota_out: "The outside check's allowance is used up; it comes back in about {min} min (250 region checks per IP per hour)",
-  myip_wait: "Looking up…", myip_got: "Your public IP right now: {ip}. With a proxy on, this may be the proxy's.", myip_none: "Couldn't find your public IP.",
+
   bad_target: "That address doesn't look right: enter a domain, an IP or a URL.",
-  local_wait: "Connecting from your browser…", dns_isip: "You entered an IP, so there's nothing to look up.", dns_wait: "Looking up…",
+
   gp_unreach: "Couldn't reach Globalping's API, so the outside check didn't run.",
   gp_429: "The outside check's allowance is used up; it comes back in about {min} min. The browser and DNS results below aren't affected.",
   gp_err: "The outside check didn't run: {msg}",
@@ -68,16 +67,10 @@ export default {
   lc_plain: "This service is plain HTTP, and a web page can only connect over HTTPS, so all we can tell is whether something answered.",
   lc_none: "No connection", lc_none_s: "no answer in {s} s", lc_none_p: "Nothing answered at {url} from here.",
 
-  rv_ali: "AliDNS",
-  dns_failres: "This resolver can't be reached from here", dns_nx: "Domain doesn't exist", dns_fail: "Lookup failed ({code})", dns_none: "None",
-  dns_cname: "Alias (CNAME): {chain}",
-  ip_private: "{ip} is a private address: it only works inside the same local network, and nobody outside can reach it.",
   ip_cgnat: "{ip} is in 100.64.0.0/10 (carrier-grade NAT): not a public address, so port forwarding won't work.",
   ip_fakeip: "{ip} is a proxy app's fake-ip, not a real address. Turn the proxy off, or go by the DoH answers.",
-  ip_cf: "{ip} belongs to Cloudflare: the domain is proxied (orange cloud), so visitors connect to Cloudflare, not to your server.",
-  dns_differ: "The resolvers disagree. That's normal with a CDN or location-based DNS; if you just changed the record, it hasn't reached everyone yet (TTL {ttl} s).",
-  dns_cnpoison: "AliDNS's answer has nothing in common with what probes abroad got ({ips}). Location-based CDNs do this, and so does DNS poisoning: see whether China's three carriers connect below.",
-  dns_ddns: "Your public IPv4 right now is {ip}, which isn't what DNS says. If the service is with you (a NAS at home), your DDNS hasn't updated; with a proxy on, this may be the proxy's IP.",
+
+
 
   v_wait: "Checking…", v_wait_sub: "{n} of {of} regions have answered",
   v_gpoff: "The outside check didn't run",
@@ -131,13 +124,14 @@ export default {
   share: "Share", share_desc: "{ok} of {n} regions reach {target}", lk_ipv6: "Does your own network support IPv6?", lk_asn: "Who owns this IP (ASN lookup)",
   faq_h: "Help", a_close: "Close", a_prev: "Previous", a_next: "Next", lk_check: "Run a full checkup",
   docs: [
-    ["How does the check work?", "Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.\nYour own browser connects too, and AliDNS, Cloudflare and Google are asked for the address over DoH. None of it goes through our servers."],
+    ["How does the check work?", "Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.\nYour own browser connects too: that's the table's first line. None of it goes through our servers."],
     ["It opens for me. Why can't others reach it?", "If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."],
     ["I set up port forwarding. Why does it still time out?", "The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP.\nWith IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."],
     ["What's the difference between refused and timed out?", "Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port.\nTimed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."],
     ["Can it check UDP ports for games or WireGuard?", "No. A UDP service usually stays silent unless it gets the right message, so neither a browser nor a public probe can tell in general whether a UDP port is open. Check that the host is reachable over TCP (SSH or a web port), then ask a friend to join with the game itself."],
-    ["Who sees the address I enter?", "Globalping, which runs the probes, and the DNS services asked over DoH. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP.\nEach IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."],
+    ["Who sees the address I enter?", "Globalping, which runs the probes. We don't store it. A result link holds the address and the result so others see the same check; it never holds your own IP.\nEach IP gets 250 region checks an hour on Globalping, and one check uses 18; when they run out, the page says when they come back."],
   ],
-  f_kind: "Service", p_custom: "Other port", b_invite: "Ask a friend", invite_tip: "Copies a link; a friend who opens it runs this check from their browser", k_reach: "regions connect", k_cn: "China's three carriers",
-  k_local: "From your browser", ks_ok: "Opens", ks_ans: "Answered", ks_none: "No answer", ks_blocked: "Can't test", more_steps: "{n} more suggestions", pl_open: "Open", pl_web: "Not a web page", pl_nottls: "Not HTTPS", pl_refused: "Refused", pl_timeout: "Timed out", pl_dns: "DNS failed", pl_unreach: "Unreachable", pl_reset: "Reset", pl_tls: "TLS failed", pl_slow: "No response", pl_other: "Failed",
+ b_invite: "Ask a friend", invite_tip: "Copies a link; a friend who opens it runs this check from their browser",
+ ks_ok: "Opens", ks_ans: "Answered", ks_none: "No answer", ks_blocked: "Can't test", more_steps: "{n} more suggestions", pl_open: "Open", pl_web: "Not a web page", pl_nottls: "Not HTTPS", pl_refused: "Refused", pl_timeout: "Timed out", pl_dns: "DNS failed", pl_unreach: "Unreachable", pl_reset: "Reset", pl_tls: "TLS failed", pl_slow: "No response", pl_other: "Failed",
+  r_browser: "Your browser", fa_world: "Worldwide", fa_cn: "China's carriers", fa_you: "From here", fa_ok: "{ok} of {n} connect",
 };

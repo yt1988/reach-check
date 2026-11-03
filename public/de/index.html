@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/de.png">
 <meta name="twitter:title" content="Erreichbarkeits-Check: Ist deine Website, dein NAS oder Gameserver von außen erreichbar? Port-Check">
 <meta name="twitter:description" content="Aus 18 Regionen und deinem Browser: wo es hakt und was du prüfen solltest">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Erreichbarkeits-Check · 1ms.dog","url":"https://reach.1ms.dog/de/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Kostenloser Erreichbarkeits-Check aus 18 Regionen (darunter China Telecom, Unicom und Mobile) und aus deinem eigenen Browser. Zeigt DNS-, TCP-, TLS- und First-Byte-Zeiten, wo die Verbindung abbricht und was du als Nächstes prüfen solltest: Portweiterleitung, Firewall, CGNAT, gesperrte Ports, Zertifikate.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Wie funktioniert der Check?","acceptedAnswer":{"@type":"Answer","text":"Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist. Auch dein eigener Browser verbindet sich, und AliDNS, Cloudflare und Google werden per DoH nach der Adresse gefragt. Nichts davon läuft über unsere Server."}},{"@type":"Question","name":"Bei mir geht es auf. Warum kommen andere nicht durch?","acceptedAnswer":{"@type":"Answer","text":"Bist du im selben Netz wie der Dienst, verlässt dein Verkehr das Haus gar nicht. Dass es bei dir aufgeht, sagt also nichts über außen. Auch ein Proxy kann dich einen anderen Weg schicken als alle anderen. Richte dich nach dem Check von außen: Er verbindet sich so, wie Fremde es tun."}},{"@type":"Question","name":"Ich habe eine Portweiterleitung eingerichtet. Warum kommt trotzdem eine Zeitüberschreitung?","acceptedAnswer":{"@type":"Answer","text":"Die üblichen Gründe: keine öffentliche IPv4 (die WAN-Adresse des Routers beginnt mit 100.64–100.127 oder ist nicht deine öffentliche IP: CGNAT, oft bei DS-Lite); eine Firewall auf dem NAS, in Windows oder in einer Cloud-Sicherheitsgruppe; ein Anbieter, der gängige Ports wie 80 und 443 an Privatanschlüssen sperrt; oder eine Weiterleitung, die noch auf die alte lokale IP des Geräts zeigt. Bei IPv6 blockt die IPv6-Firewall des Routers eingehende Verbindungen, bis du den Port freigibst."}},{"@type":"Question","name":"Was ist der Unterschied zwischen „abgelehnt“ und „Zeitüberschreitung“?","acceptedAnswer":{"@type":"Answer","text":"Abgelehnt: Die Pakete sind beim Rechner angekommen, aber auf dem Port lauscht nichts. Der Dienst ist aus, lauscht nur auf 127.0.0.1, oder die Weiterleitung geht auf den falschen Port. Zeitüberschreitung: gar keine Antwort. Eine Firewall hat die Pakete verworfen, es gibt keine Weiterleitung, oder die Adresse stimmt nicht."}},{"@type":"Question","name":"Kann es UDP-Ports für Spiele oder WireGuard prüfen?","acceptedAnswer":{"@type":"Answer","text":"Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten."}},{"@type":"Question","name":"Wer sieht die Adresse, die ich eingebe?","acceptedAnswer":{"@type":"Answer","text":"Globalping, das die Messpunkte betreibt, und die DNS-Dienste, die per DoH gefragt werden. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin. Jede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Erreichbarkeits-Check · 1ms.dog","url":"https://reach.1ms.dog/de/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Kostenloser Erreichbarkeits-Check aus 18 Regionen (darunter China Telecom, Unicom und Mobile) und aus deinem eigenen Browser. Zeigt DNS-, TCP-, TLS- und First-Byte-Zeiten, wo die Verbindung abbricht und was du als Nächstes prüfen solltest: Portweiterleitung, Firewall, CGNAT, gesperrte Ports, Zertifikate.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Wie funktioniert der Check?","acceptedAnswer":{"@type":"Answer","text":"Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist. Auch dein eigener Browser verbindet sich: das ist die erste Zeile der Tabelle. Nichts davon läuft über unsere Server."}},{"@type":"Question","name":"Bei mir geht es auf. Warum kommen andere nicht durch?","acceptedAnswer":{"@type":"Answer","text":"Bist du im selben Netz wie der Dienst, verlässt dein Verkehr das Haus gar nicht. Dass es bei dir aufgeht, sagt also nichts über außen. Auch ein Proxy kann dich einen anderen Weg schicken als alle anderen. Richte dich nach dem Check von außen: Er verbindet sich so, wie Fremde es tun."}},{"@type":"Question","name":"Ich habe eine Portweiterleitung eingerichtet. Warum kommt trotzdem eine Zeitüberschreitung?","acceptedAnswer":{"@type":"Answer","text":"Die üblichen Gründe: keine öffentliche IPv4 (die WAN-Adresse des Routers beginnt mit 100.64–100.127 oder ist nicht deine öffentliche IP: CGNAT, oft bei DS-Lite); eine Firewall auf dem NAS, in Windows oder in einer Cloud-Sicherheitsgruppe; ein Anbieter, der gängige Ports wie 80 und 443 an Privatanschlüssen sperrt; oder eine Weiterleitung, die noch auf die alte lokale IP des Geräts zeigt. Bei IPv6 blockt die IPv6-Firewall des Routers eingehende Verbindungen, bis du den Port freigibst."}},{"@type":"Question","name":"Was ist der Unterschied zwischen „abgelehnt“ und „Zeitüberschreitung“?","acceptedAnswer":{"@type":"Answer","text":"Abgelehnt: Die Pakete sind beim Rechner angekommen, aber auf dem Port lauscht nichts. Der Dienst ist aus, lauscht nur auf 127.0.0.1, oder die Weiterleitung geht auf den falschen Port. Zeitüberschreitung: gar keine Antwort. Eine Firewall hat die Pakete verworfen, es gibt keine Weiterleitung, oder die Adresse stimmt nicht."}},{"@type":"Question","name":"Kann es UDP-Ports für Spiele oder WireGuard prüfen?","acceptedAnswer":{"@type":"Answer","text":"Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten."}},{"@type":"Question","name":"Wer sieht die Adresse, die ich eingebe?","acceptedAnswer":{"@type":"Answer","text":"Globalping, das die Messpunkte betreibt. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin. Jede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.4692e25b68.css">
+<link rel="stylesheet" href="/assets/app.025a2348a4.css">
 </head>
 <body>
 <div class="app">
@@ -62,56 +62,51 @@
     </div>
   </div>
 
-  <!-- 1. what to check: one line of fields -->
-  <header class="hero card">
-    <h1>Ist dein Dienst von außen erreichbar?</h1>
-    <p class="intro" data-i="intro">Verbindet sich aus 18 Regionen und aus deinem Browser mit deiner Website, deinem NAS oder Gameserver und zeigt, wo es hakt und was du prüfen solltest.</p>
-    <form id="f" class="form" autocomplete="off">
-      <div class="row">
-        <label class="fld grow"><span class="fld-h"><span data-i="f_target">Adresse</span><button type="button" class="link" id="myip" data-i="myip_btn">Meine aktuelle IP verwenden</button></span>
-          <input id="target" name="t" placeholder="Domain, IP oder URL, z. B. nas.example.com" spellcheck="false" inputmode="url" required>
-        </label>
-        <label class="fld kind"><span data-i="f_kind">Dienst</span><select id="kind"></select></label>
-        <label class="fld port"><span data-i="f_port">Port</span>
-          <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443">
-        </label>
-        <label class="fld ipv"><span data-i="f_ipv">IP-Version</span>
-          <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
-        </label>
-        <button id="go" class="btn" type="submit" data-i="go">Prüfen</button>
-      </div>
-      <div class="sub"><span id="myipNote" class="m"></span><span class="quota m" id="quota"></span></div>
-    </form>
-  </header>
+  <!-- 1. what to check, and once checked, the answer under it in the same card -->
+  <div class="card main">
+    <header class="hero">
+      <h1>Ist dein Dienst von außen erreichbar?</h1>
+      <p class="intro" data-i="intro">Verbindet sich aus 18 Regionen und aus deinem Browser mit deiner Website, deinem NAS oder Gameserver und zeigt, wo es hakt und was du prüfen solltest.</p>
+      <form id="f" class="form" autocomplete="off">
+        <div class="row">
+          <label class="fld grow"><span data-i="f_target">Adresse</span>
+            <input id="target" name="t" placeholder="Domain, IP oder URL, z. B. nas.example.com" spellcheck="false" inputmode="url" required>
+          </label>
+          <!-- the port, with the usual services as suggestions (443 · Website, 5001 · Synology DSM…) -->
+          <label class="fld port"><span data-i="f_port">Port</span>
+            <input id="port" name="p" inputmode="numeric" pattern="[0-9]*" placeholder="443" list="ports">
+            <datalist id="ports"></datalist>
+          </label>
+          <label class="fld ipv"><span data-i="f_ipv">IP-Version</span>
+            <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
+          </label>
+          <button id="go" class="btn" type="submit" data-i="go">Prüfen</button>
+        </div>
+        <div class="sub"><span id="portNote" class="m"></span><span class="quota m" id="quota"></span></div>
+      </form>
+    </header>
 
-  <section id="out" hidden>
     <!-- 2. the answer: verdict, three numbers, at most four next steps -->
-    <div class="card verdict" id="verdict">
+    <section class="verdict" id="verdict" hidden>
       <div class="v-head"><span class="dot" id="vDot"></span><h2 id="vTitle">&nbsp;</h2>
         <div class="v-acts"><button class="btn ghost" id="inviteBtn" type="button" data-i="b_invite">Freund fragen</button><button class="btn" id="shareBtn" type="button" hidden data-i="share">Teilen</button></div></div>
       <p class="v-sub m" id="vSub">&nbsp;</p>
-      <div class="kpis" id="kpis"></div>
+      <dl class="facts" id="kpis"></dl>
       <ol class="steps" id="vSteps"></ol>
       <details class="more-steps" id="vMore" hidden><summary></summary><ol class="steps" id="vMoreSteps"></ol></details>
-    </div>
+    </section>
+  </div>
 
-    <!-- 3. the evidence: one line per region, its details on demand -->
-    <div class="card sec">
-      <div class="sec-h"><h3 data-i="h_regions">Aus aller Welt</h3><span class="src m">Daten: freiwillige Messpunkte von <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a></span><span class="m prog" id="gpProgress"></span></div>
-      <div class="legend m">
-        <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP-Verbindung</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS-Handshake</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Erstes Byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
-      </div>
-      <div id="regions" class="regions"></div>
-      <p class="note" id="gpNote" hidden></p>
+  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <section class="card sec" id="table" hidden>
+    <div class="sec-h"><h3 data-i="h_regions">Aus aller Welt</h3><span class="src m">Daten: freiwillige Messpunkte von <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a></span><span class="m prog" id="gpProgress"></span></div>
+    <div class="legend m">
+      <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP-Verbindung</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS-Handshake</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">Erstes Byte</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">Download</span></span>
     </div>
-
-    <!-- 4. the rest: this browser and DNS, side by side -->
-    <div class="card sec more">
-      <div class="col"><h3 data-i="h_local">Aus deinem Browser</h3><div id="local" class="local"></div><p class="note" id="checkLink"></p></div>
-      <div class="col"><h3 data-i="h_dns">DNS</h3><div id="dns" class="dns"></div></div>
-    </div>
+    <div id="regions" class="regions"></div>
+    <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>Datenquellen: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (Check von außen und Traceroute), AliDNS, Cloudflare und Google (DNS), <a href="https://www.ipify.org" target="_blank" rel="noopener">ipify</a> und <a href="https://ip.sb" target="_blank" rel="noopener">IP.SB</a> (deine IP).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>Datenquelle: <a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> (Check von außen und Traceroute).</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -124,12 +119,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="Weiter"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>Wie funktioniert der Check?</h3><p>Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist.</p><p>Auch dein eigener Browser verbindet sich, und AliDNS, Cloudflare und Google werden per DoH nach der Adresse gefragt. Nichts davon läuft über unsere Server.</p></article><article data-hqb="1" hidden><h3>Bei mir geht es auf. Warum kommen andere nicht durch?</h3><p>Bist du im selben Netz wie der Dienst, verlässt dein Verkehr das Haus gar nicht. Dass es bei dir aufgeht, sagt also nichts über außen. Auch ein Proxy kann dich einen anderen Weg schicken als alle anderen. Richte dich nach dem Check von außen: Er verbindet sich so, wie Fremde es tun.</p></article><article data-hqb="2" hidden><h3>Ich habe eine Portweiterleitung eingerichtet. Warum kommt trotzdem eine Zeitüberschreitung?</h3><p>Die üblichen Gründe: keine öffentliche IPv4 (die WAN-Adresse des Routers beginnt mit 100.64–100.127 oder ist nicht deine öffentliche IP: CGNAT, oft bei DS-Lite); eine Firewall auf dem NAS, in Windows oder in einer Cloud-Sicherheitsgruppe; ein Anbieter, der gängige Ports wie 80 und 443 an Privatanschlüssen sperrt; oder eine Weiterleitung, die noch auf die alte lokale IP des Geräts zeigt.</p><p>Bei IPv6 blockt die IPv6-Firewall des Routers eingehende Verbindungen, bis du den Port freigibst.</p></article><article data-hqb="3" hidden><h3>Was ist der Unterschied zwischen „abgelehnt“ und „Zeitüberschreitung“?</h3><p>Abgelehnt: Die Pakete sind beim Rechner angekommen, aber auf dem Port lauscht nichts. Der Dienst ist aus, lauscht nur auf 127.0.0.1, oder die Weiterleitung geht auf den falschen Port.</p><p>Zeitüberschreitung: gar keine Antwort. Eine Firewall hat die Pakete verworfen, es gibt keine Weiterleitung, oder die Adresse stimmt nicht.</p></article><article data-hqb="4" hidden><h3>Kann es UDP-Ports für Spiele oder WireGuard prüfen?</h3><p>Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten.</p></article><article data-hqb="5" hidden><h3>Wer sieht die Adresse, die ich eingebe?</h3><p>Globalping, das die Messpunkte betreibt, und die DNS-Dienste, die per DoH gefragt werden. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin.</p><p>Jede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht.</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>Wie funktioniert der Check?</h3><p>Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist.</p><p>Auch dein eigener Browser verbindet sich: das ist die erste Zeile der Tabelle. Nichts davon läuft über unsere Server.</p></article><article data-hqb="1" hidden><h3>Bei mir geht es auf. Warum kommen andere nicht durch?</h3><p>Bist du im selben Netz wie der Dienst, verlässt dein Verkehr das Haus gar nicht. Dass es bei dir aufgeht, sagt also nichts über außen. Auch ein Proxy kann dich einen anderen Weg schicken als alle anderen. Richte dich nach dem Check von außen: Er verbindet sich so, wie Fremde es tun.</p></article><article data-hqb="2" hidden><h3>Ich habe eine Portweiterleitung eingerichtet. Warum kommt trotzdem eine Zeitüberschreitung?</h3><p>Die üblichen Gründe: keine öffentliche IPv4 (die WAN-Adresse des Routers beginnt mit 100.64–100.127 oder ist nicht deine öffentliche IP: CGNAT, oft bei DS-Lite); eine Firewall auf dem NAS, in Windows oder in einer Cloud-Sicherheitsgruppe; ein Anbieter, der gängige Ports wie 80 und 443 an Privatanschlüssen sperrt; oder eine Weiterleitung, die noch auf die alte lokale IP des Geräts zeigt.</p><p>Bei IPv6 blockt die IPv6-Firewall des Routers eingehende Verbindungen, bis du den Port freigibst.</p></article><article data-hqb="3" hidden><h3>Was ist der Unterschied zwischen „abgelehnt“ und „Zeitüberschreitung“?</h3><p>Abgelehnt: Die Pakete sind beim Rechner angekommen, aber auf dem Port lauscht nichts. Der Dienst ist aus, lauscht nur auf 127.0.0.1, oder die Weiterleitung geht auf den falschen Port.</p><p>Zeitüberschreitung: gar keine Antwort. Eine Firewall hat die Pakete verworfen, es gibt keine Weiterleitung, oder die Adresse stimmt nicht.</p></article><article data-hqb="4" hidden><h3>Kann es UDP-Ports für Spiele oder WireGuard prüfen?</h3><p>Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten.</p></article><article data-hqb="5" hidden><h3>Wer sieht die Adresse, die ich eingebe?</h3><p>Globalping, das die Messpunkte betreibt. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin.</p><p>Jede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht.</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"de","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.de.cc1df54fd2.js"></script>
-<script src="/assets/app.5edc1f3b66.js"></script>
+<script src="/assets/l.de.61ed911afc.js"></script>
+<script src="/assets/app.0bc0404d24.js"></script>
 </body>
 </html>

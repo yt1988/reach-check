@@ -11,16 +11,15 @@ export default {
   lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_light: "主題：淺色", th_dark: "主題：深色",
 
   f_target: "位址", f_target_ph: "網域、IP 或網址，例如 nas.example.com", f_port: "連接埠", f_ipv: "IP 版本", go: "開始檢測",
-  myip_btn: "使用我目前的 IP",
+
   h_regions: "從全球各地連過去",
   lg_dns: "DNS", lg_tcp: "TCP 交握", lg_tls: "TLS 交握", lg_fb: "第一個位元組", lg_dl: "下載",
   h_local: "從你這裡連過去",
 
-  h_dns: "DNS 解析",
  copied: "已複製",
   src_gp: "資料來源：{gp} 志工探測點",
 
-  foot_src: "資料來源：{gp}（外部檢測與路由追蹤），AliDNS、Cloudflare、Google（DNS），{ipify} 與 {ipsb}（你的 IP）。",
+  foot_src: "資料來源：{gp}（外部檢測與路由追蹤）。",
 
   sep: "、",
   g_cn: "中國大陸", g_apac: "亞太", g_emea: "歐洲 · 中東 · 非洲", g_am: "美洲",
@@ -28,12 +27,12 @@ export default {
   city_Tokyo: "東京", city_London: "倫敦", city_Frankfurt: "法蘭克福", city_LosAngeles: "洛杉磯", city_NewYork: "紐約", city_SaoPaulo: "聖保羅",
   p_web: "網站", p_web_http: "網站 HTTP", p_dsm: "Synology DSM", p_rdp: "遠端桌面", p_udp: "UDP 遊戲（幻獸帕魯等）",
   what_ssh: "SSH", what_rdp: "遠端桌面", what_mc: "Minecraft 伺服器",
-  udp_note: "UDP 連接埠（幻獸帕魯、CS2、WireGuard 等）在瀏覽器和公開探測點都測不了：沒有通用的方法判斷 UDP 連接埠有沒有開。可以先測主機連不連得到（選 SSH 或網站），再請朋友直接用遊戲連線。",
+
   quota_ok: "這個小時還能測 {left} 個地區次，每次檢測用 {cost} 個",
   quota_out: "外部檢測的額度用完了，大約 {min} 分鐘後恢復（每個 IP 每小時 250 個地區次）",
-  myip_wait: "查詢中…", myip_got: "你目前的公開 IP：{ip}。開著代理的話，這可能是代理的 IP。", myip_none: "查不到你的公開 IP。",
+
   bad_target: "看不懂這個位址：請填網域、IP 或網址。",
-  local_wait: "正在從你的瀏覽器連線…", dns_isip: "直接填的是 IP，不需要解析。", dns_wait: "查詢中…",
+
   gp_unreach: "連不到 Globalping 的 API，外部檢測沒有執行。",
   gp_429: "外部檢測的額度用完了，大約 {min} 分鐘後恢復。下面「從你這裡」和 DNS 的結果不受影響。",
   gp_err: "外部檢測沒有執行：{msg}",
@@ -66,16 +65,10 @@ export default {
   lc_plain: "這個服務是未加密的 HTTP，網頁裡只能用 HTTPS 連線，所以只能判斷有沒有回應。",
   lc_none: "連不上", lc_none_s: "{s} 秒沒有回應", lc_none_p: "從你這裡連 {url} 沒有任何回應。",
 
-  rv_ali: "AliDNS",
-  dns_failres: "你這裡連不到這個 DNS 服務", dns_nx: "網域不存在", dns_fail: "解析失敗（{code}）", dns_none: "無",
-  dns_cname: "別名（CNAME）：{chain}",
-  ip_private: "{ip} 是私有位址，只有在同一個區域網路裡能用，外面的人連不到。",
   ip_cgnat: "{ip} 在 100.64.0.0/10 裡（電信業者級 NAT）：不是公開位址，連接埠轉送不會生效。",
   ip_fakeip: "{ip} 是代理軟體的 fake-ip，不是真實位址。請關掉代理，或以 DoH 的結果為準。",
-  ip_cf: "{ip} 屬於 Cloudflare：網域開著代理（橘色雲朵），外面的人連到的是 Cloudflare，不是你的伺服器。",
-  dns_differ: "各家 DNS 的答案不一樣。用了 CDN 或依地區解析時，這是正常的；如果剛改過紀錄，代表還沒全部生效（TTL {ttl} 秒）。",
-  dns_cnpoison: "AliDNS 的答案和國外探測點解析到的位址（{ips}）完全不同。依地區解析的 CDN 會這樣，DNS 汙染也會這樣：看下面中國三家電信業者連不連得上。",
-  dns_ddns: "你目前的公開 IPv4 是 {ip}，和 DNS 裡的不一樣。如果服務就在你這裡（例如家裡的 NAS），代表 DDNS 沒有更新；開著代理時，這裡顯示的可能是代理的 IP。",
+
+
 
   v_wait: "檢測中…", v_wait_sub: "已有 {n} / {of} 個地區回傳結果",
   v_gpoff: "外部檢測沒有執行",
@@ -129,13 +122,14 @@ export default {
   share: "分享", share_desc: "{n} 個地區裡有 {ok} 個連得到 {target}", lk_ipv6: "你自己的網路支援 IPv6 嗎", lk_asn: "這個 IP 屬於誰（ASN 查詢）",
   faq_h: "常見問題", a_close: "關閉", a_prev: "上一則", a_next: "下一則", lk_check: "做一次完整健檢",
   docs: [
-    ["是怎麼檢測的？", "Globalping 在 18 個地區的志工探測點，各自連到你的位址和連接埠，送出一次 HTTP(S) 請求，並替每一步計時：DNS 解析、TCP 交握、TLS 交握、第一個位元組。失敗時，錯誤訊息會說明停在哪一步：拒絕連線、逾時、被重設、TLS 出錯，或連接埠上的不是網頁服務。\n你自己的瀏覽器也會連一次，並透過 DoH 向 AliDNS、Cloudflare、Google 查詢這個位址。這些請求都不經過我們的伺服器。"],
+    ["是怎麼檢測的？", "Globalping 在 18 個地區的志工探測點，各自連到你的位址和連接埠，送出一次 HTTP(S) 請求，並替每一步計時：DNS 解析、TCP 交握、TLS 交握、第一個位元組。失敗時，錯誤訊息會說明停在哪一步：拒絕連線、逾時、被重設、TLS 出錯，或連接埠上的不是網頁服務。\n你自己的瀏覽器也會連一次，結果在表格第一列。這些請求都不經過我們的伺服器。"],
     ["我自己打得開，為什麼別人連不上？", "如果你和服務在同一個網路裡，流量根本沒有出去，自己打得開不代表外面連得上。開著代理時，你走的路也和別人不同。請以外部檢測為準：它和陌生人連線的方式一樣。"],
     ["連接埠轉送設好了，為什麼還是逾時？", "常見原因：沒有公開的 IPv4（路由器的 WAN 位址以 100.64–100.127 開頭，或和你的公開 IP 不同，就是電信業者級 NAT）；NAS、Windows 或雲端安全群組的防火牆沒有放行；電信業者封鎖家用寬頻的 80、443 等常用連接埠；轉送指向的還是設備以前的內部 IP。\n使用 IPv6 時，路由器和數據機的 IPv6 防火牆預設擋下連入連線，要另外放行這個連接埠。"],
     ["「拒絕連線」和「逾時」有什麼不同？", "拒絕連線：封包到了那台機器，但連接埠上沒有程式在接聽。可能是服務沒開、只在 127.0.0.1 上接聽，或轉送到錯誤的連接埠。\n逾時：完全沒有回應。可能是防火牆丟掉了封包、沒有設定連接埠轉送，或位址填錯了。"],
     ["能測遊戲或 WireGuard 用的 UDP 連接埠嗎？", "不能。UDP 服務收不到正確的訊息時通常不會回應，所以瀏覽器和公開探測點都沒有通用的方法判斷 UDP 連接埠有沒有開。可以先確認主機透過 TCP 連得上（選 SSH 或網頁連接埠），再請朋友直接用遊戲連線。"],
-    ["我填的位址誰看得到？", "執行探測的 Globalping，以及透過 DoH 查詢的幾家 DNS 服務。我們不會保存。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。\n每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。"],
+    ["我填的位址誰看得到？", "執行探測的 Globalping。我們不會保存。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。\n每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。"],
   ],
-  f_kind: "類型", p_custom: "其他連接埠", b_invite: "請朋友測", invite_tip: "複製一個連結，朋友打開就會用他的瀏覽器測你的服務", k_reach: "地區連得到", k_cn: "中國三家電信業者",
-  k_local: "從你這裡", ks_ok: "打得開", ks_ans: "有回應", ks_none: "連不上", ks_blocked: "測不了", more_steps: "還有 {n} 則建議", pl_open: "連接埠有開", pl_web: "不是網頁", pl_nottls: "不是 HTTPS", pl_refused: "拒絕連線", pl_timeout: "逾時", pl_dns: "解析失敗", pl_unreach: "無法連線", pl_reset: "被重設", pl_tls: "TLS 失敗", pl_slow: "無回應", pl_other: "失敗",
+ b_invite: "請朋友測", invite_tip: "複製一個連結，朋友打開就會用他的瀏覽器測你的服務",
+ ks_ok: "打得開", ks_ans: "有回應", ks_none: "連不上", ks_blocked: "測不了", more_steps: "還有 {n} 則建議", pl_open: "連接埠有開", pl_web: "不是網頁", pl_nottls: "不是 HTTPS", pl_refused: "拒絕連線", pl_timeout: "逾時", pl_dns: "解析失敗", pl_unreach: "無法連線", pl_reset: "被重設", pl_tls: "TLS 失敗", pl_slow: "無回應", pl_other: "失敗",
+  r_browser: "你的瀏覽器", fa_world: "全球", fa_cn: "中國三家電信", fa_you: "你這裡", fa_ok: "{ok}/{n} 連得到",
 };

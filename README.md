@@ -22,7 +22,7 @@ Can other people reach your website, NAS or game server, and if not, where does 
 
 - **From 18 regions**: one [Globalping](https://globalping.io) probe each in mainland China (by carrier), Hong Kong, Taiwan, Tokyo, Korea, Singapore, India, Australia, London, Frankfurt, Russia, the UAE, South Africa, Los Angeles, New York and São Paulo. Each probe makes one HTTP(S) request to the port, which tells apart: answered as a web page, open but not a web service (SSH, Minecraft…), connection refused (nothing listening), timed out (dropped by a firewall, or no port forward), DNS failure, connection reset, TLS failure.
 - **From your browser**: two HTTPS requests to the same address. A browser only sees how long a request took before it failed, so it tells "no answer at all" from "something answered", and for HTTPS pages splits the time into connection setup and the request. Ports browsers refuse to open (22, 25, 110, …) are named as such.
-- **DNS**: the answers of AliDNS, Cloudflare and Google (over DoH, from the browser), private or carrier-grade NAT addresses in public records, Cloudflare's proxy (which only forwards a few HTTP ports), resolvers that disagree, and China's probes resolving the name differently from everyone else.
+- **What DNS says**, from the addresses the probes resolved: a private or carrier-grade NAT address in public records, Cloudflare's proxy (which only forwards a few HTTP ports), and China's probes getting a different address from everyone else (DNS poisoning, or location-based DNS).
 - **A verdict with next steps**: port forwarding, firewalls, no public IPv4 (CGNAT), ports blocked by home broadband, a service listening on 127.0.0.1 only, Cloudflare 52x errors, certificates, slow TCP handshakes (lost packets), and your own view disagreeing with the outside one (NAT loopback, a proxy).
 - **Share a result**: an image, and a link that holds the whole result (`/r/<code>`), so whoever opens it sees the same check; the Worker gives the link a preview title with the verdict. The visitor's own IP is never in it.
 - **10 languages**: English, 简体中文, 繁體中文, 日本語, 한국어, Español, Français, Deutsch, Português, Русский.
@@ -32,7 +32,7 @@ UDP ports (many game servers, WireGuard) can't be checked: neither a browser nor
 
 ## Where it runs
 
-Everything runs in the visitor's browser. Data sources, named on the page: Globalping (the outside check and trace route), the DoH services of AliDNS, Cloudflare and Google (DNS), ipify and IP.SB (the visitor's own IP). The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files plus a small Worker that only runs for shared result links (to title their preview); no server of ours sees what you check.
+Everything runs in the visitor's browser. Data source, named on the page: Globalping (the outside check and trace route). The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files plus a small Worker that only runs for shared result links (to title their preview); no server of ours sees what you check.
 
 ## Develop
 

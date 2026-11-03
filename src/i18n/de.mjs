@@ -11,16 +11,15 @@ export default {
   lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
 
   f_target: "Adresse", f_target_ph: "Domain, IP oder URL, z. B. nas.example.com", f_port: "Port", f_ipv: "IP-Version", go: "Prüfen",
-  myip_btn: "Meine aktuelle IP verwenden",
+
   h_regions: "Aus aller Welt",
   lg_dns: "DNS", lg_tcp: "TCP-Verbindung", lg_tls: "TLS-Handshake", lg_fb: "Erstes Byte", lg_dl: "Download",
   h_local: "Aus deinem Browser",
 
-  h_dns: "DNS",
  copied: "Kopiert",
   src_gp: "Daten: freiwillige Messpunkte von {gp}",
 
-  foot_src: "Datenquellen: {gp} (Check von außen und Traceroute), AliDNS, Cloudflare und Google (DNS), {ipify} und {ipsb} (deine IP).",
+  foot_src: "Datenquelle: {gp} (Check von außen und Traceroute).",
 
   sep: ", ",
   g_cn: "Festlandchina", g_apac: "Asien-Pazifik", g_emea: "Europa, Nahost & Afrika", g_am: "Amerika",
@@ -28,12 +27,12 @@ export default {
   city_Tokyo: "Tokio", city_London: "London", city_Frankfurt: "Frankfurt", city_LosAngeles: "Los Angeles", city_NewYork: "New York", city_SaoPaulo: "São Paulo",
   p_web: "Website", p_web_http: "Website (HTTP)", p_dsm: "Synology DSM", p_rdp: "Remotedesktop", p_udp: "UDP-Spiele (Palworld…)",
   what_ssh: "SSH", what_rdp: "Remotedesktop", what_mc: "einen Minecraft-Server",
-  udp_note: "UDP-Ports (Palworld, CS2, WireGuard…) lassen sich weder aus dem Browser noch von öffentlichen Messpunkten prüfen: Es gibt keinen allgemeinen Weg festzustellen, ob ein UDP-Port offen ist. Prüf, ob der Host erreichbar ist (SSH oder Website wählen), und lass dann jemanden dem Spiel beitreten.",
+
   quota_ok: "Diese Stunde noch {left} Regions-Checks übrig; ein Check braucht {cost}",
   quota_out: "Das Kontingent für den Check von außen ist aufgebraucht; in etwa {min} Min. geht es wieder (250 Regions-Checks pro IP und Stunde)",
-  myip_wait: "Wird abgefragt…", myip_got: "Deine aktuelle öffentliche IP: {ip}. Mit aktivem Proxy ist es vielleicht die des Proxys.", myip_none: "Deine öffentliche IP ließ sich nicht ermitteln.",
+
   bad_target: "Diese Adresse sieht nicht richtig aus: Gib eine Domain, eine IP oder eine URL ein.",
-  local_wait: "Verbinde aus deinem Browser…", dns_isip: "Du hast eine IP eingegeben, also gibt es nichts aufzulösen.", dns_wait: "Wird abgefragt…",
+
   gp_unreach: "Die API von Globalping war nicht erreichbar, der Check von außen ist nicht gelaufen.",
   gp_429: "Das Kontingent für den Check von außen ist aufgebraucht; in etwa {min} Min. geht es wieder. Die Ergebnisse aus deinem Browser und vom DNS sind davon nicht betroffen.",
   gp_err: "Der Check von außen ist nicht gelaufen: {msg}",
@@ -66,16 +65,10 @@ export default {
   lc_plain: "Dieser Dienst läuft über unverschlüsseltes HTTP, und eine Webseite kann sich nur per HTTPS verbinden. Wir sehen also nur, ob etwas antwortet.",
   lc_none: "Keine Verbindung", lc_none_s: "{s} s keine Antwort", lc_none_p: "Unter {url} hat von hier aus nichts geantwortet.",
 
-  rv_ali: "AliDNS",
-  dns_failres: "Dieser DNS-Server ist von hier nicht erreichbar", dns_nx: "Domain existiert nicht", dns_fail: "Abfrage fehlgeschlagen ({code})", dns_none: "Keine",
-  dns_cname: "Alias (CNAME): {chain}",
-  ip_private: "{ip} ist eine private Adresse: Sie funktioniert nur im selben lokalen Netz, von außen erreicht sie niemand.",
   ip_cgnat: "{ip} liegt in 100.64.0.0/10 (CGNAT, das NAT des Anbieters): keine öffentliche Adresse, Portweiterleitung funktioniert also nicht.",
   ip_fakeip: "{ip} ist eine Fake-IP einer Proxy-App, keine echte Adresse. Schalte den Proxy aus oder richte dich nach den DoH-Antworten.",
-  ip_cf: "{ip} gehört Cloudflare: Für die Domain ist der Proxy aktiv (orange Wolke), Besucher verbinden sich also mit Cloudflare, nicht mit deinem Server.",
-  dns_differ: "Die DNS-Server antworten unterschiedlich. Mit einem CDN oder standortabhängigem DNS ist das normal; hast du den Eintrag gerade geändert, ist er noch nicht überall angekommen (TTL {ttl} s).",
-  dns_cnpoison: "Die Antwort von AliDNS hat nichts gemein mit dem, was Messpunkte außerhalb Chinas bekommen haben ({ips}). Das passiert bei CDNs mit standortabhängigen Antworten, aber auch bei DNS-Manipulation: Schau unten, ob die drei chinesischen Anbieter durchkommen.",
-  dns_ddns: "Deine öffentliche IPv4 ist gerade {ip}, nicht die aus dem DNS. Läuft der Dienst bei dir (ein NAS zu Hause), hat sich dein DDNS nicht aktualisiert; mit aktivem Proxy ist es vielleicht die IP des Proxys.",
+
+
 
   v_wait: "Wird geprüft…", v_wait_sub: "{n} von {of} Regionen haben geantwortet",
   v_gpoff: "Der Check von außen ist nicht gelaufen",
@@ -129,13 +122,14 @@ export default {
   share: "Teilen", share_desc: "{ok} von {n} Regionen erreichen {target}", lk_ipv6: "Kann dein eigenes Netz IPv6?", lk_asn: "Wem gehört diese IP (ASN-Abfrage)",
   faq_h: "Häufige Fragen", a_close: "Schließen", a_prev: "Zurück", a_next: "Weiter", lk_check: "Kompletten Check machen",
   docs: [
-    ["Wie funktioniert der Check?", "Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist.\nAuch dein eigener Browser verbindet sich, und AliDNS, Cloudflare und Google werden per DoH nach der Adresse gefragt. Nichts davon läuft über unsere Server."],
+    ["Wie funktioniert der Check?", "Freiwillig betriebene Messpunkte von Globalping in 18 Regionen verbinden sich jeweils mit deiner Adresse und deinem Port und senden eine HTTP(S)-Anfrage. Jeder Schritt wird gemessen: DNS, TCP-Verbindung, TLS-Handshake, erstes Byte. Scheitert es, zeigt der Fehler, wo: abgelehnt, Zeitüberschreitung, Reset, ein TLS-Problem oder ein Dienst, der keine Webseite ist.\nAuch dein eigener Browser verbindet sich: das ist die erste Zeile der Tabelle. Nichts davon läuft über unsere Server."],
     ["Bei mir geht es auf. Warum kommen andere nicht durch?", "Bist du im selben Netz wie der Dienst, verlässt dein Verkehr das Haus gar nicht. Dass es bei dir aufgeht, sagt also nichts über außen. Auch ein Proxy kann dich einen anderen Weg schicken als alle anderen. Richte dich nach dem Check von außen: Er verbindet sich so, wie Fremde es tun."],
     ["Ich habe eine Portweiterleitung eingerichtet. Warum kommt trotzdem eine Zeitüberschreitung?", "Die üblichen Gründe: keine öffentliche IPv4 (die WAN-Adresse des Routers beginnt mit 100.64–100.127 oder ist nicht deine öffentliche IP: CGNAT, oft bei DS-Lite); eine Firewall auf dem NAS, in Windows oder in einer Cloud-Sicherheitsgruppe; ein Anbieter, der gängige Ports wie 80 und 443 an Privatanschlüssen sperrt; oder eine Weiterleitung, die noch auf die alte lokale IP des Geräts zeigt.\nBei IPv6 blockt die IPv6-Firewall des Routers eingehende Verbindungen, bis du den Port freigibst."],
     ["Was ist der Unterschied zwischen „abgelehnt“ und „Zeitüberschreitung“?", "Abgelehnt: Die Pakete sind beim Rechner angekommen, aber auf dem Port lauscht nichts. Der Dienst ist aus, lauscht nur auf 127.0.0.1, oder die Weiterleitung geht auf den falschen Port.\nZeitüberschreitung: gar keine Antwort. Eine Firewall hat die Pakete verworfen, es gibt keine Weiterleitung, oder die Adresse stimmt nicht."],
     ["Kann es UDP-Ports für Spiele oder WireGuard prüfen?", "Nein. Ein UDP-Dienst schweigt meist, solange er nicht die richtige Nachricht bekommt. Daher kann weder ein Browser noch ein öffentlicher Messpunkt allgemein feststellen, ob ein UDP-Port offen ist. Prüf, ob der Host per TCP erreichbar ist (SSH oder ein Web-Port), und lass dann jemanden mit dem Spiel selbst beitreten."],
-    ["Wer sieht die Adresse, die ich eingebe?", "Globalping, das die Messpunkte betreibt, und die DNS-Dienste, die per DoH gefragt werden. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin.\nJede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht."],
+    ["Wer sieht die Adresse, die ich eingebe?", "Globalping, das die Messpunkte betreibt. Wir speichern sie nicht. Ein Ergebnislink enthält Adresse und Ergebnis, damit andere denselben Check sehen; deine eigene IP steht nie darin.\nJede IP hat bei Globalping 250 Regions-Checks pro Stunde, ein Check braucht 18; sind sie aufgebraucht, sagt dir die Seite, wann es weitergeht."],
   ],
-  f_kind: "Dienst", p_custom: "Anderer Port", b_invite: "Freund fragen", invite_tip: "Kopiert einen Link: Wer ihn öffnet, startet diesen Check im eigenen Browser", k_reach: "Regionen erreichbar", k_cn: "3 chinesische Anbieter",
-  k_local: "Aus deinem Browser", ks_ok: "Lädt", ks_ans: "Antwortet", ks_none: "Keine Antwort", ks_blocked: "Nicht prüfbar", more_steps: "{n} weitere Hinweise", pl_open: "Offen", pl_web: "Keine Webseite", pl_nottls: "Kein HTTPS", pl_refused: "Abgelehnt", pl_timeout: "Zeitüberschreitung", pl_dns: "DNS-Fehler", pl_unreach: "Unerreichbar", pl_reset: "Zurückgesetzt", pl_tls: "TLS-Fehler", pl_slow: "Keine Antwort", pl_other: "Fehler",
+ b_invite: "Freund fragen", invite_tip: "Kopiert einen Link: Wer ihn öffnet, startet diesen Check im eigenen Browser",
+ ks_ok: "Lädt", ks_ans: "Antwortet", ks_none: "Keine Antwort", ks_blocked: "Nicht prüfbar", more_steps: "{n} weitere Hinweise", pl_open: "Offen", pl_web: "Keine Webseite", pl_nottls: "Kein HTTPS", pl_refused: "Abgelehnt", pl_timeout: "Zeitüberschreitung", pl_dns: "DNS-Fehler", pl_unreach: "Unerreichbar", pl_reset: "Zurückgesetzt", pl_tls: "TLS-Fehler", pl_slow: "Keine Antwort", pl_other: "Fehler",
+  r_browser: "Dein Browser", fa_world: "Weltweit", fa_cn: "China (3 Anbieter)", fa_you: "Von hier", fa_ok: "{ok} von {n} verbinden",
 };
