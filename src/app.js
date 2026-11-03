@@ -56,7 +56,8 @@ $("helpSel").onchange = e => showHelp(+e.target.value);
 all("[data-hstep]").forEach(b => { b.onclick = () => showHelp(helpIdx + +b.dataset.hstep); });
 
 // One probe per region: mainland China by carrier (eyeball networks), then each continent's main hubs.
-// `loc` is a Globalping location filter; names come from the browser (Intl.DisplayNames) plus a city or carrier.
+// `loc` is a Globalping location filter; names come from the browser (Intl.DisplayNames) plus a city or carrier,
+// except Taiwan's, which is written out per the 1ms.dog tool contract.
 const REGIONS = [
   { g: "cn", cc: "CN", carrier: 4134, loc: { country: "CN", asn: 4134 } },
   { g: "cn", cc: "CN", carrier: 4837, loc: { country: "CN", asn: 4837 } },
@@ -78,9 +79,10 @@ const REGIONS = [
   { g: "am", cc: "BR", city: "SaoPaulo", loc: { city: "Sao Paulo" } },
 ];
 REGIONS.forEach(x => x.cn = x.g === "cn");
-let regionName;
-try { const dn = new Intl.DisplayNames([D.lang], { type: "region" }); regionName = cc => dn.of(cc); } catch (e) { regionName = cc => cc; }
-const nameOf = x => x.carrier ? t("c_" + x.carrier) : x.city ? `${regionName(x.cc)} · ${t("city_" + x.city)}` : regionName(x.cc);
+const TW = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
+const regionName = (cc, lang) => cc === "TW" ? (TW[lang] || TW.en) : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
+const place = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
+const nameOf = x => x.carrier ? t("c_" + x.carrier) : x.city ? `${place(x.cc)} · ${t("city_" + x.city)}` : place(x.cc);
 
 // Presets: the port, whether it should answer as a web page (and over TLS), what to expect otherwise
 const PRESETS = [
