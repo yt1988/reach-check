@@ -691,7 +691,7 @@ async function shareResult() {
   const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter(r => r?.c));
   const target = `${s.t.host}:${s.t.port}`;
   const COLS = 3, ROW = 46;
-  const { share } = await import("/assets/share/share.js?v=6");
+  const { share } = await import("/assets/share/share.js?v=7");
   share({
     lang: D.lang, name: t("app_name"), file: "reach-check", show: [], never: ["ip"],
     link: () => link, home: location.origin + D.paths[D.lang],
@@ -737,7 +737,7 @@ if (sp) {
     $("verdict").hidden = $("table").hidden = false; showOut(state.t);
     drawRegions(); drawVerdict();
     $("shareBtn").hidden = false;
-    const { received } = await import("/assets/share/share.js?v=6");
+    const { received } = await import("/assets/share/share.js?v=7");
     recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });
   });
 } else {
