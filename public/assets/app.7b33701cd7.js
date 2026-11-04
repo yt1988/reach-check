@@ -40,6 +40,8 @@ const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").text
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const t = (k, v) => { let s = L[k] ?? k; if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+// a sentence with a number in it: key_one, key_few… where the language has that form for n, else the key itself
+const PR = new Intl.PluralRules(D.lang), pk = (k, n) => `${k}_${PR.select(n)}` in L ? `${k}_${PR.select(n)}` : k;
 // advice strings: **bold** and `code`, with the values escaped before they go in
 const tm = (k, v) => { const e = {}; for (const x in v || {}) e[x] = esc(v[x]); return t(k, e).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`(.+?)`/g, '<span class="mono">$1</span>'); };
 const list = a => a.join(t("sep"));
@@ -248,7 +250,7 @@ async function loadQuota() {
 function showQuota(left, reset) {
   if (state) state.quota = { left, reset };
   const cost = REGIONS.length;
-  $("quota").textContent = left >= cost ? t("quota_ok", { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
+  $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
 }
 
 // "Ask a friend": copies a link that runs the same check in the friend's browser
@@ -525,15 +527,15 @@ function drawVerdict() {
   const ms = l?.k === "ok" || l?.k === "answered" ? ` <span class="m">· ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
   const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
   $("kpis").innerHTML =
-    fact("fa_world", done && rows.length ? t("fa_ok", { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
-    fact("fa_cn", done && cn.length ? t("fa_ok", { ok: cnOk, n: cn.length }) : "…", done ? tone(cnOk, cn.length) : "") +
+    fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
+    fact("fa_cn", done && cn.length ? t(pk("fa_ok", cnOk), { ok: cnOk, n: cn.length }) : "…", done ? tone(cnOk, cn.length) : "") +
     fact("fa_you", l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…",
       l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "", ms);
   const steps = v.steps || [];
   $("vSteps").innerHTML = steps.slice(0, SHOWN_STEPS).map(x => `<li>${x}</li>`).join("");
   const rest = steps.slice(SHOWN_STEPS);
   $("vMore").hidden = !rest.length;
-  $("vMore").querySelector("summary").textContent = t("more_steps", { n: rest.length });
+  $("vMore").querySelector("summary").textContent = t(pk("more_steps", rest.length), { n: rest.length });
   $("vMoreSteps").innerHTML = rest.map(x => `<li>${x}</li>`).join("");
   $("vMoreSteps").start = SHOWN_STEPS + 1;
 }
@@ -545,7 +547,7 @@ function verdict(s, rows) {
   const total = REGIONS.length, port = s.t.port;
   const ips = dnsIps(s), allIps = s.t.isIp ? [s.t.host] : ips;
   const idx = r => s.rows.indexOf(r), rname = r => nameOf(REGIONS[idx(r)]);
-  if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t("v_wait_sub", { n: rows.length, of: total }) };
+  if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t(pk("v_wait_sub", rows.length), { n: rows.length, of: total }) };
   if (s.gpError && !rows.length) return { key: "v_gpoff", cls: "warn", title: t("v_gpoff"), sub: s.gpError, steps: localSteps(s, null) };
   const priv = allIps.find(ip => ipKind(ip) === "private");
   if (priv) return { key: "v_priv", cls: "bad", title: t("v_priv"), sub: t("v_priv_sub", { host: s.t.host, ip: priv }), steps: [tm("v_priv_1"), tm("v_priv_2")] };
@@ -564,24 +566,24 @@ function verdict(s, rows) {
 
   let title, cls, sub, key;
   if (ok.length === rows.length) {
-    cls = "ok"; key = rows.length === total ? "v_all" : "v_all_n"; title = t(key, { n: rows.length });
+    cls = "ok"; key = rows.length === total ? "v_all" : "v_all_n"; title = t(pk(key, rows.length), { n: rows.length });
     const med = median(rows.map(r => r.res.timings?.tcp).filter(x => x != null));
-    sub = med != null ? t("v_all_sub", { n: rows.length, ms: med }) : t("v_all_sub2", { n: rows.length });
+    sub = med != null ? t(pk("v_all_sub", rows.length), { n: rows.length, ms: med }) : t(pk("v_all_sub2", rows.length), { n: rows.length });
   } else if (!ok.length) {
     cls = "bad"; key = "n_" + (top || "other"); title = t(key); sub = L["ns_" + top] ? t("ns_" + top) : "";
     steps.push(...failSteps(top, s));
   } else if (cnRows.length && !cnOk && wOk >= wRows.length * 0.7) {
     cls = "warn"; key = "v_cnfail"; title = t(key);
-    sub = t("v_cnfail_sub", { why: list([...new Set(cnRows.map(r => rowStatus(r, s)[1]))]), n: wOk });
+    sub = t(pk("v_cnfail_sub", wOk), { why: list([...new Set(cnRows.map(r => rowStatus(r, s)[1]))]), n: wOk });
     const cnIps = cnRows.map(r => r.res.resolvedAddress).filter(Boolean), wIps = wRows.map(r => r.res.resolvedAddress).filter(Boolean);
     const odd = !s.t.isIp && wIps.length && cnIps.find(ip => !wIps.includes(ip));   // an answer no probe abroad got
     if (odd) steps.push(tm("cn_poison", { ip: odd }));
     steps.push(tm("cn_1"), tm("cn_2"), tm("cn_3"));
   } else if (cnRows.length && cnOk === cnRows.length && !wOk) {
-    cls = "warn"; key = "v_cnonly"; title = t(key); sub = t("v_cnonly_sub", { n: wRows.length });
+    cls = "warn"; key = "v_cnonly"; title = t(key); sub = t(pk("v_cnonly_sub", wRows.length), { n: wRows.length });
     steps.push(tm("cnonly_1"), tm("cnonly_2"));
   } else {
-    cls = "warn"; key = "v_part"; title = t(key, { ok: ok.length, n: rows.length });
+    cls = "warn"; key = "v_part"; title = t(pk(key, ok.length), { ok: ok.length, n: rows.length });
     sub = t("v_part_sub", { list: list(rows.filter(r => !good(r.c, s)).map(rname)) });
     steps.push(tm("part_1"));
   }
@@ -592,7 +594,7 @@ function verdict(s, rows) {
   const cert = rows.find(r => r.res.tls && r.res.tls.authorized === false);
   if (cert) steps.push(tm("cert_bad", { err: cert.res.tls.error || "" }));
   const exp = rows.map(r => r.res.tls?.expiresAt).find(Boolean);
-  if (exp) { const days = Math.floor((new Date(exp) - Date.now()) / 864e5); if (days < 14) steps.push(days < 0 ? tm("cert_expired", { date: exp.slice(0, 10) }) : tm("cert_soon", { days, date: exp.slice(0, 10) })); }
+  if (exp) { const days = Math.floor((new Date(exp) - Date.now()) / 864e5); if (days < 14) steps.push(days < 0 ? tm("cert_expired", { date: exp.slice(0, 10) }) : tm(pk("cert_soon", days), { days, date: exp.slice(0, 10) })); }
   for (const c of new Set(rows.filter(r => r.c.k === "http5" || CF_CODES.includes(r.c.code)).map(r => r.c.code)))
     steps.push(CF_CODES.includes(c) ? tm("cf_code", { code: c, text: t(`cf${c}_l`) }) : tm("http5", { code: c }));
   if (ok.length && s.web && rows.some(r => r.c.k === "nothttp")) steps.push(tm("nothttp_web"));
