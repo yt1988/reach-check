@@ -655,30 +655,59 @@ function unpack(o) {
 const resultLink = async s => `${location.origin}${D.paths[D.lang]}r/${await encodeResult(pack(s))}`;
 
 // The card: the verdict and its line of numbers, then every region as a dot, its name and its total
+// A region's name on the share card, short enough for a cell: the country alone where it has one probe, the city and
+// country code where it has more (Los Angeles, US); China's carriers by name
+const cardName = x => x.carrier ? t("c_" + x.carrier)
+  : x.city && REGIONS.filter(r => r.cc === x.cc && !r.carrier).length > 1 ? `${t("city_" + x.city)}, ${x.cc}` : regionOf(x.cc);
+// The card's layout, measured the same way for its height and for drawing it, so that nothing is cut short with "…"
+// (tool contract, "Share card"): the verdict shrinks to fit, then takes two lines; what was checked goes right under it,
+// with the subtitle after it when there's room, else on its own lines; the regions take fewer columns when a name
+// doesn't fit in a cell.
+const ROW = 46, TOT_W = 110;
+function cardLayout(ctx, kit, v, target) {
+  const { W, P, F, fit, wrap } = kit, w = W - P * 2;
+  let ts = fit(ctx, v.title, w, 46, 34), title = [v.title];
+  if (ctx.measureText(v.title).width > w) { ts = 40; ctx.font = `700 40px ${F}`; title = wrap(ctx, v.title, w, 2); }
+  ctx.font = `600 28px ${F}`;
+  const tw = ctx.measureText(target + "   ").width;
+  ctx.font = `400 26px ${F}`;
+  const inline = v.sub && tw + ctx.measureText(v.sub).width <= w, sub = v.sub && !inline ? wrap(ctx, v.sub, w, 3) : [];
+  const names = REGIONS.map(cardName);
+  let cols = 1, ns = 24;
+  out: for (const c of [3, 2]) for (const z of [24, 22]) {
+    ctx.font = `500 ${z}px ${F}`;
+    if (names.every(n => ctx.measureText(n).width <= (w / c) - 28 - TOT_W)) { cols = c; ns = z; break out; }
+  }
+  const tY = kit.top + 24, lineY = tY + (title.length - 1) * Math.round(ts * 1.2) + 52;
+  const gridY = lineY + sub.length * 36 + 70;
+  return { title, ts, inline, sub, names, cols, ns, tY, lineY, gridY, H: gridY + Math.ceil(REGIONS.length / cols) * ROW + 60 };
+}
 async function shareResult() {
   const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter(r => r?.c));
   const target = `${s.t.host}:${s.t.port}`;
-  const COLS = 3, ROW = 46;
   const { share } = await import("/assets/share/share.js?v=7");
   share({
     lang: D.lang, name: t("app_name"), file: "reach-check", show: [], never: ["ip"],
     link: () => link, home: location.origin + D.paths[D.lang],
     text: () => `${v.title} · ${target}`,
-    height: (ctx, kit) => kit.top + 150 + Math.ceil(REGIONS.length / COLS) * ROW + 40,
-    foot: () => [target],
+    height: (ctx, kit) => cardLayout(ctx, kit, v, target).H,
     ts: s.ts,
     draw: (ctx, kit) => {
       const { P, W, F, v: css, clip } = kit, col = c => css(c === "ok" ? "ok" : c === "warn" ? "warn" : c === "bad" ? "bad" : "muted");
-      let y = kit.top;
-      ctx.fillStyle = col(v.cls); ctx.font = `700 46px ${F}`; ctx.fillText(clip(ctx, v.title, W - P * 2), P, y + 10);
-      ctx.fillStyle = css("muted"); ctx.font = `400 26px ${F}`; ctx.fillText(clip(ctx, v.sub || target, W - P * 2), P, y + 60);
-      y += 130;
-      const cw = (W - P * 2) / COLS;
+      const L = cardLayout(ctx, kit, v, target);
+      ctx.fillStyle = col(v.cls); ctx.font = `700 ${L.ts}px ${F}`;
+      L.title.forEach((line, i) => ctx.fillText(line, P, L.tY + i * Math.round(L.ts * 1.2)));
+      ctx.fillStyle = css("fg"); ctx.font = `600 28px ${F}`; ctx.fillText(clip(ctx, target, W - P * 2), P, L.lineY);
+      const tw = ctx.measureText(target + "   ").width;
+      ctx.fillStyle = css("muted"); ctx.font = `400 26px ${F}`;
+      if (L.inline) ctx.fillText(v.sub, P + tw, L.lineY);
+      L.sub.forEach((line, i) => ctx.fillText(line, P, L.lineY + (i + 1) * 36));
+      const cw = (W - P * 2) / L.cols;
       REGIONS.forEach((x, i) => {
-        const row = s.rows[i], cx = P + (i % COLS) * cw, cy = y + Math.floor(i / COLS) * ROW;
+        const row = s.rows[i], cx = P + (i % L.cols) * cw, cy = L.gridY + Math.floor(i / L.cols) * ROW;
         const [cls] = row?.c ? rowStatus(row, s) : ["", ""], tot = row?.c && row.res.status === "finished" ? `${row.res.timings.total} ms` : row?.c ? "✕" : "–";
         ctx.fillStyle = col(cls); ctx.beginPath(); ctx.arc(cx + 9, cy - 8, 8, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = css("fg"); ctx.font = `500 24px ${F}`; ctx.fillText(clip(ctx, nameOf(x), cw - 150), cx + 28, cy);
+        ctx.fillStyle = css("fg"); ctx.font = `500 ${L.ns}px ${F}`; ctx.fillText(clip(ctx, L.names[i], cw - 28 - TOT_W), cx + 28, cy);
         ctx.fillStyle = css("muted"); ctx.font = `500 22px ${F}`; ctx.textAlign = "right"; ctx.fillText(tot, cx + cw - 24, cy); ctx.textAlign = "left";
       });
     },
