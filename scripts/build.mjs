@@ -121,7 +121,9 @@ export async function build({ check = false } = {}) {
 > first-byte and download times per region. Each result is classed as a web answer, open but not HTTP, refused,
 > timed out, DNS failure, reset, TLS failure or no response, and the page names the likely cause and next steps
 > (port forwarding, firewalls, CGNAT, ports blocked by home broadband, Cloudflare's proxy ports, certificates,
-> blocking in mainland China). The browser also times two HTTPS requests itself. UDP ports can't be checked. Nothing is sent to this site.
+> blocking in mainland China). The browser also times two HTTPS requests itself, and 1ms.dog's server in Tokyo connects
+> once: it reads the service's greeting (SSH, SMTP…) or its TLS certificate chain, and checks UDP ports with a standard
+> hello (QUIC, DNS, Minecraft Bedrock, Steam). It keeps no log; private addresses are never checked.
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
 - Check an address directly: ${SITE}/?t=<domain, IP or URL>&p=<port>&from=friend

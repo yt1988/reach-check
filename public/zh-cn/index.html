@@ -39,9 +39,9 @@
 <meta name="twitter:image" content="https://reach.1ms.dog/og/zh-cn.png">
 <meta name="twitter:title" content="可达性检测：别人能连上你的网站、NAS 或游戏服务吗？端口检测 · 全球与三网">
 <meta name="twitter:description" content="全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"怎么检测的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。 你自己的浏览器也会连一次，结果在表格第一行。这些请求都不经过我们的服务器。"}},{"@type":"Question","name":"我自己能打开，为什么别人连不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。"}},{"@type":"Question","name":"端口转发设好了，为什么还是超时？","acceptedAnswer":{"@type":"Answer","text":"常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。 用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。"}},{"@type":"Question","name":"「拒绝连接」和「超时」有什么区别？","acceptedAnswer":{"@type":"Answer","text":"拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。 超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。"}},{"@type":"Question","name":"能测游戏或 WireGuard 用的 UDP 端口吗？","acceptedAnswer":{"@type":"Answer","text":"不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。"}},{"@type":"Question","name":"我填的地址谁能看到？","acceptedAnswer":{"@type":"Answer","text":"运行探针的 Globalping。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。 每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。"}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"可达性检测 · 1ms.dog","url":"https://reach.1ms.dog/zh-cn/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费的可达性检测：从全球 18 个地区（含中国电信、联通、移动）和你自己的浏览器去连你的服务，分段显示 DNS、TCP、TLS、首字节耗时。连不上就告诉你卡在哪一步、下一步查哪里：端口转发、防火墙、没有公网 IP、运营商封端口、证书。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"怎么检测的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。 你自己的浏览器也会连一次，结果在表格第一行。然后我们东京的服务器再连一次：读取服务先发的消息（SSH、邮件等）或 TLS 证书链，除此之外不发任何内容。"}},{"@type":"Question","name":"我自己能打开，为什么别人连不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。"}},{"@type":"Question","name":"端口转发设好了，为什么还是超时？","acceptedAnswer":{"@type":"Answer","text":"常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。 用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。"}},{"@type":"Question","name":"「拒绝连接」和「超时」有什么区别？","acceptedAnswer":{"@type":"Answer","text":"拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。 超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。"}},{"@type":"Question","name":"能测游戏或 WireGuard 用的 UDP 端口吗？","acceptedAnswer":{"@type":"Answer","text":"能测一部分。协议选 UDP：我们东京的服务器向端口发一个标准的问候包（QUIC、DNS、Minecraft 基岩版或 Steam 服务器查询），告诉你它有回应、回复端口关闭，还是没有任何反应。很多 UDP 服务（WireGuard、大多数游戏）只回应它认得的消息，所以没回应不代表端口关着。而且这只是东京一个地方的结果，国内网络对 UDP 的处理可能不一样。"}},{"@type":"Question","name":"我填的地址谁能看到？","acceptedAnswer":{"@type":"Answer","text":"运行探针的 Globalping，以及连它一次的我们东京的服务器。我们不保存：服务器不记日志，结果只在内存里留 5 分钟，免得重复检测时再去连一次。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。 每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。我们的服务器每位访客每小时最多测 10 次、5 个不同地址，并且从不连接内网地址。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.c6c9a7419d.css">
+<link rel="stylesheet" href="/assets/app.0c8dfe1d7f.css">
 </head>
 <body>
 <div class="app">
@@ -83,6 +83,9 @@
               <ul class="combo-list" id="portList" role="listbox" hidden></ul>
             </div>
           </div>
+          <label class="fld proto"><span data-i="f_proto">协议</span>
+            <select id="proto"><option value="tcp">TCP</option><option value="udp">UDP</option></select>
+          </label>
           <label class="fld ipv"><span data-i="f_ipv">IP 版本</span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -103,16 +106,16 @@
     </section>
   </div>
 
-  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <!-- 3. the evidence: this browser, our server in Tokyo, then one line per region; details on demand (UDP: the server only) -->
   <section class="card sec" id="table" hidden>
-    <div class="sec-h"><h3 data-i="h_regions">从全球各地连过去</h3><span class="src m">数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志愿者探针</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="sec-h"><h3 id="tblH" data-i="h_regions">从全球各地连过去</h3><span class="src m">数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志愿者探针</span><span class="m prog" id="gpProgress"></span></div>
     <div class="legend m">
       <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 握手</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 握手</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">首字节</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">下载</span></span>
     </div>
     <div id="regions" class="regions"></div>
     <p class="note" id="gpNote" hidden></p>
   </section>
-  <footer class="foot m"><p>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由）。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+  <footer class="foot m"><p>数据来源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a>（外部检测和追踪路由），以及我们东京的服务器。</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
@@ -125,12 +128,12 @@
         <select id="helpSel" aria-labelledby="helpT"></select>
         <button class="icon-btn" type="button" data-hstep="1" aria-label="下一条"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
       </div>
-      <div class="help-c" id="helpC"><article data-hqb="0"><h3>怎么检测的？</h3><p>Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。</p><p>你自己的浏览器也会连一次，结果在表格第一行。这些请求都不经过我们的服务器。</p></article><article data-hqb="1" hidden><h3>我自己能打开，为什么别人连不上？</h3><p>如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。</p></article><article data-hqb="2" hidden><h3>端口转发设好了，为什么还是超时？</h3><p>常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。</p><p>用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。</p></article><article data-hqb="3" hidden><h3>「拒绝连接」和「超时」有什么区别？</h3><p>拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。</p><p>超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。</p></article><article data-hqb="4" hidden><h3>能测游戏或 WireGuard 用的 UDP 端口吗？</h3><p>不能。UDP 服务收不到正确的消息时通常不会回应，所以浏览器和公共探针都没有通用的办法判断 UDP 端口开没开。可以先确认主机通过 TCP 能连上（选 SSH 或网页端口），再请朋友直接用游戏连。</p></article><article data-hqb="5" hidden><h3>我填的地址谁能看到？</h3><p>运行探针的 Globalping。我们不保存。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。</p><p>每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。</p></article></div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>怎么检测的？</h3><p>Globalping 在 18 个地区的志愿者探针，各自连你的地址和端口，发一次 HTTP(S) 请求，并给每一步计时：DNS 解析、TCP 握手、TLS 握手、首字节。失败时，错误信息说明停在哪一步：拒绝连接、超时、被重置、TLS 出错，或者端口上的不是网页服务。</p><p>你自己的浏览器也会连一次，结果在表格第一行。然后我们东京的服务器再连一次：读取服务先发的消息（SSH、邮件等）或 TLS 证书链，除此之外不发任何内容。</p></article><article data-hqb="1" hidden><h3>我自己能打开，为什么别人连不上？</h3><p>如果你和服务在同一个网络里，流量根本没出门，自己能打开说明不了外面能不能连。开着代理时，你走的路也和别人不一样。以外部检测为准：它和陌生人连你的方式一样。</p></article><article data-hqb="2" hidden><h3>端口转发设好了，为什么还是超时？</h3><p>常见原因：没有公网 IPv4（路由器的 WAN 地址以 100.64–100.127 开头，或者和你的公网 IP 不一样，就是运营商级 NAT）；NAS、Windows 或云服务器安全组的防火墙没放行；运营商封了家宽的 80、443 等常用端口；转发指向的还是设备以前的内网 IP。</p><p>用 IPv6 的话，路由器和光猫的 IPv6 防火墙默认挡住入站连接，要单独放行这个端口。</p></article><article data-hqb="3" hidden><h3>「拒绝连接」和「超时」有什么区别？</h3><p>拒绝连接：数据包到了那台机器，但端口上没有程序在监听。可能是服务没开、只监听了 127.0.0.1，或者转发到了错误的端口。</p><p>超时：完全没有回应。可能是防火墙把包丢了、没有做端口转发，或者地址填错了。</p></article><article data-hqb="4" hidden><h3>能测游戏或 WireGuard 用的 UDP 端口吗？</h3><p>能测一部分。协议选 UDP：我们东京的服务器向端口发一个标准的问候包（QUIC、DNS、Minecraft 基岩版或 Steam 服务器查询），告诉你它有回应、回复端口关闭，还是没有任何反应。很多 UDP 服务（WireGuard、大多数游戏）只回应它认得的消息，所以没回应不代表端口关着。而且这只是东京一个地方的结果，国内网络对 UDP 的处理可能不一样。</p></article><article data-hqb="5" hidden><h3>我填的地址谁能看到？</h3><p>运行探针的 Globalping，以及连它一次的我们东京的服务器。我们不保存：服务器不记日志，结果只在内存里留 5 分钟，免得重复检测时再去连一次。结果链接里带着地址和结果，方便别人看到同一次检测；链接里不会有你自己的 IP。</p><p>每个 IP 在 Globalping 每小时可以测 250 个地区次，一次检测用 18 个；用完时页面会告诉你多久后恢复。我们的服务器每位访客每小时最多测 10 次、5 个不同地址，并且从不连接内网地址。</p></article></div>
     </div>
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-cn.76b805065f.js"></script>
-<script src="/assets/app.7b33701cd7.js"></script>
+<script src="/assets/l.zh-cn.d74aed98d3.js"></script>
+<script src="/assets/app.f30379c19c.js"></script>
 </body>
 </html>

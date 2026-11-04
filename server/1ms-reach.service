@@ -1,0 +1,63 @@
+# Reach Check's server on the 1ms.dog VPS: https://reach-api.1ms.dog:2096 (port, user and directory as allocated in
+# 1ms-shell docs/processes.md, "专用服务器"). Install: the binary at /opt/1ms/reach/1ms-reach, this file at
+# /etc/systemd/system/1ms-reach.service. The certificate is renewed by certbot, which then restarts this service.
+[Unit]
+Description=1ms-reach: Reach Check's server (reach-api.1ms.dog:2096)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=1ms-reach
+Group=1ms-reach
+# -self: the machine's public IPv4 is behind the cloud's NAT, not on an interface, so it is named here to be refused
+ExecStart=/opt/1ms/reach/1ms-reach -addr :2096 -self 16.76.79.94
+LoadCredential=fullchain.pem:/etc/letsencrypt/live/reach-api.1ms.dog/fullchain.pem
+LoadCredential=privkey.pem:/etc/letsencrypt/live/reach-api.1ms.dog/privkey.pem
+Restart=on-failure
+RestartSec=5
+
+# resources
+Environment=GOMEMLIMIT=40MiB
+Environment=QUIC_GO_DISABLE_RECEIVE_BUFFER_WARNING=true
+MemoryMax=64M
+TasksMax=64
+LimitNOFILE=4096
+
+# no access log: the program writes nothing but a fatal error, and only errors reach the journal
+StandardOutput=null
+StandardError=journal
+LogLevelMax=err
+
+# The program refuses private, reserved and its own addresses; this is the same again, enforced by the kernel for
+# every packet the service sends or receives (remote addresses only, so visitors and public resolvers pass)
+IPAddressDeny=localhost link-local multicast 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 240.0.0.0/4 16.76.79.94/32 ::/96 ::ffff:0:0/96 64:ff9b::/96 2001:db8::/32 2002::/16 fc00::/7 fec0::/10 2406:da14:3c2:6400:d2e5:c654:ae70:30c5/128
+
+# hardening: no privileges at all (2096 is not a privileged port), nothing writable
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+UMask=077
+
+[Install]
+WantedBy=multi-user.target

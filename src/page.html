@@ -48,6 +48,9 @@
               <ul class="combo-list" id="portList" role="listbox" hidden></ul>
             </div>
           </div>
+          <label class="fld proto"><span data-i="f_proto"></span>
+            <select id="proto"><option value="tcp">TCP</option><option value="udp">UDP</option></select>
+          </label>
           <label class="fld ipv"><span data-i="f_ipv"></span>
             <select id="ipv"><option value="4">IPv4</option><option value="6">IPv6</option></select>
           </label>
@@ -68,9 +71,9 @@
     </section>
   </div>
 
-  <!-- 3. the evidence: this browser, then one line per region; details on demand -->
+  <!-- 3. the evidence: this browser, our server in Tokyo, then one line per region; details on demand (UDP: the server only) -->
   <section class="card sec" id="table" hidden>
-    <div class="sec-h"><h3 data-i="h_regions"></h3><span class="src m">{{srcGp}}</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="sec-h"><h3 id="tblH" data-i="h_regions"></h3><span class="src m">{{srcGp}}</span><span class="m prog" id="gpProgress"></span></div>
     <div class="legend m">
       <span><i class="seg s-dns"></i><span data-i="lg_dns"></span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp"></span></span><span><i class="seg s-tls"></i><span data-i="lg_tls"></span></span><span><i class="seg s-fb"></i><span data-i="lg_fb"></span></span><span><i class="seg s-dl"></i><span data-i="lg_dl"></span></span>
     </div>

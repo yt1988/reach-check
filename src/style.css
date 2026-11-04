@@ -89,6 +89,7 @@ select option { background-color: var(--panel); color: var(--fg); }
 .combo-list li span { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .combo-list li:hover, .combo-list li[aria-selected="true"] { background: var(--soft); }
 .fld.ipv { flex: 0 0 96px; }
+.fld.proto { flex: 0 0 86px; }
 .btn { height: 40px; padding: 0 18px; border: 0; border-radius: 9px; background: var(--ink); color: var(--ink-fg); font-weight: 600; cursor: pointer; white-space: nowrap; }
 .btn:disabled { opacity: .55; cursor: default; }
 .btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
@@ -180,15 +181,21 @@ select option { background-color: var(--panel); color: var(--fg); }
 .segs .hot { color: var(--bad); font-weight: 600; }
 .trace { font-size: 12px; margin-left: 6px; font-family: var(--f-ui); }
 @media (pointer: coarse) { .trace, .link, .xl { min-height: 32px; display: inline-flex; align-items: center; } }
+/* the server row: what the service said, the certificate chain */
+.sv-said { overflow-wrap: anywhere; }
+.chain { margin: 2px 0 0; padding-left: 18px; font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; }
+.chain li { overflow-wrap: anywhere; }
+/* UDP: the server alone, so no timing legend or probe source */
+.udp .legend, .udp .sec-h .src, .udp .prog { display: none; }
 .tr { margin: 4px 0 0; padding: 10px 12px; background: var(--panel); border-radius: 8px; font: 12px/1.45 var(--f-num); overflow-x: auto; white-space: pre; }
 .blink { animation: blink 1.2s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: .45; } }
 @media (max-width: 640px) {
-  /* the form in two rows: the address; then port, IP version and the button */
-  .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+  /* the form in three rows: the address; port, protocol and IP version; the button */
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fld select { padding: 0 8px; }
   .row .fld { flex: none; }
-  .fld.grow { grid-column: 1 / -1; }
-  .row #go { align-self: end; }
+  .fld.grow, .row #go { grid-column: 1 / -1; }
   .rg { grid-template-columns: minmax(0, 1fr) 14px 58px; }
   .rg .bar { grid-column: 1 / -1; grid-row: 2; margin-left: 18px; }
   .facts { grid-template-columns: minmax(0, 1fr); gap: 6px; }

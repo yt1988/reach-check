@@ -22,17 +22,19 @@ Can other people reach your website, NAS or game server, and if not, where does 
 
 - **From 18 regions**: one [Globalping](https://globalping.io) probe each in mainland China (by carrier); Hong Kong; Taiwan, China; Tokyo; Korea; Singapore; India; Australia; London; Frankfurt; Russia; the UAE; South Africa; Los Angeles; New York; and São Paulo. Each probe makes one HTTP(S) request to the port, which tells apart: answered as a web page, open but not a web service (SSH, Minecraft…), connection refused (nothing listening), timed out (dropped by a firewall, or no port forward), DNS failure, connection reset, TLS failure.
 - **From your browser**: two HTTPS requests to the same address. A browser only sees how long a request took before it failed, so it tells "no answer at all" from "something answered", and for HTTPS pages splits the time into connection setup and the request. Ports browsers refuse to open (22, 25, 110, …) are named as such.
+- **From our server in Tokyo**: one more connection, from `reach-api.1ms.dog` ([server/](server/)). It reads what the service says first (an SSH, SMTP, FTP, MySQL… greeting), or completes a TLS handshake and checks the certificate chain (missing intermediate, wrong name, self-signed, expired). It sends nothing but that handshake.
+- **UDP ports**, from the same server: it sends a standard hello (a QUIC handshake, a DNS query, a Minecraft Bedrock or Steam server query) and says whether the port answered, replied that it's closed (ICMP port unreachable), or stayed silent. Many UDP services (WireGuard, most games) only answer a message they recognise, so silence proves nothing; and it's one place, Tokyo.
 - **What DNS says**, from the addresses the probes resolved: a private or carrier-grade NAT address in public records, Cloudflare's proxy (which only forwards a few HTTP ports), and China's probes getting a different address from everyone else (DNS poisoning, or location-based DNS).
 - **A verdict with next steps**: port forwarding, firewalls, no public IPv4 (CGNAT), ports blocked by home broadband, a service listening on 127.0.0.1 only, Cloudflare 52x errors, certificates, slow TCP handshakes (lost packets), and your own view disagreeing with the outside one (NAT loopback, a proxy).
 - **Share a result**: an image, and a link that holds the whole result (`/r/<code>`), so whoever opens it sees the same check; the Worker gives the link a preview title with the verdict. The visitor's own IP is never in it.
 - **10 languages**: English, 简体中文, 繁體中文, 日本語, 한국어, Español, Français, Deutsch, Português, Русский.
 - **Trace route** from any failed region, and an **invite link**: a friend opens it and their browser checks your service.
 
-UDP ports (many game servers, WireGuard) can't be checked: neither a browser nor a public probe can tell whether a UDP port is open.
-
 ## Where it runs
 
-Everything runs in the visitor's browser. Data source, named on the page: Globalping (the outside check and trace route). The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files plus a small Worker that only runs for shared result links (to title their preview); no server of ours sees what you check.
+The check runs in the visitor's browser. Data sources, named on the page: Globalping (the outside check and trace route) and our own server in Tokyo. The page calls Globalping's API directly, so each visitor uses their own allowance (250 probe results an hour per IP; one check uses 18). When it runs out the page says when it comes back. The site is static files plus a small Worker that only runs for shared result links (to title their preview).
+
+The server in Tokyo ([server/](server/), Go, one binary) sees the address and port being checked, and nothing else about the visitor but their IP, which it keeps only as a keyed hash in memory for the rate limits. It writes no access log, and holds an answer for 5 minutes so a repeat doesn't connect again. Because anyone can call it, its limits are what stops it being used to scan others: one host and port per request; never a private, reserved or its own address (checked in the program and again by systemd's `IPAddressDeny=`); 10 checks of at most 5 addresses an hour per visitor (an IPv6 visitor by their /64); 30 connections an hour to any one address; 60 a minute and 1000 an hour for the whole site.
 
 ## Develop
 
@@ -48,7 +50,7 @@ Deploy with `npx wrangler deploy` (static assets, not metered, and the Worker fo
 
 ```
 src/page.html       the page template
-src/app.js          regions, Globalping, the browser check, DNS, the verdict
+src/app.js          regions, Globalping, the browser check, our server's check, the verdict
 src/style.css       design tokens (shared with the other 1ms.dog tools) and layout
 src/code.mjs        a result in a link and back (the page and the Worker share it)
 src/worker.js       the Worker: /r/<code> gets the page with the verdict in its title; anything else is a 404
@@ -56,6 +58,7 @@ src/i18n/*.mjs      the strings in 10 languages; en is the reference
 scripts/build.mjs   builds public/: a page per language (English at /, the others under /zh-cn/, /ja/ …), sitemap, _headers
 scripts/assets.mjs  renders the link-preview images
 scripts/dev.mjs     local preview server (static files only)
+server/             1ms-reach, the server in Tokyo (Go): go test ./... · build with GOOS=linux GOARCH=amd64 CGO_ENABLED=0; 1ms-reach.service is its systemd unit
 ```
 
 ## License
