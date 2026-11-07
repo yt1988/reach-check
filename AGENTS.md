@@ -57,7 +57,9 @@ be); test real targets from a machine without one.
 - **The site**: pushing `main` deploys it (Cloudflare Workers Builds runs `npm ci && npm test`, then
   `npx wrangler deploy`), in about half a minute. To host it yourself: `npx wrangler deploy`, then bind a domain to the
   Worker in the Cloudflare dashboard.
-- **The server**: by hand, as below. It is not deployed by a push.
+- **The server**: installed by hand, as below; a push doesn't reach any machine. When `server/` changes on `main`,
+  the `server` workflow (`.github/workflows/server.yml`) tests it, builds `1ms-reach` for linux/amd64 (static) and
+  publishes it as a GitHub Release tagged `server-<short commit>`, marked latest, with `SHA256SUMS`.
 
 ## The server 1ms-reach, from nothing
 
@@ -70,12 +72,21 @@ visitors connect directly, so the program's own limits are what stop it being us
    useradd --system --no-create-home --shell /usr/sbin/nologin <user>
    mkdir -p /opt/<app>
    ```
-2. **Build** (anywhere with Go; the machine itself needs no compiler)
+2. **The program**: download the latest release and check it (linux/amd64; no Go needed on the machine)
+   ```bash
+   cd /opt/<app>
+   R=https://github.com/yt1988/reach-check/releases/latest/download
+   curl -fLO $R/1ms-reach -fLO $R/SHA256SUMS
+   grep ' 1ms-reach$' SHA256SUMS | sha256sum -c -        # must say: 1ms-reach: OK
+   chown root:root 1ms-reach && chmod 755 1ms-reach && rm SHA256SUMS
+   ```
+   Each release also has `1ms-reach.service` (the unit of step 4) and a build attestation
+   (`gh attestation verify 1ms-reach --repo yt1988/reach-check`). Or build it yourself, anywhere with Go, and upload
+   it there:
    ```bash
    cd server
    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o 1ms-reach .
    ```
-   Upload it to `/opt/<app>/1ms-reach`, owned by root, mode 755.
 3. **Certificate** for `<api-domain>`, for example with certbot, so it lands in
    `/etc/letsencrypt/live/<api-domain>/`. Renewal must restart the service (a certbot deploy hook:
    `systemctl restart 1ms-reach`).
@@ -93,7 +104,7 @@ visitors connect directly, so the program's own limits are what stop it being us
    ```
 5. **Firewall**: allow 2096/tcp in, over IPv4 and IPv6, in the cloud provider's firewall and on the host. The server
    listens on no UDP port: it only sends UDP.
-6. **Upgrade later**: upload the new binary over the old one, then `systemctl restart 1ms-reach`.
+6. **Upgrade later**: get the new binary as in step 2 (over the old one), then `systemctl restart 1ms-reach`.
 
 ### Verify
 

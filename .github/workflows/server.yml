@@ -1,0 +1,48 @@
+# When server/ changes on main: test it, build 1ms-reach for linux/amd64 (static), and publish it as a release tagged
+# server-<short commit>, marked latest, with SHA256SUMS, so a new machine downloads it instead of installing Go:
+#   https://github.com/yt1988/reach-check/releases/latest/download/1ms-reach
+name: server
+on:
+  push:
+    branches: [main]
+    paths: ["server/**", ".github/workflows/server.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+concurrency:
+  group: server-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - name: Test
+        run: go vet ./... && go test ./...
+      - name: Build
+        run: |
+          mkdir -p dist
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o dist/1ms-reach .
+          cp 1ms-reach.service dist/
+          cd dist && sha256sum 1ms-reach 1ms-reach.service > SHA256SUMS && cat SHA256SUMS
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: server/dist/1ms-reach
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="server-${GITHUB_SHA::7}"
+          if gh release view "$tag" >/dev/null 2>&1; then echo "$tag exists"; exit 0; fi
+          gh release create "$tag" dist/1ms-reach dist/1ms-reach.service dist/SHA256SUMS --target "$GITHUB_SHA" \
+            --title "1ms-reach $tag" --latest \
+            --notes "1ms-reach (server/) at ${GITHUB_SHA::7}, linux/amd64, static. Check with: sha256sum -c SHA256SUMS"
