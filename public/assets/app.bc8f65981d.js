@@ -1255,7 +1255,7 @@
     async function shareResult() {
       const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c));
       const target = "".concat(s.t.host, ":").concat(s.t.port);
-      const { share } = await import("/assets/share/share.js?v=8");
+      const { share } = await import("/assets/share/share.js?v=9");
       share({
         lang: D.lang,
         name: t("app_name"),
@@ -1326,7 +1326,7 @@
         drawRegions();
         drawVerdict();
         $("shareBtn").hidden = false;
-        const { received } = await import("/assets/share/share.js?v=8");
+        const { received } = await import("/assets/share/share.js?v=9");
         recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });
       });
     } else {
