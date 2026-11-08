@@ -16,6 +16,7 @@
   },
   "homepage": "https://reach.1ms.dog",
   "devDependencies": {
-    "@resvg/resvg-js": "^2.6.2"
+    "@resvg/resvg-js": "^2.6.2",
+    "esbuild": "0.25.10"
   }
 }

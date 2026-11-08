@@ -157,4 +157,6 @@ export default {
   sv_step_chain: "**중간 인증서가 없어요**: 서버가 자기 인증서만 보내요. 브라우저는 대개 채워 넣지만 앱, curl, 일부 휴대폰은 실패해요. 전체 체인을 설정하세요(`cert.pem`이 아니라 `fullchain.pem`).",
   sv_step_name: "**다른 이름용 인증서예요**({names}). {host}이(가) 들어간 인증서를 받으세요.",
   sv_step_self: "**자체 서명 인증서예요**. 신뢰하도록 설정한 기기만 경고 없이 접속할 수 있어요. Let's Encrypt 같은 무료 인증서를 쓰세요.",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "이 브라우저에서는 이 결과를 열 수 없어요", v_oldbrowser_sub: "링크는 문제없지만, 보려면 최신 브라우저(Chrome 103, Safari 16.4 이상)가 필요해요. 브라우저를 업데이트하거나 다른 브라우저에서 링크를 여세요.",
 };

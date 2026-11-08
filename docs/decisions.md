@@ -40,6 +40,13 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 
 ## The page
 
+- **Result links use 1ms.dog's shared codec** (`public/assets/share/codec.js`, copied byte for byte; the page and the
+  Worker import the same file). Version 1 links were bare `CompressionStream("deflate-raw")`, which Chrome before 103
+  and Safari before 16.4 don't have: making a link threw there. Version 2 compresses where it can and otherwise writes
+  the JSON uncompressed, marked by its first letter (`z` / `u`); version 1 links are still read. A browser that can't
+  decompress a link says so instead of showing an empty result (the Worker's preview title still works).
+- **The page's script is built for ES2019** (esbuild in `scripts/build.mjs`): `?.` and `??` in the source would
+  be a syntax error in Chrome 79 / Safari 13 era browsers and stop the whole page.
 - **A target that resolves to a private address.** Globalping refuses such targets with "Private IP
   ranges are not allowed" and no address, so the page used to say only "unreachable from outside". It now treats that
   message as its own outcome and takes the address from our server, which resolves the name but doesn't connect.

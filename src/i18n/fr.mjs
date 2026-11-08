@@ -168,4 +168,6 @@ export default {
   sv_step_chain: "**Il manque un certificat intermédiaire** : le serveur n'envoie que son propre certificat. Les navigateurs comblent souvent le trou, mais les applis, curl et certains téléphones échouent. Configurez la chaîne complète (`fullchain.pem`, pas `cert.pem`).",
   sv_step_name: "**Le certificat est pour un autre nom** ({names}). Obtenez-en un qui inclut {host}.",
   sv_step_self: "**Le certificat est autosigné**, seuls les appareils réglés pour lui faire confiance se connectent sans avertissement. Utilisez-en un gratuit, comme Let's Encrypt.",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "Ce navigateur ne peut pas ouvrir ce résultat", v_oldbrowser_sub: "Le lien est correct, mais l'afficher demande un navigateur plus récent (Chrome 103 ou Safari 16.4 et au-delà). Mettez le navigateur à jour, ou ouvrez le lien dans un autre.",
 };

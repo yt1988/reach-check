@@ -168,4 +168,6 @@ export default {
   sv_step_chain: "**An intermediate certificate is missing**: the server sends only its own certificate. Browsers often fill the gap, but apps, curl and some phones fail. Configure the full chain (`fullchain.pem`, not `cert.pem`).",
   sv_step_name: "**The certificate is for another name** ({names}). Get one that includes {host}.",
   sv_step_self: "**The certificate is self-signed**, so only devices told to trust it connect without a warning. Use a free one such as Let's Encrypt.",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "This browser can't open this result", v_oldbrowser_sub: "The link is fine, but showing it needs a newer browser (Chrome 103 or Safari 16.4 and later). Update the browser, or open the link in another one.",
 };

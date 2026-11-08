@@ -10,6 +10,7 @@
 import { mkdir, readFile, readdir, writeFile, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { build as bundle } from "esbuild";
 
 const SITE = (process.env.SITE_URL || "https://reach.1ms.dog").replace(/\/+$/, "");
 const pub = new URL("../public/", import.meta.url), src = new URL("../src/", import.meta.url);
@@ -49,8 +50,12 @@ export async function build({ check = false } = {}) {
   for (const [l] of langs) for (const k of Object.keys(en)) if (!(k in I[l])) throw new Error(`i18n/${l}.mjs is missing "${k}"`);
   const tpl = await readFile(new URL("page.html", src), "utf8");
 
-  // the result-link code (src/code.mjs, shared with the Worker) goes in front of the page's code, without its exports
-  const js = (await readFile(new URL("code.mjs", src), "utf8")).replace(/^export /gm, "") + "\n" + await readFile(new URL("app.js", src), "utf8");
+  // the page's code, with the result-link code it imports (src/code.mjs and 1ms.dog's codec, shared with the Worker),
+  // as one script for ES2019 browsers: Chrome 70 and Safari 12 era in-app browsers can't parse ?. or ??, and one
+  // unparsable token stops the whole page. The share dialog (/assets/share/share.js) stays out: loaded when needed.
+  const js = (await bundle({ entryPoints: [fileURLToPath(new URL("app.js", src))], bundle: true, format: "iife",
+    target: ["es2019", "chrome70", "safari12", "firefox68", "edge79"], legalComments: "none", write: false,
+    external: ["/assets/share/share.js*"] })).outputFiles[0].text;
   const css = (await readFile(new URL("fonts.css", src), "utf8")) + "\n" + await readFile(new URL("style.css", src), "utf8");
   const jsName = `app.${hash(js)}.js`, cssName = `app.${hash(css)}.css`;
   const files = { ["assets/" + jsName]: js, ["assets/" + cssName]: css };

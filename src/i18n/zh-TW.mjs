@@ -151,4 +151,6 @@ export default {
   u_none: "UDP 檢測沒有執行", sv_step_svc: "從東京連，這個連接埠上的是 **{svc}**：`{banner}`。如果這不是你要的服務，代表連接埠轉發指到了別的裝置或連接埠。",
   sv_step_chain: "**缺少中繼憑證**：伺服器只送出自己的憑證。瀏覽器往往能自己補上，但 App、curl 和部分手機會直接失敗。請設定完整憑證鏈（用 `fullchain.pem`，不是 `cert.pem`）。",
   sv_step_name: "**憑證是簽給別的網域的**（{names}）。請換一張包含 {host} 的憑證。", sv_step_self: "**憑證是自簽的**，只有手動信任過它的裝置才能不跳警告地連上。請改用 Let's Encrypt 等免費憑證。",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "這個瀏覽器打不開這筆結果", v_oldbrowser_sub: "連結沒有問題，但要較新的瀏覽器才能顯示（Chrome 103、Safari 16.4 以上）。請更新瀏覽器，或換一個瀏覽器開啟這個連結。",
 };

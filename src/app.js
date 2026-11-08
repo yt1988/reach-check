@@ -3,6 +3,8 @@
 // visitor spends their own hourly allowance). Inside view: this browser, by timing two HTTPS requests. Up close: our
 // own server in Tokyo (server/ in this repo) connects once and reads what the service says first and its TLS handshake,
 // and is the only view for UDP. Strings come from window.L1MS (assets/l.<lang>.*.js, built from src/i18n/).
+import { encodeResult, decodeResult, sharePath } from "./code.mjs";
+
 (() => {
 const GP = "https://api.globalping.io/v1";
 const API = "https://reach-api.1ms.dog:2096/v1/probe";
@@ -863,7 +865,11 @@ loadQuota();
 const sp = sharePath(location.pathname);
 if (sp) {
   // someone else's result: show it as it was, under the banner that offers the visitor's own check of the same target
-  decodeResult(sp.code).then(async o => {
+  decodeResult(sp.code).catch(() => {
+    // the link is fine, but this browser can't decompress it: say so, rather than show an empty result
+    $("verdict").hidden = false; $("vDot").className = "dot warn"; $("inviteBtn").hidden = true;
+    $("vTitle").textContent = t("v_oldbrowser"); $("vSub").textContent = t("v_oldbrowser_sub");
+  }).then(async o => {
     if (!o) return;
     state = unpack(o);
     $("target").value = state.t.raw; $("port").value = state.t.port; $("ipv").value = state.ipv;

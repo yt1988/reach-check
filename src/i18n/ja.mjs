@@ -157,4 +157,6 @@ export default {
   sv_step_chain: "**中間証明書がありません**：サーバーは自分の証明書しか送っていません。ブラウザは補えることが多いものの、アプリや curl、一部のスマホは失敗します。チェーン全体を設定してください（`cert.pem` ではなく `fullchain.pem`）。",
   sv_step_name: "**別の名前向けの証明書です**（{names}）。{host} を含む証明書を取得してください。",
   sv_step_self: "**自己署名の証明書です**。信頼するよう設定した端末でしか警告なしに接続できません。Let's Encrypt などの無料の証明書を使ってください。",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "このブラウザではこの結果を開けません", v_oldbrowser_sub: "リンクに問題はありませんが、表示には新しいブラウザ（Chrome 103、Safari 16.4 以降）が必要です。ブラウザを更新するか、別のブラウザでリンクを開いてください。",
 };

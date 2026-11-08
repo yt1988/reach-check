@@ -150,4 +150,6 @@ export default {
   u_none: "UDP 检测没有运行", sv_step_svc: "从东京连，这个端口上的是 **{svc}**：`{banner}`。如果这不是你要的服务，说明端口转发指到了别的设备或端口。",
   sv_step_chain: "**缺少中间证书**：服务器只发了自己的证书。浏览器往往能自己补上，但 App、curl 和部分手机会直接失败。请配置完整证书链（用 `fullchain.pem`，不是 `cert.pem`）。",
   sv_step_name: "**证书是签给别的域名的**（{names}）。请换一张包含 {host} 的证书。", sv_step_self: "**证书是自签名的**，只有手动信任过它的设备才能不报警告地连上。请改用 Let's Encrypt 等免费证书。",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "这个浏览器打不开这条结果", v_oldbrowser_sub: "链接没有问题，但要较新的浏览器才能显示（Chrome 103、Safari 16.4 及以上）。请更新浏览器，或换一个浏览器打开这条链接。",
 };

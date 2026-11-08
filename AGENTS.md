@@ -46,7 +46,7 @@ be); test real targets from a machine without one.
 |---|---|
 | strings (`src/i18n/*.mjs`) | `npm test` (every language has every key, with the same placeholders and marks). Read the sentence in Chinese and Russian at 375 px wide |
 | the page (`src/app.js`, `page.html`, `style.css`) | `npm run build && npm test` (the built script must parse). Then open the page: one TCP check (say `github.com`, port 22), one UDP check (`cloudflare-quic.com`, 443), and the phone width (375 px) |
-| result links (`src/code.mjs`, `src/worker.js`) | `npm test`, then open a `/r/` link under `npx wrangler dev` and check its title |
+| result links (`src/code.mjs`, `src/worker.js`) | `npm test` (old version-1 links, uncompressed `u` links), then open a `/r/` link under `npx wrangler dev` and check its title. `public/assets/share/codec.js` is 1ms.dog's shared codec: replace it only with a new copy of the original |
 | the server (`server/`) | `go vet ./... && go test ./...` in `server/`; after deploying, the checks under "Verify" below |
 | the build (`scripts/build.mjs`) | `npm test` (`public/ is up to date`) |
 

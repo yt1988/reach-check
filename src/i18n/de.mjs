@@ -169,4 +169,6 @@ export default {
   sv_step_chain: "**Ein Zwischenzertifikat fehlt**: der Server schickt nur sein eigenes Zertifikat. Browser ergänzen es oft, aber Apps, curl und manche Handys scheitern. Richte die vollständige Kette ein (`fullchain.pem`, nicht `cert.pem`).",
   sv_step_name: "**Das Zertifikat gilt für einen anderen Namen** ({names}). Hol dir eines, das {host} enthält.",
   sv_step_self: "**Das Zertifikat ist selbst signiert**, daher verbinden sich nur Geräte ohne Warnung, denen man es als vertrauenswürdig eingetragen hat. Nimm ein kostenloses wie Let's Encrypt.",
+  // a result link this browser can't decompress (older than Chrome 103 / Safari 16.4)
+  v_oldbrowser: "Dieser Browser kann dieses Ergebnis nicht öffnen", v_oldbrowser_sub: "Der Link ist in Ordnung, aber zum Anzeigen braucht es einen neueren Browser (Chrome 103 oder Safari 16.4 und neuer). Aktualisiere den Browser oder öffne den Link in einem anderen.",
 };
