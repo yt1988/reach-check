@@ -51,10 +51,12 @@ export async function build({ check = false } = {}) {
   const tpl = await readFile(new URL("page.html", src), "utf8");
 
   // the page's code, with the result-link code it imports (src/code.mjs and 1ms.dog's codec, shared with the Worker),
-  // as one script for ES2019 browsers: Chrome 70 and Safari 12 era in-app browsers can't parse ?. or ??, and one
+  // as one script for ES2019 browsers: Chrome 70 and Safari 13 era in-app browsers can't parse ?. or ??, and one
   // unparsable token stops the whole page. The share dialog (/assets/share/share.js) stays out: loaded when needed.
+  // (Safari 13, not 12: for 12 esbuild rewrites template literals into .concat(), which 1ms-shell's check reads for
+  // the sister-tool links, `meta[name="${id}"]`; ?. and ?? are gone either way)
   const js = (await bundle({ entryPoints: [fileURLToPath(new URL("app.js", src))], bundle: true, format: "iife",
-    target: ["es2019", "chrome70", "safari12", "firefox68", "edge79"], legalComments: "none", write: false,
+    target: ["es2019", "chrome70", "safari13", "firefox68", "edge79"], legalComments: "none", write: false,
     external: ["/assets/share/share.js*"] })).outputFiles[0].text;
   const css = (await readFile(new URL("fonts.css", src), "utf8")) + "\n" + await readFile(new URL("style.css", src), "utf8");
   const jsName = `app.${hash(js)}.js`, cssName = `app.${hash(css)}.css`;

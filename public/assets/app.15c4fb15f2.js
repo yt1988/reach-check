@@ -31,7 +31,7 @@
   // public/assets/share/codec.js
   var CodecError = class extends Error {
     constructor(reason) {
-      super("codec: ".concat(reason));
+      super(`codec: ${reason}`);
       this.name = "CodecError";
       this.reason = reason;
     }
@@ -137,7 +137,7 @@
       if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]);
       return s;
     };
-    const PR = new Intl.PluralRules(D.lang), pk = (k, n) => "".concat(k, "_").concat(PR.select(n)) in L ? "".concat(k, "_").concat(PR.select(n)) : k;
+    const PR = new Intl.PluralRules(D.lang), pk = (k, n) => `${k}_${PR.select(n)}` in L ? `${k}_${PR.select(n)}` : k;
     const tm = (k, v) => {
       const e = {};
       for (const x in v || {}) e[x] = esc(v[x]);
@@ -177,17 +177,17 @@
       location.href = D.paths[l] + location.search;
     };
     const tool = (id) => {
-      const m = document.querySelector('meta[name="'.concat(id, '"]'));
+      const m = document.querySelector(`meta[name="${id}"]`);
       return m && m.content ? m.content.replace(/\/+$/, "") + D.paths[D.lang] : "";
     };
     const EXT = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
     const toolLink = (id, key) => {
       const u = tool(id);
-      return u ? '<a class="xl" href="'.concat(esc(u), '" target="_blank" rel="noopener">').concat(esc(t(key))).concat(EXT, "</a>") : "";
+      return u ? `<a class="xl" href="${esc(u)}" target="_blank" rel="noopener">${esc(t(key))}${EXT}</a>` : "";
     };
     const ipVal = (ip) => {
       const u = tool("asn");
-      return u && ["public", "cf"].includes(ipKind(ip)) ? '<a class="dv" href="'.concat(esc(u), "ip/").concat(esc(ip), '" target="_blank" rel="noopener" title="').concat(esc(t("lk_asn")), '">').concat(esc(ip), "</a>") : esc(ip);
+      return u && ["public", "cf"].includes(ipKind(ip)) ? `<a class="dv" href="${esc(u)}ip/${esc(ip)}" target="_blank" rel="noopener" title="${esc(t("lk_asn"))}">${esc(ip)}</a>` : esc(ip);
     };
     const all = (s) => [...document.querySelectorAll(s)];
     const openDlg = (id) => {
@@ -212,7 +212,7 @@
     });
     let helpIdx = 0;
     const helpQs = all("#helpNav [data-hq]");
-    $("helpSel").innerHTML = helpQs.map((b, i) => '<option value="'.concat(i, '">').concat(i + 1, " / ").concat(helpQs.length, " \xB7 ").concat(esc(b.textContent), "</option>")).join("");
+    $("helpSel").innerHTML = helpQs.map((b, i) => `<option value="${i}">${i + 1} / ${helpQs.length} \xB7 ${esc(b.textContent)}</option>`).join("");
     const showHelp = (i) => {
       helpIdx = Math.max(0, Math.min(helpQs.length - 1, i));
       helpQs.forEach((b) => b.setAttribute("aria-selected", +b.dataset.hq === helpIdx));
@@ -266,7 +266,7 @@
         return cc;
       }
     };
-    const nameOf = (x) => x.carrier ? t("c_" + x.carrier) : x.city ? "".concat(regionOf(x.cc), " \xB7 ").concat(t("city_" + x.city)) : regionOf(x.cc);
+    const nameOf = (x) => x.carrier ? t("c_" + x.carrier) : x.city ? `${regionOf(x.cc)} \xB7 ${t("city_" + x.city)}` : regionOf(x.cc);
     const PRESETS = [
       { label: "p_web", port: 443, proto: "HTTPS", web: true },
       { label: "p_web_http", port: 80, proto: "HTTP", web: true },
@@ -459,7 +459,7 @@
       const each = ports(), v = portTyped ? $("port").value.trim() : "", shown = each.filter((p) => !v || String(p.port).startsWith(v) || +v === p.port);
       const list2 = shown.length ? shown : each;
       portActive = Math.min(portActive, list2.length - 1);
-      $("portList").innerHTML = list2.map((p, i) => '<li role="option" id="po'.concat(i, '" data-port="').concat(p.port, '" aria-selected="').concat(i === portActive, '"><b>').concat(p.port, "</b><span>").concat(esc(presetName(p)), "</span></li>")).join("");
+      $("portList").innerHTML = list2.map((p, i) => `<li role="option" id="po${i}" data-port="${p.port}" aria-selected="${i === portActive}"><b>${p.port}</b><span>${esc(presetName(p))}</span></li>`).join("");
       $("port").setAttribute("aria-activedescendant", portActive >= 0 ? "po" + portActive : "");
     }
     const portOpen = (open) => {
@@ -586,7 +586,7 @@
         recv.remove();
         recv = null;
       }
-      const q = "?t=".concat(encodeURIComponent(raw), "&p=").concat(tg.port).concat(udp ? "&u=1" : "");
+      const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}${udp ? "&u=1" : ""}`;
       history.replaceState(null, "", D.paths[D.lang] + q);
       $("verdict").hidden = $("table").hidden = false;
       $("go").disabled = true;
@@ -611,7 +611,7 @@
       if (!s.t.isIp) q.set("ipv", s.ipv);
       const c = new AbortController(), timer = setTimeout(() => c.abort(), 3e4);
       try {
-        s.srv = await (await fetch("".concat(API, "?").concat(q), { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
+        s.srv = await (await fetch(`${API}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
       } catch {
         s.srv = { k: "down" };
       } finally {
@@ -700,7 +700,7 @@
         await new Promise((res) => setTimeout(res, 700));
         let m;
         try {
-          m = await (await fetch("".concat(GP, "/measurements/").concat(j.id))).json();
+          m = await (await fetch(`${GP}/measurements/${j.id}`)).json();
         } catch {
           continue;
         }
@@ -746,7 +746,7 @@
       if (c.k === "ok" || c.k === "http5") {
         const certBad = r.tls && r.tls.authorized === false;
         const parts = [t("st_http", { code: c.code })];
-        if (CF_CODES.includes(c.code)) parts.push(t("cf".concat(c.code, "_s")));
+        if (CF_CODES.includes(c.code)) parts.push(t(`cf${c.code}_s`));
         if (certBad) parts.push(t("st_certbad"));
         return [c.k === "http5" || certBad ? "warn" : "ok", parts.join(" \xB7 ")];
       }
@@ -769,7 +769,7 @@
         s.local = { k: "blocked" };
         return drawLocal();
       }
-      const url = "https://".concat(isV6(host) ? "[".concat(host, "]") : host, ":").concat(port).concat(path.startsWith("/") ? path : "/" + path);
+      const url = `https://${isV6(host) ? `[${host}]` : host}:${port}${path.startsWith("/") ? path : "/" + path}`;
       const once = async () => {
         const c = new AbortController(), timer = setTimeout(() => c.abort(), LOCAL_TIMEOUT), t0 = performance.now();
         try {
@@ -802,11 +802,11 @@
         if (!v) continue;
         const a = Math.min(cum, SCALE_MS), b = Math.min(cum + v, SCALE_MS);
         cum += v;
-        if (b > a) h += '<i class="'.concat(c, '" data-w="').concat(((b - a) / SCALE_MS * 100).toFixed(2), '"></i>');
+        if (b > a) h += `<i class="${c}" data-w="${((b - a) / SCALE_MS * 100).toFixed(2)}"></i>`;
       }
-      return '<div class="bar'.concat(cum > SCALE_MS ? " over" : "", '">').concat(h, "</div>");
+      return `<div class="bar${cum > SCALE_MS ? " over" : ""}">${h}</div>`;
     }
-    const dot = (cls, text2, busy) => '<span class="sdot '.concat(cls).concat(busy ? " blink" : "", '" role="img" title="').concat(esc(text2), '" aria-label="').concat(esc(text2), '"></span>');
+    const dot = (cls, text2, busy) => `<span class="sdot ${cls}${busy ? " blink" : ""}" role="img" title="${esc(text2)}" aria-label="${esc(text2)}"></span>`;
     function drawRegions() {
       const s = state;
       let html = "", g = "", first = true;
@@ -836,10 +836,10 @@
         }
         if (x.g !== g) {
           g = x.g;
-          html += '<div class="grp">'.concat(esc(t("g_" + g)), "</div>");
+          html += `<div class="grp">${esc(t("g_" + g))}</div>`;
         }
         const row = s.rows[i];
-        let pl = dot("m", t("r_queue"), true), bar = '<div class="bar"></div>', tot = '<span class="rg-tot wait">\u2013</span>', more = "", hot = false;
+        let pl = dot("m", t("r_queue"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">\u2013</span>`, more = "", hot = false;
         if (!(row == null ? void 0 : row.probe) && (s.gpError || s.gpDone)) pl = dot("m", t(s.gpError ? "r_notrun" : "r_noprobe"));
         if ((row == null ? void 0 : row.probe) && !row.c) pl = dot("m", t("r_testing"), true);
         if (row == null ? void 0 : row.c) {
@@ -848,27 +848,27 @@
           pl = dot(cls, pillOf(row, s) + (hot ? " \xB7 " + t("hot_tip") : ""));
           if (drawn(row)) {
             bar = barOf([[tg.dns, "s-dns"], [tg.tcp, "s-tcp"], [tg.tls, "s-tls"], [tg.firstByte, "s-fb"], [tg.download, "s-dl"]]);
-            tot = '<span class="rg-tot">'.concat(span(row), '<small class="m"> ms</small></span>');
+            tot = `<span class="rg-tot">${span(row)}<small class="m"> ms</small></span>`;
           } else {
-            bar = '<div class="bar fail"></div>';
-            tot = '<span class="rg-tot wait">'.concat(tg.total != null ? "".concat((tg.total / 1e3).toFixed(1), "<small> s</small>") : "\u2715", "</span>");
+            bar = `<div class="bar fail"></div>`;
+            tot = `<span class="rg-tot wait">${tg.total != null ? `${(tg.total / 1e3).toFixed(1)}<small> s</small>` : "\u2715"}</span>`;
           }
           if (row.open) {
-            const segs = [["sg_dns", tg.dns], ["sg_tcp", tg.tcp, hot], ["sg_tls", tg.tls], ["sg_fb", tg.firstByte], ["sg_dl", tg.download]].filter(([, v]) => v != null).map(([n2, v, h]) => "<span".concat(h ? ' class="hot" title="'.concat(esc(t("hot_tip")), '"') : "", ">").concat(esc(t(n2)), " ").concat(v, " ms</span>")).join(" \xB7 ");
-            const where = [p.city, p.network].filter(Boolean).map(esc).join(" \xB7 ") + (row.res.resolvedAddress ? " \u2192 ".concat(ipVal(row.res.resolvedAddress)) : "");
+            const segs = [["sg_dns", tg.dns], ["sg_tcp", tg.tcp, hot], ["sg_tls", tg.tls], ["sg_fb", tg.firstByte], ["sg_dl", tg.download]].filter(([, v]) => v != null).map(([n2, v, h]) => `<span${h ? ` class="hot" title="${esc(t("hot_tip"))}"` : ""}>${esc(t(n2))} ${v} ms</span>`).join(" \xB7 ");
+            const where = [p.city, p.network].filter(Boolean).map(esc).join(" \xB7 ") + (row.res.resolvedAddress ? ` \u2192 ${ipVal(row.res.resolvedAddress)}` : "");
             const stage = row.res.status !== "finished" && !good(row.c, s) && failStage(row.c.k) ? esc(t(failStage(row.c.k))) + " \xB7 " : "";
-            more = '<div class="rg-more"><p class="'.concat(cls, '" title="').concat(esc(row.c.raw || ""), '">').concat(esc(text2), '</p><p class="m">').concat(where, '</p><p class="segs">').concat(stage).concat(segs) + ' <button type="button" class="link trace" data-trace="'.concat(i, '"').concat(row.trace === "" ? " disabled" : "", ">").concat(esc(t(row.trace === "" ? "tracing" : "trace")), "</button></p>") + (row.trace ? '<pre class="tr">'.concat(esc(row.trace), "</pre>") : "") + "</div>";
+            more = `<div class="rg-more"><p class="${cls}" title="${esc(row.c.raw || "")}">${esc(text2)}</p><p class="m">${where}</p><p class="segs">${stage}${segs} <button type="button" class="link trace" data-trace="${i}"${row.trace === "" ? " disabled" : ""}>${esc(t(row.trace === "" ? "tracing" : "trace"))}</button></p>` + (row.trace ? `<pre class="tr">${esc(row.trace)}</pre>` : "") + `</div>`;
           }
         }
         const can = !!(row == null ? void 0 : row.c);
-        html += '<div class="rg'.concat((row == null ? void 0 : row.open) ? " open" : "", '"').concat(can ? ' data-row="'.concat(i, '" role="button" tabindex="0" aria-expanded="').concat(!!row.open, '"') : "", ">") + '<span class="rg-name">'.concat(can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>').concat(esc(nameOf(x)), "</span>").concat(pl).concat(bar).concat(tot).concat(more, "</div>");
+        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
       });
       $("regions").innerHTML = html;
       sizeBars();
       const n = s.rows.filter((r) => r == null ? void 0 : r.c).length;
-      $("gpProgress").textContent = s.gpError ? "" : "".concat(n, " / ").concat(REGIONS.length);
+      $("gpProgress").textContent = s.gpError ? "" : `${n} / ${REGIONS.length}`;
       $("gpNote").hidden = !s.gpError;
-      $("gpNote").innerHTML = s.gpError ? '<span class="st-warn">'.concat(esc(s.gpError), "</span>") : "";
+      $("gpNote").innerHTML = s.gpError ? `<span class="st-warn">${esc(s.gpError)}</span>` : "";
     }
     const sizeBars = () => {
       for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";
@@ -877,59 +877,59 @@
     function srvRow(s) {
       var _a, _b;
       const v = s.srv;
-      let pl = dot("m", t("r_testing"), true), bar = '<div class="bar"></div>', tot = '<span class="rg-tot wait">\u2013</span>', more = "";
+      let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">\u2013</span>`, more = "";
       if (v) {
         const [cls, short, text2] = srvStatus(v, s);
         pl = dot(cls, short);
         const total = s.udp ? v.ms : v.tcp != null ? v.tcp + (v.tlsMs || 0) : null;
         if (total != null) {
           bar = s.udp ? barOf([[v.ms, "s-fb"]]) : barOf([[v.tcp, "s-tcp"], [v.tlsMs, "s-tls"]]);
-          tot = '<span class="rg-tot">'.concat(total, '<small class="m"> ms</small></span>');
-        } else if (!["limit", "down", "bad"].includes(v.k)) bar = '<div class="bar fail"></div>';
+          tot = `<span class="rg-tot">${total}<small class="m"> ms</small></span>`;
+        } else if (!["limit", "down", "bad"].includes(v.k)) bar = `<div class="bar fail"></div>`;
         if (s.srvOpen) {
-          const p = ['<p class="'.concat(cls === "m" ? "" : cls, '">').concat(esc(text2), "</p>")];
-          for (const said of [v.banner, v.detail]) if (said) p.push('<p class="mono sv-said">'.concat(esc(said), "</p>"));
+          const p = [`<p class="${cls === "m" ? "" : cls}">${esc(text2)}</p>`];
+          for (const said of [v.banner, v.detail]) if (said) p.push(`<p class="mono sv-said">${esc(said)}</p>`);
           const x = v.tls;
           if (x) {
-            p.push('<p class="segs">'.concat([x.version, x.alpn && "ALPN " + x.alpn, x.cipher].filter(Boolean).map(esc).join(" \xB7 "), "</p>"));
-            p.push('<p class="'.concat(x.ok ? "ok" : "warn", '">').concat(esc(t("tr_" + (x.ok ? "ok" : x.problem || "invalid"), { err: x.err || "" })), "</p>"));
-            if ((_a = x.names) == null ? void 0 : _a.length) p.push('<p class="m">'.concat(esc(t("sv_names", { names: list(x.names) })), "</p>"));
-            if ((_b = x.chain) == null ? void 0 : _b.length) p.push('<ol class="chain">'.concat(x.chain.map((c) => "<li>".concat(esc(c.subject), ' <span class="m">\xB7 ').concat(esc(t("sv_by", { issuer: c.issuer })), " \xB7 ").concat(esc(t("sv_until", { date: c.until })), "</span></li>")).join(""), "</ol>"));
+            p.push(`<p class="segs">${[x.version, x.alpn && "ALPN " + x.alpn, x.cipher].filter(Boolean).map(esc).join(" \xB7 ")}</p>`);
+            p.push(`<p class="${x.ok ? "ok" : "warn"}">${esc(t("tr_" + (x.ok ? "ok" : x.problem || "invalid"), { err: x.err || "" }))}</p>`);
+            if ((_a = x.names) == null ? void 0 : _a.length) p.push(`<p class="m">${esc(t("sv_names", { names: list(x.names) }))}</p>`);
+            if ((_b = x.chain) == null ? void 0 : _b.length) p.push(`<ol class="chain">${x.chain.map((c) => `<li>${esc(c.subject)} <span class="m">\xB7 ${esc(t("sv_by", { issuer: c.issuer }))} \xB7 ${esc(t("sv_until", { date: c.until }))}</span></li>`).join("")}</ol>`);
           }
           const ips = v.ip ? [v.ip] : (v.addrs || []).map((a) => a.ip);
-          if (ips.length) p.push('<p class="m">'.concat(esc(t("city_Tokyo")), " \u2192 ").concat(ips.map(ipVal).join(esc(t("sep")))).concat(v.cached ? " \xB7 " + esc(t("sv_cached")) : "", "</p>"));
-          more = '<div class="rg-more">'.concat(p.join(""), "</div>");
+          if (ips.length) p.push(`<p class="m">${esc(t("city_Tokyo"))} \u2192 ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " \xB7 " + esc(t("sv_cached")) : ""}</p>`);
+          more = `<div class="rg-more">${p.join("")}</div>`;
         }
       }
       const can = !!v;
-      return (s.udp ? "" : '<div class="grp">'.concat(esc(t("h_srv")), "</div>")) + '<div class="rg'.concat(s.srvOpen ? " open" : "", '"').concat(can ? ' data-row="srv" role="button" tabindex="0" aria-expanded="'.concat(!!s.srvOpen, '"') : "", ">") + '<span class="rg-name">'.concat(chev(can)).concat(esc(t("r_srv")), "</span>").concat(pl).concat(bar).concat(tot).concat(more, "</div>");
+      return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${esc(t("r_srv"))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawLocal() {
       drawRegions();
       drawVerdict();
     }
     function localRow(s) {
-      const l = s.local, ms = (v) => "".concat(Math.round(v), " ms");
-      let pl = dot("m", t("r_testing"), true), bar = '<div class="bar"></div>', tot = '<span class="rg-tot wait">\u2013</span>', more = "";
+      const l = s.local, ms = (v) => `${Math.round(v)} ms`;
+      let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">\u2013</span>`, more = "";
       if (l) {
         const setup = l.k === "ok" && l.warm != null ? Math.max(0, l.ms - l.warm) : null;
         const cls = { ok: "ok", answered: "warn", timeout: "bad", blocked: "m" }[l.k];
         pl = dot(cls, t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]));
         if (l.k === "ok") {
           bar = setup != null ? barOf([[setup, "s-setup"], [l.warm, "s-fb"]]) : barOf([[l.ms, "s-setup"]]);
-        } else if (l.k !== "blocked") bar = '<div class="bar fail"></div>';
-        if (l.k === "ok" || l.k === "answered") tot = '<span class="rg-tot">'.concat(Math.round(l.ms), '<small class="m"> ms</small></span>');
-        else if (l.k === "timeout") tot = '<span class="rg-tot wait">'.concat((LOCAL_TIMEOUT / 1e3).toFixed(1), "<small> s</small></span>");
+        } else if (l.k !== "blocked") bar = `<div class="bar fail"></div>`;
+        if (l.k === "ok" || l.k === "answered") tot = `<span class="rg-tot">${Math.round(l.ms)}<small class="m"> ms</small></span>`;
+        else if (l.k === "timeout") tot = `<span class="rg-tot wait">${(LOCAL_TIMEOUT / 1e3).toFixed(1)}<small> s</small></span>`;
         if (s.localOpen) {
-          const url = "https://".concat(isV6(s.t.host) ? "[".concat(s.t.host, "]") : s.t.host, ":").concat(s.t.port);
+          const url = `https://${isV6(s.t.host) ? `[${s.t.host}]` : s.t.host}:${s.t.port}`;
           const tao = esc(t("lc_tao")).replace("{h}", '<span class="mono">Timing-Allow-Origin: *</span>');
-          const body = l.k === "ok" ? '<p class="ok">'.concat(esc(t("lc_ok")), '</p><p class="segs">').concat(esc(t("lc_first")), " ").concat(ms(l.ms)) + (setup != null ? " \xB7 ".concat(esc(t("lc_setup")), " \u2248 ").concat(ms(setup), " \xB7 ").concat(esc(t("lc_req")), " ").concat(ms(l.warm)) : "") + '</p><p class="m">'.concat(tao, "</p>") : l.k === "answered" ? '<p class="warn">'.concat(esc(t("lc_ans")), '</p><p class="m">').concat(esc(t("lc_ans_p"))).concat(s.plainWeb ? " " + esc(t("lc_plain")) : "", "</p>") : l.k === "timeout" ? '<p class="bad">'.concat(esc(t("lc_none")), '</p><p class="m">').concat(esc(t("lc_none_p", { url })), "</p>") : "<p>".concat(esc(t("lc_blocked")), '</p><p class="m">').concat(esc(t("lc_blocked_p", { port: s.t.port })), "</p>");
+          const body = l.k === "ok" ? `<p class="ok">${esc(t("lc_ok"))}</p><p class="segs">${esc(t("lc_first"))} ${ms(l.ms)}` + (setup != null ? ` \xB7 ${esc(t("lc_setup"))} \u2248 ${ms(setup)} \xB7 ${esc(t("lc_req"))} ${ms(l.warm)}` : "") + `</p><p class="m">${tao}</p>` : l.k === "answered" ? `<p class="warn">${esc(t("lc_ans"))}</p><p class="m">${esc(t("lc_ans_p"))}${s.plainWeb ? " " + esc(t("lc_plain")) : ""}</p>` : l.k === "timeout" ? `<p class="bad">${esc(t("lc_none"))}</p><p class="m">${esc(t("lc_none_p", { url }))}</p>` : `<p>${esc(t("lc_blocked"))}</p><p class="m">${esc(t("lc_blocked_p", { port: s.t.port }))}</p>`;
           const links = [toolLink("check", "lk_check"), toolLink("ipv6", "lk_ipv6")].filter(Boolean).join(" ");
-          more = '<div class="rg-more">'.concat(body).concat(links ? '<p class="links">'.concat(links, "</p>") : "", "</div>");
+          more = `<div class="rg-more">${body}${links ? `<p class="links">${links}</p>` : ""}</div>`;
         }
       }
       const can = !!l;
-      return '<div class="grp">'.concat(esc(t("h_local")), '</div><div class="rg').concat(s.localOpen ? " open" : "", '"').concat(can ? ' data-row="local" role="button" tabindex="0" aria-expanded="'.concat(!!s.localOpen, '"') : "", ">") + '<span class="rg-name">'.concat(can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>').concat(esc(t("r_browser")), "</span>").concat(pl).concat(bar).concat(tot).concat(more, "</div>");
+      return `<div class="grp">${esc(t("h_local"))}</div><div class="rg${s.localOpen ? " open" : ""}"${can ? ` data-row="local" role="button" tabindex="0" aria-expanded="${!!s.localOpen}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(t("r_browser"))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawVerdict() {
       const s = state;
@@ -941,8 +941,8 @@
       const cn = rows.filter((r) => REGIONS[s.rows.indexOf(r)].cn), ok = rows.filter((r) => good(r.c, s));
       const tone = (a, n) => !n ? "" : a === n ? "ok" : a ? "warn" : "bad";
       const cnOk = cn.filter((r) => good(r.c, s)).length, l = s.local;
-      const ms = (l == null ? void 0 : l.k) === "ok" || (l == null ? void 0 : l.k) === "answered" ? ' <span class="m">\xB7 '.concat(esc(t("lc_first")), " ").concat(Math.round(l.ms), " ms</span>") : "";
-      const fact = (label, val, cls, extra = "") => '<div class="fact"><span class="fl">'.concat(esc(t(label)), '</span><span class="fv"><b class="').concat(cls, '">').concat(esc(val), "</b>").concat(extra, "</span></div>");
+      const ms = (l == null ? void 0 : l.k) === "ok" || (l == null ? void 0 : l.k) === "answered" ? ` <span class="m">\xB7 ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
+      const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
       $("kpis").hidden = !!s.udp;
       $("kpis").innerHTML = fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "\u2026", done ? tone(ok.length, rows.length) : "") + fact("fa_cn", done && cn.length ? t(pk("fa_ok", cnOk), { ok: cnOk, n: cn.length }) : "\u2026", done ? tone(cnOk, cn.length) : "") + fact(
         "fa_you",
@@ -951,11 +951,11 @@
         ms
       );
       const steps = v.steps || [];
-      $("vSteps").innerHTML = steps.slice(0, SHOWN_STEPS).map((x) => "<li>".concat(x, "</li>")).join("");
+      $("vSteps").innerHTML = steps.slice(0, SHOWN_STEPS).map((x) => `<li>${x}</li>`).join("");
       const rest = steps.slice(SHOWN_STEPS);
       $("vMore").hidden = !rest.length;
       $("vMore").querySelector("summary").textContent = t(pk("more_steps", rest.length), { n: rest.length });
-      $("vMoreSteps").innerHTML = rest.map((x) => "<li>".concat(x, "</li>")).join("");
+      $("vMoreSteps").innerHTML = rest.map((x) => `<li>${x}</li>`).join("");
       $("vMoreSteps").start = SHOWN_STEPS + 1;
     }
     const SHOWN_STEPS = 4;
@@ -1042,7 +1042,7 @@
         if (days < 14) steps.push(days < 0 ? tm("cert_expired", { date: exp.slice(0, 10) }) : tm(pk("cert_soon", days), { days, date: exp.slice(0, 10) }));
       }
       for (const c of new Set(rows.filter((r) => r.c.k === "http5" || CF_CODES.includes(r.c.code)).map((r) => r.c.code)))
-        steps.push(CF_CODES.includes(c) ? tm("cf_code", { code: c, text: t("cf".concat(c, "_l")) }) : tm("http5", { code: c }));
+        steps.push(CF_CODES.includes(c) ? tm("cf_code", { code: c, text: t(`cf${c}_l`) }) : tm("http5", { code: c }));
       if (ok.length && s.web && rows.some((r) => r.c.k === "nothttp")) steps.push(tm("nothttp_web"));
       if (s.web && rows.some((r) => r.c.k === "nottls")) steps.push(tm("nottls_web"));
       steps.push(...localSteps(s, ok.length ? ok.length === rows.length ? "all" : "some" : "none"));
@@ -1142,7 +1142,7 @@
         let m;
         for (let k = 0; k < 60; k++) {
           await new Promise((res) => setTimeout(res, 1e3));
-          m = await (await fetch("".concat(GP, "/measurements/").concat(j.id))).json();
+          m = await (await fetch(`${GP}/measurements/${j.id}`)).json();
           if (m.status !== "in-progress") break;
         }
         row.trace = ((_d = (_c = (_b = m.results) == null ? void 0 : _b[0]) == null ? void 0 : _c.result) == null ? void 0 : _d.rawOutput) || t("trace_none");
@@ -1153,7 +1153,7 @@
     });
     let recv = null;
     function showOut(tg) {
-      inviteUrl = "".concat(location.origin).concat(D.paths.en, "?t=").concat(encodeURIComponent(tg.raw), "&p=").concat(tg.port, "&from=friend");
+      inviteUrl = `${location.origin}${D.paths.en}?t=${encodeURIComponent(tg.raw)}&p=${tg.port}&from=friend`;
     }
     function pack2(s) {
       const v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c)), n = (x) => x == null ? null : Math.round(x);
@@ -1223,25 +1223,25 @@
         srv: o.s || null
       };
     }
-    const resultLink = async (s) => "".concat(location.origin).concat(D.paths[D.lang], "r/").concat(await encodeResult(pack2(s)));
-    const cardName = (x) => x.carrier ? t("c_" + x.carrier) : x.city && REGIONS.filter((r) => r.cc === x.cc && !r.carrier).length > 1 ? "".concat(t("city_" + x.city), ", ").concat(x.cc) : regionOf(x.cc);
+    const resultLink = async (s) => `${location.origin}${D.paths[D.lang]}r/${await encodeResult(pack2(s))}`;
+    const cardName = (x) => x.carrier ? t("c_" + x.carrier) : x.city && REGIONS.filter((r) => r.cc === x.cc && !r.carrier).length > 1 ? `${t("city_" + x.city)}, ${x.cc}` : regionOf(x.cc);
     const ROW = 46, TOT_W = 110;
     function cardLayout(ctx, kit, v, target) {
       const { W, P, F, fit, wrap } = kit, w = W - P * 2;
       let ts = fit(ctx, v.title, w, 46, 34), title = [v.title];
       if (ctx.measureText(v.title).width > w) {
         ts = 40;
-        ctx.font = "700 40px ".concat(F);
+        ctx.font = `700 40px ${F}`;
         title = wrap(ctx, v.title, w, 2);
       }
-      ctx.font = "600 28px ".concat(F);
+      ctx.font = `600 28px ${F}`;
       const tw = ctx.measureText(target + "   ").width;
-      ctx.font = "400 26px ".concat(F);
+      ctx.font = `400 26px ${F}`;
       const inline = v.sub && tw + ctx.measureText(v.sub).width <= w, sub = v.sub && !inline ? wrap(ctx, v.sub, w, 3) : [];
       const names = REGIONS.map(cardName);
       let cols = 1, ns = 24;
       out: for (const c of [3, 2]) for (const z of [24, 22]) {
-        ctx.font = "500 ".concat(z, "px ").concat(F);
+        ctx.font = `500 ${z}px ${F}`;
         if (names.every((n) => ctx.measureText(n).width <= w / c - 28 - TOT_W)) {
           cols = c;
           ns = z;
@@ -1254,7 +1254,7 @@
     }
     async function shareResult() {
       const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c));
-      const target = "".concat(s.t.host, ":").concat(s.t.port);
+      const target = `${s.t.host}:${s.t.port}`;
       const { share } = await import("/assets/share/share.js?v=9");
       share({
         lang: D.lang,
@@ -1264,36 +1264,36 @@
         never: ["ip"],
         link: () => link,
         home: location.origin + D.paths[D.lang],
-        text: () => "".concat(v.title, " \xB7 ").concat(target),
+        text: () => `${v.title} \xB7 ${target}`,
         height: (ctx, kit) => cardLayout(ctx, kit, v, target).H,
         ts: s.ts,
         draw: (ctx, kit) => {
           const { P, W, F, v: css, clip } = kit, col = (c) => css(c === "ok" ? "ok" : c === "warn" ? "warn" : c === "bad" ? "bad" : "muted");
           const L2 = cardLayout(ctx, kit, v, target);
           ctx.fillStyle = col(v.cls);
-          ctx.font = "700 ".concat(L2.ts, "px ").concat(F);
+          ctx.font = `700 ${L2.ts}px ${F}`;
           L2.title.forEach((line, i) => ctx.fillText(line, P, L2.tY + i * Math.round(L2.ts * 1.2)));
           ctx.fillStyle = css("fg");
-          ctx.font = "600 28px ".concat(F);
+          ctx.font = `600 28px ${F}`;
           ctx.fillText(clip(ctx, target, W - P * 2), P, L2.lineY);
           const tw = ctx.measureText(target + "   ").width;
           ctx.fillStyle = css("muted");
-          ctx.font = "400 26px ".concat(F);
+          ctx.font = `400 26px ${F}`;
           if (L2.inline) ctx.fillText(v.sub, P + tw, L2.lineY);
           L2.sub.forEach((line, i) => ctx.fillText(line, P, L2.lineY + (i + 1) * 36));
           const cw = (W - P * 2) / L2.cols;
           REGIONS.forEach((x, i) => {
             const row = s.rows[i], cx = P + i % L2.cols * cw, cy = L2.gridY + Math.floor(i / L2.cols) * ROW;
-            const [cls] = (row == null ? void 0 : row.c) ? rowStatus(row, s) : ["", ""], tot = (row == null ? void 0 : row.c) && row.res.status === "finished" ? "".concat(row.res.timings.total, " ms") : (row == null ? void 0 : row.c) ? "\u2715" : "\u2013";
+            const [cls] = (row == null ? void 0 : row.c) ? rowStatus(row, s) : ["", ""], tot = (row == null ? void 0 : row.c) && row.res.status === "finished" ? `${row.res.timings.total} ms` : (row == null ? void 0 : row.c) ? "\u2715" : "\u2013";
             ctx.fillStyle = col(cls);
             ctx.beginPath();
             ctx.arc(cx + 9, cy - 8, 8, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = css("fg");
-            ctx.font = "500 ".concat(L2.ns, "px ").concat(F);
+            ctx.font = `500 ${L2.ns}px ${F}`;
             ctx.fillText(clip(ctx, L2.names[i], cw - 28 - TOT_W), cx + 28, cy);
             ctx.fillStyle = css("muted");
-            ctx.font = "500 22px ".concat(F);
+            ctx.font = `500 22px ${F}`;
             ctx.textAlign = "right";
             ctx.fillText(tot, cx + cw - 24, cy);
             ctx.textAlign = "left";
@@ -1302,7 +1302,7 @@
       }).open();
     }
     $("shareBtn").addEventListener("click", () => shareResult());
-    window.msReport = () => state && state.gpDone ? { summary: "".concat(verdict(state, state.rows.filter((r) => r == null ? void 0 : r.c)).title, " \xB7 ").concat(state.t.host, ":").concat(state.t.port), data: pack2(state) } : null;
+    window.msReport = () => state && state.gpDone ? { summary: `${verdict(state, state.rows.filter((r) => r == null ? void 0 : r.c)).title} \xB7 ${state.t.host}:${state.t.port}`, data: pack2(state) } : null;
     renderPresets();
     loadQuota();
     const sp = sharePath(location.pathname);
