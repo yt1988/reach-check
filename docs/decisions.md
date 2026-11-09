@@ -60,3 +60,14 @@ code does; this says why, so that nobody re-runs an experiment that already fail
   ("Taiwan, China" / 中国台湾 …) kept in line by a test.
 - **The share card never cuts text short**: the title shrinks, then wraps to two lines; the target sits
   right under it; region names are short ("Los Angeles, US"); fewer columns when a name doesn't fit.
+- **The way on to Global Ping**: after a check, the region table's heading carries "See ping latency from these
+  regions" — the same target and the same 18 regions, but timed with 16 ICMP packets instead of one HTTP request.
+  Its address is the shell's `<meta name="ping">`, and the target goes in `?t=`: a self-hosted copy (no shell) shows
+  no link, a UDP check (no region rows) hides it, and so does a private or CGNAT address, which Ping refuses exactly as
+  our probes do. (Audit 1ms-shell#93, item 1.)
+- **The table's heading is translated at runtime too.** `h_regions` was a build-only string (the page ships it as static
+  HTML), but `drawRegions()` writes it into the heading after every check, so the heading showed the key itself. It
+  ships in the browser's strings now, and a test fails if the page's `t()` reads any build-only key.
+- **On a touch screen the footer's GitHub link is 32px tall, its line box still 19px.** It is the footer's only
+  independent link (the Globalping source is a link inside a sentence, which the contract exempts); `min-height: 32px`
+  with a negative margin makes the target index-finger-sized without moving anything visible. (1ms-shell#93, item 5.)

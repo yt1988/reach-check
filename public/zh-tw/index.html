@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"連線可達性檢測 · 1ms.dog","url":"https://reach.1ms.dog/zh-tw/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免費的連線可達性檢測：從全球 18 個地區（含中國電信、聯通、移動）和你自己的瀏覽器連到你的服務，分段顯示 DNS、TCP、TLS、第一個位元組的耗時。連不上就告訴你卡在哪一步、接下來該查哪裡：連接埠轉送、防火牆、沒有實體 IP、電信業者封鎖連接埠、憑證。","inLanguage":"zh-TW","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"是怎麼檢測的？","acceptedAnswer":{"@type":"Answer","text":"Globalping 在 18 個地區的志工探測點，各自連到你的位址和連接埠，送出一次 HTTP(S) 請求，並替每一步計時：DNS 解析、TCP 交握、TLS 交握、第一個位元組。失敗時，錯誤訊息會說明停在哪一步：拒絕連線、逾時、被重設、TLS 出錯，或連接埠上的不是網頁服務。 你自己的瀏覽器也會連一次，結果在表格第一列。接著我們東京的伺服器再連一次：讀取服務先送出的訊息（SSH、郵件等）或 TLS 憑證鏈，除此之外不送任何內容。"}},{"@type":"Question","name":"我自己打得開，為什麼別人連不上？","acceptedAnswer":{"@type":"Answer","text":"如果你和服務在同一個網路裡，流量根本沒有出去，自己打得開不代表外面連得上。開著代理時，你走的路也和別人不同。請以外部檢測為準：它和陌生人連線的方式一樣。"}},{"@type":"Question","name":"連接埠轉送設好了，為什麼還是逾時？","acceptedAnswer":{"@type":"Answer","text":"常見原因：沒有公開的 IPv4（路由器的 WAN 位址以 100.64–100.127 開頭，或和你的公開 IP 不同，就是電信業者級 NAT）；NAS、Windows 或雲端安全群組的防火牆沒有放行；電信業者封鎖家用寬頻的 80、443 等常用連接埠；轉送指向的還是設備以前的內部 IP。 使用 IPv6 時，路由器和數據機的 IPv6 防火牆預設擋下連入連線，要另外放行這個連接埠。"}},{"@type":"Question","name":"「拒絕連線」和「逾時」有什麼不同？","acceptedAnswer":{"@type":"Answer","text":"拒絕連線：封包到了那台機器，但連接埠上沒有程式在接聽。可能是服務沒開、只在 127.0.0.1 上接聽，或轉送到錯誤的連接埠。 逾時：完全沒有回應。可能是防火牆丟掉了封包、沒有設定連接埠轉送，或位址填錯了。"}},{"@type":"Question","name":"能測遊戲或 WireGuard 用的 UDP 連接埠嗎？","acceptedAnswer":{"@type":"Answer","text":"能測一部分。協定選 UDP：我們東京的伺服器向連接埠送出一個標準的問候封包（QUIC、DNS、Minecraft 基岩版或 Steam 伺服器查詢），告訴你它有回應、回覆連接埠關閉，還是毫無反應。許多 UDP 服務（WireGuard、大多數遊戲）只回應它認得的訊息，所以沒回應不代表連接埠關著。而且這只是東京一個地方的結果，中國大陸的網路對 UDP 的處理可能不同。"}},{"@type":"Question","name":"我填的位址誰看得到？","acceptedAnswer":{"@type":"Answer","text":"執行探測的 Globalping，以及連它一次的我們東京的伺服器。我們不會保存：伺服器不記錄日誌，結果只在記憶體裡留 5 分鐘，免得重複檢測時再去連一次。結果連結裡帶著位址和結果，讓別人看到同一次檢測；連結裡不會有你自己的 IP。 每個 IP 在 Globalping 每小時可以測 250 個地區次，一次檢測用 18 個；用完時頁面會告訴你多久後恢復。我們的伺服器每位訪客每小時最多測 10 次、5 個不同位址，而且從不連線到內網位址。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.0c8dfe1d7f.css">
+<link rel="stylesheet" href="/assets/app.03ca8009f6.css">
 </head>
 <body>
 <div class="app">
@@ -108,7 +108,7 @@
 
   <!-- 3. the evidence: this browser, our server in Tokyo, then one line per region; details on demand (UDP: the server only) -->
   <section class="card sec" id="table" hidden>
-    <div class="sec-h"><h3 id="tblH" data-i="h_regions">從全球各地連過去</h3><span class="src m">資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志工探測點</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="sec-h"><h3 id="tblH" data-i="h_regions">從全球各地連過去</h3><span id="pingLink" hidden></span><span class="src m">資料來源：<a href="https://globalping.io" target="_blank" rel="noopener">Globalping</a> 志工探測點</span><span class="m prog" id="gpProgress"></span></div>
     <div class="legend m">
       <span><i class="seg s-dns"></i><span data-i="lg_dns">DNS</span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp">TCP 交握</span></span><span><i class="seg s-tls"></i><span data-i="lg_tls">TLS 交握</span></span><span><i class="seg s-fb"></i><span data-i="lg_fb">第一個位元組</span></span><span><i class="seg s-dl"></i><span data-i="lg_dl">下載</span></span>
     </div>
@@ -133,7 +133,7 @@
   </div>
 </div>
 <script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"}}</script>
-<script src="/assets/l.zh-tw.75dca7cab8.js"></script>
-<script src="/assets/app.15c4fb15f2.js"></script>
+<script src="/assets/l.zh-tw.19f753d1df.js"></script>
+<script src="/assets/app.2ff5f1c483.js"></script>
 </body>
 </html>

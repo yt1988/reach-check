@@ -33,9 +33,11 @@ export async function loadI18n() {
   return out;
 }
 
-// Strings only the build uses (the page already shows them); everything else goes to the browser
-const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "intro", "lang_label", "f_target", "f_target_ph", "f_port", "f_ipv",
-  "go", "h_regions", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
+// Strings only the build uses (the page already shows them); everything else goes to the browser. A key the page's code
+// reads at runtime must not be here (strings.test.mjs checks that): drawRegions() writes h_regions into the table's
+// heading after every check, so it ships.
+export const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "intro", "lang_label", "f_target", "f_target_ph", "f_port", "f_ipv",
+  "go", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
   "src_gp", "src_dns", "foot_src"]);
 
 // Data sources named in the page link to their sites

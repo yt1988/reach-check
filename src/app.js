@@ -37,6 +37,15 @@ const EXT = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-w
 const toolLink = (id, key) => { const u = tool(id); return u ? `<a class="xl" href="${esc(u)}" target="_blank" rel="noopener">${esc(t(key))}${EXT}</a>` : ""; };
 // an IP address as a value: links to ASN Lookup (who owns it), except private ones
 const ipVal = ip => { const u = tool("asn"); return u && ["public", "cf"].includes(ipKind(ip)) ? `<a class="dv" href="${esc(u)}ip/${esc(ip)}" target="_blank" rel="noopener" title="${esc(t("lk_asn"))}">${esc(ip)}</a>` : esc(ip); };
+// The same target's latency from the same regions: Global Ping, prefilled with the host. Its address comes from the
+// shell's <meta name="ping">, so a self-hosted copy (no meta) shows no link. No link where Global Ping would only
+// repeat our answer: a UDP check has no region rows, and a private or CGNAT address is refused by every probe there too
+// (as ASN Lookup links skip private IPs). The host alone: Ping takes no port or path.
+function showPing(s) {
+  const u = s.udp || (s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host))) ? "" : tool("ping"), el = $("pingLink");
+  el.hidden = !u;
+  el.innerHTML = u ? `<a class="xl" href="${esc(u)}?t=${encodeURIComponent(s.t.host)}" target="_blank" rel="noopener">${esc(t("lk_ping"))}${EXT}</a>` : "";
+}
 
 // the help dialog: one answer at a time; a picker with previous / next on phones
 const all = s => [...document.querySelectorAll(s)];
@@ -270,7 +279,7 @@ function start() {
   showOut(tg);
   // UDP is our server's check alone: nothing for a result link's regions, nothing a friend's browser could add
   $("shareBtn").hidden = true; $("inviteBtn").hidden = udp;
-  drawRegions(); drawVerdict();
+  drawRegions(); drawVerdict(); showPing(state);
 
   const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
   Promise.allSettled(jobs).then(() => { if (state.id === id) { $("go").disabled = false; drawVerdict(); $("shareBtn").hidden = udp; if (!udp) loadQuota(); } });
@@ -875,7 +884,7 @@ if (sp) {
     $("target").value = state.t.raw; $("port").value = state.t.port; $("ipv").value = state.ipv;
     $("proto").value = "tcp"; $("port").dispatchEvent(new Event("input"));
     $("verdict").hidden = $("table").hidden = false; showOut(state.t);
-    drawRegions(); drawVerdict();
+    drawRegions(); drawVerdict(); showPing(state);
     $("shareBtn").hidden = false;
     const { received } = await import("/assets/share/share.js?v=9");
     recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });

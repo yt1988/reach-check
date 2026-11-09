@@ -122,7 +122,7 @@ export default {
   ls_here: "**It connects from here but not from outside**: most likely you're on the same network as the service (traffic never leaves), or you're using a proxy. Go by the outside check.",
   ls_out: "**It connects from outside but not from here**: if you're on the same network as the service, your router may not support NAT loopback, so use the local address at home; or your proxy rules block it.",
   share: "Share", share_desc: "{ok} of {n} regions reach {target}", share_desc_one: "{ok} of {n} regions reaches {target}", lk_ipv6: "Does your own network support IPv6?", lk_asn: "Who owns this IP (ASN lookup)",
-  faq_h: "Help", a_close: "Close", a_prev: "Previous", a_next: "Next", lk_check: "Run a full checkup",
+  faq_h: "Help", a_close: "Close", a_prev: "Previous", a_next: "Next", lk_check: "Run a full checkup", lk_ping: "See ping latency from these regions",
   docs: [
     ["How does the check work?","Globalping's volunteer probes in 18 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.\nYour own browser connects too: that's the table's first line. Then our server in Tokyo connects once more: it reads what the service says first (SSH, mail…) or its TLS certificate chain, and sends nothing else."],
     ["It opens for me. Why can't others reach it?", "If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."],

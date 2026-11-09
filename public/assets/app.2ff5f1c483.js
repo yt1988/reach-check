@@ -189,6 +189,11 @@
       const u = tool("asn");
       return u && ["public", "cf"].includes(ipKind(ip)) ? `<a class="dv" href="${esc(u)}ip/${esc(ip)}" target="_blank" rel="noopener" title="${esc(t("lk_asn"))}">${esc(ip)}</a>` : esc(ip);
     };
+    function showPing(s) {
+      const u = s.udp || s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host)) ? "" : tool("ping"), el = $("pingLink");
+      el.hidden = !u;
+      el.innerHTML = u ? `<a class="xl" href="${esc(u)}?t=${encodeURIComponent(s.t.host)}" target="_blank" rel="noopener">${esc(t("lk_ping"))}${EXT}</a>` : "";
+    }
     const all = (s) => [...document.querySelectorAll(s)];
     const openDlg = (id) => {
       $(id).hidden = false;
@@ -595,6 +600,7 @@
       $("inviteBtn").hidden = udp;
       drawRegions();
       drawVerdict();
+      showPing(state);
       const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
       Promise.allSettled(jobs).then(() => {
         if (state.id === id) {
@@ -1325,6 +1331,7 @@
         showOut(state.t);
         drawRegions();
         drawVerdict();
+        showPing(state);
         $("shareBtn").hidden = false;
         const { received } = await import("/assets/share/share.js?v=9");
         recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });

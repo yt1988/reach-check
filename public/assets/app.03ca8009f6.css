@@ -74,6 +74,12 @@ select option { background-color: var(--panel); color: var(--fg); }
 .gh svg { fill: currentColor; }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 12.5px; }
 .foot a { color: inherit; }
+/* On a phone the last line's link (GitHub) is index-finger-sized: the target grows to 32px while its line box stays 19px
+   (tool contract, mobile: an independent link needs min-height and must look the same; links in a sentence are exempt). */
+@media (pointer: coarse) {
+  .foot { align-items: center; }
+  .foot > a { display: inline-flex; align-items: center; min-height: 32px; margin-block: -6.5px; }
+}
 /* 1. what to check, and the answer under it in the same card */
 .main { display: flex; flex-direction: column; }
 .hero { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
