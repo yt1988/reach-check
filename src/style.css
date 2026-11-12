@@ -1,64 +1,31 @@
 /* Reach Check. Same tokens as the other 1ms.dog tools; the accent is indigo. Timing segments: --s-dns … --s-dl. */
-:root {
-  --bg: #f6f6f7; --panel: #ffffff; --soft: #f3f3f5; --line: #e4e4e8;
-  --fg: #141416; --muted: #6e6e78; --ink: #4f46e5; --ink-fg: #ffffff;
-  --ok: #059669; --warn: #d97706; --bad: #dc2626;
-  --s-dns: #a78bfa; --s-tcp: #38bdf8; --s-tls: #34d399; --s-fb: #fbbf24; --s-dl: #f472b6;
-  --f-ui: "Geist", "PingFang SC", "Microsoft YaHei", "Hiragino Sans", "Noto Sans", system-ui, sans-serif;
-  --f-num: "Geist Mono", ui-monospace, "SF Mono", Consolas, monospace;
-  --r: 14px;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #1c1c1c; --panel: #232323; --soft: #282828; --line: #363636;
-  --fg: #ededed; --muted: #a0a0a0; --ink: #818cf8; --ink-fg: #111133;
-  --ok: #34d399; --warn: #fbbf24; --bad: #f87171;
-  color-scheme: dark; } }
-:root[data-theme="dark"] {
-  --bg: #1c1c1c; --panel: #232323; --soft: #282828; --line: #363636;
-  --fg: #ededed; --muted: #a0a0a0; --ink: #818cf8; --ink-fg: #111133;
-  --ok: #34d399; --warn: #fbbf24; --bad: #f87171;
-  color-scheme: dark; }
 
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html, body { margin: 0; }
-html { background: var(--bg); scrollbar-gutter: stable; }
+ }
+
 body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--f-ui); -webkit-font-smoothing: antialiased; }
 .app { max-width: 1080px; margin: 0 auto; padding-block: 20px 40px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column; gap: 20px; }
 #out { display: flex; flex-direction: column; gap: 20px; }
-h1, h2, h3, p { margin: 0; }
 a { color: var(--ink); }
 button, input, select { font: inherit; color: inherit; }
-.m { color: var(--muted); }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 select option { background-color: var(--panel); color: var(--fg); }
 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; overflow: hidden; text-decoration: none; color: var(--fg); }
 .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; }
-.logo { display: block; width: 90px; height: 36px; flex: none; }
-.logo img { display: block; width: 90px; height: 36px; }
-.logo-dark { display: none !important; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-light { display: none !important; } :root:not([data-theme="light"]) .logo-dark { display: block !important; } }
-:root[data-theme="dark"] .logo-light { display: none !important; }
-:root[data-theme="dark"] .logo-dark { display: block !important; }
 .brand { align-items: center; }
 .brand-name { overflow: hidden; text-overflow: ellipsis; }
 .top-acts { display: flex; gap: 8px; align-items: center; flex: none; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .sel { position: relative; display: flex; align-items: center; height: 34px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); padding-left: 10px; }
 .sel svg { width: 15px; height: 15px; color: var(--muted); flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; }
 .sel select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; height: 100%; padding: 0 10px 0 6px; font-size: 16px; cursor: pointer; outline: none; }
 #theme { cursor: pointer; padding: 0; }
 #theme svg { display: none; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-#theme[data-th="system"] .i-sys, #theme[data-th="light"] .i-light, #theme[data-th="dark"] .i-dark, #theme:not([data-th]) .i-sys { display: block; }
 @media (max-width: 480px) { .brand-name { font-size: 17px; } }
 .icon-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--fg); flex: none; }
-.icon-btn svg { width: 16px; height: 16px; }
 .gh svg { fill: currentColor; }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 12.5px; }
 .foot a { color: inherit; }
