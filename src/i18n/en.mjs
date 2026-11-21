@@ -9,7 +9,7 @@ export default {
   og_sub: "From 18 regions and your browser: where it stops, and what to check next",
   h1: "Can other people reach your service?",
   intro: "Checks your website, NAS or game server from 18 regions and from your own browser, then tells you where it stops and what to check next.",
-  skip: "Skip to main content", lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
+lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
 
   f_target: "Address", f_target_ph: "Domain, IP or URL, e.g. nas.example.com", f_port: "Port", f_ipv: "IP version", go: "Check",
 

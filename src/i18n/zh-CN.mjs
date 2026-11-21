@@ -8,7 +8,7 @@ export default {
   og_sub: "全球 18 个地区加你的浏览器：卡在哪一步，下一步查哪里",
   h1: "别人能连上你的服务吗？",
   intro: "从全球 18 个地区和你自己的浏览器去连你的网站、NAS 或游戏服务，告诉你卡在哪一步、下一步查哪里。",
-  skip: "跳到主要内容", lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
+lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
 
   f_target: "地址", f_target_ph: "域名、IP 或网址，例如 nas.example.com", f_port: "端口", f_ipv: "IP 版本", go: "开始检测",
 

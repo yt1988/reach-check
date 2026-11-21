@@ -7,12 +7,6 @@ body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--f-ui); -web
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column; gap: 20px; }
 #main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-/* "Skip to main content": the first thing a keyboard user reaches. Off screen until it has focus, then at the top
-   left, above the site's bar; it is positioned, so it never takes space at any width. */
-.skip { position: fixed; z-index: 1100; left: 12px; top: 12px; transform: translateY(-200%); padding: 10px 14px;
-  border-radius: var(--r-ctl); background: var(--ink); color: var(--ink-fg); font-size: 14px; font-weight: 600; text-decoration: none; }
-.skip:focus { transform: none; }
-.skip:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 a { color: var(--ink); }
 button, input, select { font: inherit; color: inherit; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }

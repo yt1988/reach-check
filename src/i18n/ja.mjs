@@ -8,7 +8,7 @@ export default {
   og_sub: "世界 18 地域とあなたのブラウザから：どこで止まるか、次に何を見るか",
   h1: "あなたのサービスに、外からつながりますか？",
   intro: "世界 18 地域とあなたのブラウザからサイト、NAS、ゲームサーバーに接続し、どこで止まるか、次に何を確認すべきかを示します。",
-  skip: "メインコンテンツへスキップ", lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム設定", th_light: "テーマ：ライト", th_dark: "テーマ：ダーク",
+lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム設定", th_light: "テーマ：ライト", th_dark: "テーマ：ダーク",
 
   f_target: "アドレス", f_target_ph: "ドメイン、IP、URL（例：nas.example.com）", f_port: "ポート", f_ipv: "IP バージョン", go: "チェック",
 

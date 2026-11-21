@@ -8,7 +8,7 @@ export default {
   og_sub: "Depuis 18 régions et votre navigateur : où ça bloque, et quoi vérifier",
   h1: "Les autres peuvent-ils joindre votre service ?",
   intro: "Se connecte à votre site, NAS ou serveur de jeu depuis 18 régions et depuis votre navigateur, puis indique où ça bloque et quoi vérifier.",
-  skip: "Aller au contenu principal", lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
+lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
 
   f_target: "Adresse", f_target_ph: "Domaine, IP ou URL, ex. nas.example.com", f_port: "Port", f_ipv: "Version IP", go: "Tester",
 
