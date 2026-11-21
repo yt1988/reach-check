@@ -8,7 +8,7 @@ export default {
   og_sub: "全球 18 個地區加上你的瀏覽器：卡在哪一步，接下來查哪裡",
   h1: "別人連得到你的服務嗎？",
   intro: "從全球 18 個地區和你自己的瀏覽器連到你的網站、NAS 或遊戲伺服器，告訴你卡在哪一步、接下來查哪裡。",
-  lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_light: "主題：淺色", th_dark: "主題：深色",
+  skip: "跳到主要內容", lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_light: "主題：淺色", th_dark: "主題：深色",
 
   f_target: "位址", f_target_ph: "網域、IP 或網址，例如 nas.example.com", f_port: "連接埠", f_ipv: "IP 版本", go: "開始檢測",
 

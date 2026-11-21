@@ -8,7 +8,7 @@ export default {
   og_sub: "전 세계 18개 지역과 내 브라우저에서: 어디서 막히는지, 다음에 무엇을 볼지",
   h1: "다른 사람이 내 서비스에 접속할 수 있을까요?",
   intro: "전 세계 18개 지역과 내 브라우저에서 웹사이트, NAS, 게임 서버에 접속해 보고, 어디서 막히는지와 다음에 확인할 것을 알려 줘요.",
-  lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_light: "테마: 라이트", th_dark: "테마: 다크",
+  skip: "본문으로 건너뛰기", lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_light: "테마: 라이트", th_dark: "테마: 다크",
 
   f_target: "주소", f_target_ph: "도메인, IP 또는 URL (예: nas.example.com)", f_port: "포트", f_ipv: "IP 버전", go: "확인",
 

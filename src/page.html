@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="/assets/{{css}}">
 </head>
 <body>
+<a class="skip" href="#main" data-i="skip"></a>
 <div class="app">
   <div class="top">
     <a class="brand" href="{{homeHref}}"><span class="logo"><img class="logo-light" src="/assets/logo-light.svg" width="90" height="36" alt="1ms" loading="lazy"><img class="logo-dark" src="/assets/logo-dark.svg" width="90" height="36" alt="1ms" loading="lazy"></span><span class="brand-name">{{appName}}</span></a>
@@ -27,6 +28,7 @@
     </div>
   </div>
 
+  <main id="main" tabindex="-1">
   <!-- 1. what to check, and once checked, the answer under it in the same card -->
   <div class="card main">
     <header class="hero">
@@ -80,6 +82,7 @@
     <div id="regions" class="regions"></div>
     <p class="note" id="gpNote" hidden></p>
   </section>
+  </main>
   <footer class="foot m"><p>{{footSrc}}</p><a href="https://github.com/yt1988/reach-check" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 </div>
 <div class="scrim" id="help" hidden>

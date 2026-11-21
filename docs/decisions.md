@@ -68,6 +68,12 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 - **The table's heading is translated at runtime too.** `h_regions` was a build-only string (the page ships it as static
   HTML), but `drawRegions()` writes it into the heading after every check, so the heading showed the key itself. It
   ships in the browser's strings now, and a test fails if the page's `t()` reads any build-only key.
+- **A `main` landmark and a "skip to main content" link.** The page's content cards sit in `<main id="main">`
+  (`tabindex="-1"`, so the link moves focus there), and the first element in `<body>` is a skip link that is off screen
+  until it has focus. It is `position: fixed`, so it never takes space at 375 px. 1ms.dog's shell prepends its
+  navigation bar before the tool's body, so on that site the shell's own skip link has to come first; a self-hosted
+  page gets ours in the right place. (#136, item 3.)
+
 - **On a touch screen the footer's GitHub link is 32px tall, its line box still 19px.** It is the footer's only
   independent link (the Globalping source is a link inside a sentence, which the contract exempts); `min-height: 32px`
   with a negative margin makes the target index-finger-sized without moving anything visible. (1ms-shell#93, item 5.)

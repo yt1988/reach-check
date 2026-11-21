@@ -8,7 +8,7 @@ export default {
   og_sub: "Aus 18 Regionen und deinem Browser: wo es hakt und was du prüfen solltest",
   h1: "Ist dein Dienst von außen erreichbar?",
   intro: "Verbindet sich aus 18 Regionen und aus deinem Browser mit deiner Website, deinem NAS oder Gameserver und zeigt, wo es hakt und was du prüfen solltest.",
-  lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
+  skip: "Zum Hauptinhalt springen", lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
 
   f_target: "Adresse", f_target_ph: "Domain, IP oder URL, z. B. nas.example.com", f_port: "Port", f_ipv: "IP-Version", go: "Prüfen",
 

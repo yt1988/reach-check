@@ -8,7 +8,7 @@ export default {
   og_sub: "Desde 18 regiones y tu navegador: dónde se corta y qué revisar",
   h1: "¿Otras personas pueden conectarse a tu servicio?",
   intro: "Se conecta a tu web, NAS o servidor de juegos desde 18 regiones y desde tu navegador, y te dice dónde se corta y qué revisar.",
-  lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: el del sistema", th_light: "Tema: claro", th_dark: "Tema: oscuro",
+  skip: "Saltar al contenido principal", lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: el del sistema", th_light: "Tema: claro", th_dark: "Tema: oscuro",
 
   f_target: "Dirección", f_target_ph: "Dominio, IP o URL, p. ej. nas.example.com", f_port: "Puerto", f_ipv: "Versión de IP", go: "Comprobar",
 
