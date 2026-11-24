@@ -139,6 +139,9 @@ const CF_CODES = [520, 521, 522, 523, 524, 525, 526, 530];
 
 const ISP_BLOCKED = [80, 443, 8080, 8443];     // ports Chinese home broadband commonly blocks inbound
 const LOCAL_TIMEOUT = 10000;
+const GP_LIMIT = 20000;      // the 16-region outside check: stop polling here and keep what came back
+const SRV_LIMIT = 8000;      // each of our servers, timed on its own
+const POST_LIMIT = 8000;     // creating a Globalping measurement
 
 // ---------- address helpers ----------
 
@@ -303,12 +306,12 @@ async function runServer(s) {
   const q = new URLSearchParams({ host: s.t.host, port: s.t.port });
   if (s.udp) q.set("mode", "udp");
   if (!s.t.isIp) q.set("ipv", s.ipv);
-  const c = new AbortController(), timer = setTimeout(() => c.abort(), 30000);
   await Promise.all(SERVERS.map(async srv => {
+    const c = new AbortController(), timer = setTimeout(() => c.abort(), SRV_LIMIT);
     try { s.srvs[srv.id] = await (await fetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json(); }
     catch { s.srvs[srv.id] = { k: "down" }; }
+    finally { clearTimeout(timer); }
   }));
-  clearTimeout(timer);
   if (s === state) { drawRegions(); drawVerdict(); }
 }
 
@@ -348,24 +351,29 @@ async function runGlobalping(s) {
   if (s.t.path.includes("?")) opts.request.query = s.t.path.split("?")[1];
   if (!s.t.isIp) opts.ipVersion = +s.ipv;
   let r, j;
+  const pc = new AbortController(), pt = setTimeout(() => pc.abort(), POST_LIMIT);
   try {
-    r = await fetch(GP + "/measurements", { method: "POST", headers: { "content-type": "application/json" },
+    r = await fetch(GP + "/measurements", { signal: pc.signal, method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "http", target: s.t.host, inProgressUpdates: true, locations: REGIONS.map(x => ({ ...x.loc, limit: 1 })), measurementOptions: opts }) });
     j = await r.json();
-  } catch { return gpFail(s, t("gp_unreach")); }
+  } catch { clearTimeout(pt); return gpFail(s, t("gp_unreach")); }
+  clearTimeout(pt);
   const reset = +r.headers.get("x-ratelimit-reset");
   if (r.headers.get("x-ratelimit-remaining") != null) showQuota(+r.headers.get("x-ratelimit-remaining"), reset);
   if (r.status === 429) return gpFail(s, t("gp_429", { min: Math.ceil((reset || 3600) / 60) }));
   if (!r.ok) return gpFail(s, t("gp_err", { msg: j?.error?.message || r.status }));
 
   const t0 = Date.now();
-  while (s.id === run && Date.now() - t0 < 45000) {
+  let last = null;
+  while (s.id === run && Date.now() - t0 < GP_LIMIT) {
     await new Promise(res => setTimeout(res, 700));
     let m; try { m = await (await fetch(`${GP}/measurements/${j.id}`)).json(); } catch { continue; }
+    last = m;
     place(s, m.results || []);
     drawRegions(); drawVerdict();
     if (m.status !== "in-progress") break;
   }
+  if (last && last.status === "in-progress") s.gpPartial = s.rows.filter(x => !x?.c).length;
   s.gpDone = true;
   drawRegions(); drawVerdict();
 }
@@ -527,8 +535,9 @@ function drawRegions() {
   sizeBars();
   const n = s.rows.filter(r => r?.c).length;
   $("gpProgress").textContent = s.gpError ? "" : `${n} / ${REGIONS.length}`;
-  $("gpNote").hidden = !s.gpError;
-  $("gpNote").innerHTML = s.gpError ? `<span class="st-warn">${esc(s.gpError)}</span>` : "";
+  $("gpNote").hidden = !s.gpError && !s.gpPartial;
+  $("gpNote").innerHTML = s.gpError ? `<span class="st-warn">${esc(s.gpError)}</span>`
+    : s.gpPartial ? `<span class="m">${esc(t("gp_partial", { n: s.gpPartial }))}</span>` : "";
 }
 
 const sizeBars = () => { for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%"; };   // the CSP forbids style attributes, not CSSOM

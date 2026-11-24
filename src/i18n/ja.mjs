@@ -220,4 +220,5 @@ lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム
   home_countries: "国・地域からテスト",
   rg_assigning: "テストプローブを割り当て中…",
   srv_tokyo: "当サイト（東京）", srv_shanghai: "当サイト（上海）",
+  gp_partial: "{n} 個のプローブが時間内に応答しませんでした。", rg_noanswer: "時間内に応答なし",
 };

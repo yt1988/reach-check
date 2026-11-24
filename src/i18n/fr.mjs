@@ -231,4 +231,5 @@ lang_label: "Langue", a_theme: "Thème", th_system: "Thème : système", th_lig
   home_countries: "Tester par pays ou région",
   rg_assigning: "Attribution des sondes…",
   srv_tokyo: "Notre serveur (Tokyo)", srv_shanghai: "Notre serveur (Shanghai)",
+  gp_partial: "{n} sondes n'ont pas répondu à temps.", rg_noanswer: "Pas de réponse à temps",
 };

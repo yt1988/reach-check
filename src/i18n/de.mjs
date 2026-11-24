@@ -232,4 +232,5 @@ lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light:
   home_countries: "Nach Land oder Region testen",
   rg_assigning: "Test-Sonden werden zugewiesen…",
   srv_tokyo: "Unser Server (Tokio)", srv_shanghai: "Unser Server (Shanghai)",
+  gp_partial: "{n} Sonden antworteten nicht rechtzeitig.", rg_noanswer: "Keine Antwort rechtzeitig",
 };

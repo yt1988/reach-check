@@ -26,6 +26,9 @@ $("lang").onchange = e => {
 let run = 0;
 // Globalping quota: fetched on load, after each run, and shown on the same line as the form, left aligned.
 const COST = D.slots || (D.locations && D.locations.length) || 1;
+// A country page gives up after 12s, a continent page after 18s; whatever came back stays on screen.
+const LIMIT = (String(D.suffix || "").split("/").filter(Boolean).length === 2) ? 12000 : 18000;
+const POST_LIMIT = 8000;
 let low = false, running = false;
 function showQuota(left, reset) {
   low = left < COST;
@@ -90,11 +93,11 @@ function draw(s) {
   const probing = rows.some(x => x.probe);
   $("vSub").textContent = s.error
     || (probing ? t("rg_result_sub", { target: s.host + ":" + s.port }) + (s.done < rows.length ? " · " + t("rg_short", { done: s.done }) : "")
-                : t("rg_assigning"));
+                : t("rg_assigning")) + (s.timedOut ? " · " + t("gp_partial", { n: rows.filter(x => !x.res).length }) : "");
   $("vDot").className = "dot " + (s.error ? "bad" : s.done < rows.length ? "" : s.ok === rows.length ? "ok" : s.ok ? "warn" : "bad");
   const seen = new Map();
   $("rows").innerHTML = rows.map((x, i) => {
-    const [cls, label] = statusOf(x.res);
+    const [cls, label] = x.timedOut ? ["m", t("rg_noanswer")] : statusOf(x.res);
     const tm = x.res && x.res.timings && x.res.timings.total != null ? Math.round(x.res.timings.total) + " ms" : "";
     const where = x.probe ? esc(probeLabel(x)) : "";
     const net = x.network ? `<span class="m">${esc(x.network)}</span>` : "";
@@ -122,17 +125,20 @@ async function start(ev) {
   const proto = tg.port === 443 ? "HTTPS" : "HTTP";
   let j;
   try {
-    const r = await fetch(GP + "/measurements", { method: "POST", headers: { "content-type": "application/json" },
+    const pc = new AbortController(), pt = setTimeout(() => pc.abort(), POST_LIMIT);
+    const r = await fetch(GP + "/measurements", { signal: pc.signal, method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "http", target: tg.host, inProgressUpdates: true,
         locations: D.locations.map(({ label, network, ...loc }) => ({ ...loc, limit: loc.limit || 1 })),
         measurementOptions: { protocol: proto, port: tg.port, request: { method: "HEAD", path: "/" } } }) });
     j = await r.json();
+    clearTimeout(pt);
     if (r.status === 429) {
       s.error = t("quota_out", { min: Math.ceil((+r.headers.get("x-ratelimit-reset") || 60) / 60) });
       s.rows = []; running = false; draw(s); loadQuota(); return;
     }
     if (!r.ok) throw new Error(j?.error?.message || ("HTTP " + r.status));
   } catch (e) {
+    clearTimeout(pt);
     s.error = t("rg_gp_failed") + (e && e.message ? " (" + e.message + ")" : "");
     draw(s); running = false; loadQuota(); return;
   }
@@ -141,7 +147,7 @@ async function start(ev) {
     place(s, m0.results || []); draw(s);
   } catch (e) {}
   const t0 = Date.now();
-  while (s.id === run && Date.now() - t0 < 45000) {
+  while (s.id === run && Date.now() - t0 < LIMIT) {
     let m; try { m = await (await fetch(GP + "/measurements/" + j.id)).json(); } catch (e) { await new Promise(r => setTimeout(r, 700)); continue; }
     place(s, m.results || []);
     draw(s);
@@ -149,6 +155,7 @@ async function start(ev) {
     await new Promise(r => setTimeout(r, 700));
   }
   s.done = s.rows.filter(x => x.res).length;
+  if (s.done < s.rows.length) { s.timedOut = true; s.rows.forEach(x => { if (!x.res) x.timedOut = true; }); }
   draw(s);
   running = false;
   loadQuota();
