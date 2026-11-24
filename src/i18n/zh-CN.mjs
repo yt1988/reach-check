@@ -212,4 +212,5 @@ lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_
   rg_short: "本次只得到 {done} 个样本",
   home_countries: "按国家/地区测试",
   rg_assigning: "正在分配测试节点…",
+  srv_tokyo: "本站（东京）", srv_shanghai: "本站（上海）",
 };

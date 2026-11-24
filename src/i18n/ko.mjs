@@ -219,4 +219,5 @@ lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_ligh
   rg_short: "이번에는 샘플 {done}개만 얻었습니다",
   home_countries: "국가/지역별 테스트",
   rg_assigning: "테스트 프로브를 배정하는 중…",
+  srv_tokyo: "이 사이트(도쿄)", srv_shanghai: "이 사이트(상하이)",
 };

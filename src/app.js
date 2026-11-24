@@ -7,7 +7,10 @@ import { encodeResult, decodeResult, sharePath } from "./code.mjs";
 
 (() => {
 const GP = "https://api.globalping.io/v1";
-const API = "https://reach-api.1ms.dog:2096/v1/probe";
+const SERVERS = [
+  { id: "tokyo", api: "https://reach-api.1ms.dog:2096/v1/probe", cc: "JP", label: "srv_tokyo" },
+  { id: "shanghai", api: "https://reach-api.dog.1msapp.com:2096/v1/probe", cc: "CN", label: "srv_shanghai" },
+];
 const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -95,6 +98,7 @@ REGIONS.forEach(x => x.cn = x.cc === "CN");
 const TW = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
 const regionName = (cc, lang) => cc === "TW" ? (TW[lang] || TW.en) : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
 const regionOf = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
+const flagImg = cc => cc ? `<img class="rf" src="/flags/${cc === "TW" ? "cn" : String(cc).toLowerCase()}.svg" alt="" width="16" height="12" loading="lazy">` : "";
 const nameOf = x => x.carrier ? t("c_" + x.carrier) : x.city ? `${regionOf(x.cc)} · ${t("city_" + x.city)}` : regionOf(x.cc);
 
 // Presets: the port, whether it should answer as a web page (and over TLS), what to expect otherwise
@@ -276,7 +280,7 @@ function start() {
   const web = tg.scheme ? true : pr ? pr.web : true;
   const id = ++run;
   state = { id, t: tg, proto, web, whatKey: pr?.what || "", home: !!pr?.home, plainWeb: proto === "HTTP" && web && (!!pr || tg.scheme === "http"),
-    ipv: $("ipv").value, rows: REGIONS.map(() => null), gpDone: false, local: null, srv: null, udp, quota: state?.quota, ts: Date.now() };
+    ipv: $("ipv").value, rows: REGIONS.map(() => null), gpDone: false, local: null, srvs: {}, udp, quota: state?.quota, ts: Date.now() };
   if (recv) { recv.remove(); recv = null; }
 
   const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}${udp ? "&u=1" : ""}`;
@@ -300,9 +304,11 @@ async function runServer(s) {
   if (s.udp) q.set("mode", "udp");
   if (!s.t.isIp) q.set("ipv", s.ipv);
   const c = new AbortController(), timer = setTimeout(() => c.abort(), 30000);
-  try { s.srv = await (await fetch(`${API}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json(); }
-  catch { s.srv = { k: "down" }; }
-  finally { clearTimeout(timer); }
+  await Promise.all(SERVERS.map(async srv => {
+    try { s.srvs[srv.id] = await (await fetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json(); }
+    catch { s.srvs[srv.id] = { k: "down" }; }
+  }));
+  clearTimeout(timer);
   if (s === state) { drawRegions(); drawVerdict(); }
 }
 
@@ -475,7 +481,7 @@ function drawRegions() {
   const s = state; let html = "", g = "", first = true;
   $("table").classList.toggle("udp", !!s.udp);
   $("tblH").textContent = t(s.udp ? "h_srv" : "h_regions");
-  if (s.udp) { $("regions").innerHTML = srvRow(s); sizeBars(); $("gpProgress").textContent = ""; $("gpNote").hidden = true; return; }
+  if (s.udp) { $("regions").innerHTML = srvRows(s); sizeBars(); $("gpProgress").textContent = ""; $("gpNote").hidden = true; return; }
   // Bars for every probe that reached the port; one that stopped earlier is hatched and doesn't set the scale
   const span = r => r.res.status === "finished" ? r.res.timings.total : (r.res.timings.dns || 0) + r.res.timings.tcp + (r.res.timings.tls || 0);
   const drawn = r => r?.c && REACHED.has(r.c.k) && r.res.timings?.tcp != null;
@@ -484,7 +490,7 @@ function drawRegions() {
   // One line per region: name, a short status, the time bar, the total. A click opens the details: the full status,
   // the probe's network, the address it reached, each step's time, and trace route.
   REGIONS.forEach((x, i) => {
-    if (first) { first = false; html += localRow(s) + (s.shared && !s.srv ? "" : srvRow(s)); }
+    if (first) { first = false; html += localRow(s) + (s.shared && !Object.values(s.srvs||{}).some(v => v && v.k !== "down") ? "" : srvRows(s)); }
     if (x.g !== g) { g = x.g; html += `<div class="grp">${esc(t("g_" + g))}</div>`; }
     const row = s.rows[i];
     let pl = dot("m", t("r_queue"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
@@ -513,7 +519,7 @@ function drawRegions() {
     }
     const can = !!row?.c;
     html += `<div class="rg${row?.open ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}>` +
-      `<span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
+      `<span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
   });
   $("regions").innerHTML = html;
   sizeBars();
@@ -528,8 +534,10 @@ const chev = can => can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="tr
 
 // Our server's line, under the browser's (UDP: alone): what it found, connecting then TLS (UDP: the answer's time).
 // Its details: the sentence, what the service said, the TLS handshake and certificate chain, the address it tried.
-function srvRow(s) {
-  const v = s.srv;
+const srvRows = s => SERVERS.map(srv => srvRow(srv, s)).join("");
+function srvRow(srv, s) {
+  const v = s.srvs[srv.id];
+  if (!v || v.k === "down") return "";
   let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
   if (v) {
     const [cls, short, text] = srvStatus(v, s);
@@ -557,7 +565,7 @@ function srvRow(s) {
   const can = !!v;
   return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) +
     `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}>` +
-    `<span class="rg-name">${chev(can)}${esc(t("r_srv"))}</span>${pl}${bar}${tot}${more}</div>`;
+    `<span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
 }
 
 // This browser is the table's first row; drawing it is drawing the table
@@ -634,7 +642,7 @@ function verdict(s, rows) {
   if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t(pk("v_wait_sub", rows.length), { n: rows.length, of: total }) };
   if (s.gpError && !rows.length) return { key: "v_gpoff", cls: "warn", title: t("v_gpoff"), sub: s.gpError, steps: localSteps(s, null) };
   // a private address: the probes refuse it without saying which; our server says which (and doesn't connect either)
-  const priv = allIps.find(ip => ipKind(ip) === "private") || srvPrivIp(s.srv);
+  const priv = allIps.find(ip => ipKind(ip) === "private") || srvPrivIp(s.srvs?.tokyo);
   if (priv || rows.some(r => r.c.k === "priv")) return privVerdict(s, priv);
 
   const steps = [];
@@ -677,7 +685,7 @@ function verdict(s, rows) {
   const slow = rows.filter(r => r.res.timings?.tcp > 1000);
   if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
   // What our server read up close: which service answers, and exactly what's wrong with the certificate
-  const sv = s.srv, pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
+  const sv = s.srvs?.tokyo, pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
   if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
   if (pb === "chain") steps.push(tm("sv_step_chain"));
   else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
@@ -704,7 +712,7 @@ function privVerdict(s, ip) {
 
 // UDP: what our server found is the whole answer
 function udpVerdict(s) {
-  const v = s.srv, port = s.t.port;
+  const v = s.srvs?.tokyo, port = s.t.port;
   if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
   if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
   if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
@@ -780,7 +788,7 @@ function pack(s) {
     }),
     l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
     d: 0,
-    s: srvPack(s.srv),
+    s: srvPack(s.srvs?.tokyo),
   };
 }
 // what our server found, without what the link holds already or what only mattered at the time

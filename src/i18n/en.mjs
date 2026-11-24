@@ -230,4 +230,5 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
   rg_short: "Fewer samples than planned: {done}",
   home_countries: "Test by country or region",
   rg_assigning: "Assigning test probes…",
+  srv_tokyo: "This site (Tokyo)", srv_shanghai: "This site (Shanghai)",
 };

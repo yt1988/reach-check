@@ -127,7 +127,10 @@
   // src/app.js
   (() => {
     const GP = "https://api.globalping.io/v1";
-    const API = "https://reach-api.1ms.dog:2096/v1/probe";
+    const SERVERS = [
+      { id: "tokyo", api: "https://reach-api.1ms.dog:2096/v1/probe", cc: "JP", label: "srv_tokyo" },
+      { id: "shanghai", api: "https://reach-api.dog.1msapp.com:2096/v1/probe", cc: "CN", label: "srv_shanghai" }
+    ];
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -269,6 +272,7 @@
         return cc;
       }
     };
+    const flagImg = (cc) => cc ? `<img class="rf" src="/flags/${cc === "TW" ? "cn" : String(cc).toLowerCase()}.svg" alt="" width="16" height="12" loading="lazy">` : "";
     const nameOf = (x) => x.carrier ? t("c_" + x.carrier) : x.city ? `${regionOf(x.cc)} \xB7 ${t("city_" + x.city)}` : regionOf(x.cc);
     const PRESETS = [
       { label: "p_web", port: 443, proto: "HTTPS", web: true },
@@ -601,7 +605,7 @@
         rows: REGIONS.map(() => null),
         gpDone: false,
         local: null,
-        srv: null,
+        srvs: {},
         udp,
         quota: state == null ? void 0 : state.quota,
         ts: Date.now()
@@ -635,13 +639,14 @@
       if (s.udp) q.set("mode", "udp");
       if (!s.t.isIp) q.set("ipv", s.ipv);
       const c = new AbortController(), timer = setTimeout(() => c.abort(), 3e4);
-      try {
-        s.srv = await (await fetch(`${API}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
-      } catch {
-        s.srv = { k: "down" };
-      } finally {
-        clearTimeout(timer);
-      }
+      await Promise.all(SERVERS.map(async (srv) => {
+        try {
+          s.srvs[srv.id] = await (await fetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
+        } catch {
+          s.srvs[srv.id] = { k: "down" };
+        }
+      }));
+      clearTimeout(timer);
       if (s === state) {
         drawRegions();
         drawVerdict();
@@ -838,7 +843,7 @@
       $("table").classList.toggle("udp", !!s.udp);
       $("tblH").textContent = t(s.udp ? "h_srv" : "h_regions");
       if (s.udp) {
-        $("regions").innerHTML = srvRow(s);
+        $("regions").innerHTML = srvRows(s);
         sizeBars();
         $("gpProgress").textContent = "";
         $("gpNote").hidden = true;
@@ -857,7 +862,7 @@
       REGIONS.forEach((x, i) => {
         if (first) {
           first = false;
-          html += localRow(s) + (s.shared && !s.srv ? "" : srvRow(s));
+          html += localRow(s) + (s.shared && !Object.values(s.srvs || {}).some((v) => v && v.k !== "down") ? "" : srvRows(s));
         }
         if (x.g !== g) {
           g = x.g;
@@ -886,7 +891,7 @@
           }
         }
         const can = !!(row == null ? void 0 : row.c);
-        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
+        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
       });
       $("regions").innerHTML = html;
       sizeBars();
@@ -899,9 +904,11 @@
       for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";
     };
     const chev = (can) => can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>';
-    function srvRow(s) {
+    const srvRows = (s) => SERVERS.map((srv) => srvRow(srv, s)).join("");
+    function srvRow(srv, s) {
       var _a, _b;
-      const v = s.srv;
+      const v = s.srvs[srv.id];
+      if (!v || v.k === "down") return "";
       let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">\u2013</span>`, more = "";
       if (v) {
         const [cls, short, text2] = srvStatus(v, s);
@@ -927,7 +934,7 @@
         }
       }
       const can = !!v;
-      return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${esc(t("r_srv"))}</span>${pl}${bar}${tot}${more}</div>`;
+      return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawLocal() {
       drawRegions();
@@ -986,21 +993,21 @@
     const SHOWN_STEPS = 4;
     const median = (a) => a.length ? a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)] : null;
     function verdict(s, rows) {
-      var _a, _b, _c;
+      var _a, _b, _c, _d, _e;
       if (s.udp) return udpVerdict(s);
       const total = REGIONS.length, port = s.t.port;
       const ips = dnsIps(s), allIps = s.t.isIp ? [s.t.host] : ips;
       const idx = (r) => s.rows.indexOf(r), rname = (r) => nameOf(REGIONS[idx(r)]);
       if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t(pk("v_wait_sub", rows.length), { n: rows.length, of: total }) };
       if (s.gpError && !rows.length) return { key: "v_gpoff", cls: "warn", title: t("v_gpoff"), sub: s.gpError, steps: localSteps(s, null) };
-      const priv = allIps.find((ip) => ipKind(ip) === "private") || srvPrivIp(s.srv);
+      const priv = allIps.find((ip) => ipKind(ip) === "private") || srvPrivIp((_a = s.srvs) == null ? void 0 : _a.tokyo);
       if (priv || rows.some((r) => r.c.k === "priv")) return privVerdict(s, priv);
       const steps = [];
       const cf = allIps.some((ip) => ipKind(ip) === "cf");
       const ok = rows.filter((r) => good(r.c, s));
       const kinds = {};
       rows.filter((r) => !good(r.c, s)).forEach((r) => kinds[r.c.k] = (kinds[r.c.k] || 0) + 1);
-      const top = (_a = Object.entries(kinds).sort((a, b) => b[1] - a[1])[0]) == null ? void 0 : _a[0];
+      const top = (_b = Object.entries(kinds).sort((a, b) => b[1] - a[1])[0]) == null ? void 0 : _b[0];
       const cnRows = rows.filter((r) => REGIONS[idx(r)].cn), wRows = rows.filter((r) => !REGIONS[idx(r)].cn);
       const cnOk = cnRows.filter((r) => good(r.c, s)).length, wOk = wRows.filter((r) => good(r.c, s)).length;
       if (cf && ![...CF_HTTP, ...CF_HTTPS].includes(port)) steps.push(tm("cf_port", { http: list(CF_HTTP), https: list(CF_HTTPS), port }));
@@ -1049,7 +1056,7 @@
         return ((_a2 = r.res.timings) == null ? void 0 : _a2.tcp) > 1e3;
       });
       if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
-      const sv = s.srv, pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
+      const sv = (_c = s.srvs) == null ? void 0 : _c.tokyo, pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
       if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
       if (pb === "chain") steps.push(tm("sv_step_chain"));
       else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
@@ -1061,7 +1068,7 @@
         var _a2;
         return (_a2 = r.res.tls) == null ? void 0 : _a2.expiresAt;
       }).find(Boolean);
-      if (!exp && pb === "expired") steps.push(tm("cert_expired", { date: ((_c = (_b = sv.tls.chain) == null ? void 0 : _b[0]) == null ? void 0 : _c.until) || "" }));
+      if (!exp && pb === "expired") steps.push(tm("cert_expired", { date: ((_e = (_d = sv.tls.chain) == null ? void 0 : _d[0]) == null ? void 0 : _e.until) || "" }));
       if (exp) {
         const days = Math.floor((new Date(exp) - Date.now()) / 864e5);
         if (days < 14) steps.push(days < 0 ? tm("cert_expired", { date: exp.slice(0, 10) }) : tm(pk("cert_soon", days), { days, date: exp.slice(0, 10) }));
@@ -1084,7 +1091,8 @@
       };
     }
     function udpVerdict(s) {
-      const v = s.srv, port = s.t.port;
+      var _a;
+      const v = (_a = s.srvs) == null ? void 0 : _a.tokyo, port = s.t.port;
       if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
       if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
       if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
@@ -1181,6 +1189,7 @@
       inviteUrl = `${location.origin}${D.paths.en}?t=${encodeURIComponent(tg.raw)}&p=${tg.port}&from=friend`;
     }
     function pack2(s) {
+      var _a;
       const v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c)), n = (x) => x == null ? null : Math.round(x);
       return {
         t: [s.t.host, s.t.port, s.t.path, s.t.scheme, s.ipv, s.proto, s.web ? 1 : 0, s.whatKey, s.home ? 1 : 0, s.plainWeb ? 1 : 0, s.t.raw],
@@ -1205,7 +1214,7 @@
         }),
         l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
         d: 0,
-        s: srvPack(s.srv)
+        s: srvPack((_a = s.srvs) == null ? void 0 : _a.tokyo)
       };
     }
     function srvPack(v) {

@@ -219,4 +219,5 @@ lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム
   rg_short: "今回のサンプルは {done} 件のみ",
   home_countries: "国・地域からテスト",
   rg_assigning: "テストプローブを割り当て中…",
+  srv_tokyo: "当サイト（東京）", srv_shanghai: "当サイト（上海）",
 };

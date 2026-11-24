@@ -231,4 +231,5 @@ lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light:
   rg_short: "Weniger Stichproben als geplant: {done}",
   home_countries: "Nach Land oder Region testen",
   rg_assigning: "Test-Sonden werden zugewiesen…",
+  srv_tokyo: "Unser Server (Tokio)", srv_shanghai: "Unser Server (Shanghai)",
 };

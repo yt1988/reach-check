@@ -229,4 +229,5 @@ lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: 
   rg_short: "Menos amostras do que o previsto: {done}",
   home_countries: "Testar por país ou região",
   rg_assigning: "Atribuindo sondas de teste…",
+  srv_tokyo: "Nosso servidor (Tóquio)", srv_shanghai: "Nosso servidor (Xangai)",
 };

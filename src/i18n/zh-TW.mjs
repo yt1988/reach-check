@@ -213,4 +213,5 @@ lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_
   rg_short: "本次只得到 {done} 個樣本",
   home_countries: "依國家/地區測試",
   rg_assigning: "正在分配測試節點…",
+  srv_tokyo: "本站（東京）", srv_shanghai: "本站（上海）",
 };
