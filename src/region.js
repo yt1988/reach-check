@@ -33,8 +33,16 @@ function showQuota(left, reset) {
   if (el) el.textContent = low
     ? t("quota_out", { min: Math.ceil((reset || 60) / 60) })
     : t(left === 1 && L.quota_ok_one ? "quota_ok_one" : "quota_ok", { left, cost: COST });
-  $("go").disabled = low || running;
+  $("go").setAttribute("aria-disabled", low || running ? "true" : "false");
 }
+function nudgeQuota() {
+  const q = $("quota"), live = $("quotaLive");
+  if (!q) return;
+  q.classList.remove("flash"); void q.offsetWidth; q.classList.add("flash");
+  setTimeout(() => q.classList.remove("flash"), 1400);
+  if (live) { live.textContent = ""; setTimeout(() => { live.textContent = q.textContent; }, 30); }
+}
+$("go").addEventListener("click", e => { if ($("go").getAttribute("aria-disabled") === "true") { e.preventDefault(); nudgeQuota(); } });
 async function loadQuota() {
   try {
     const r = await fetch(GP + "/limits");
@@ -100,7 +108,7 @@ function draw(s) {
 
 async function start(ev) {
   ev.preventDefault();
-  if (low) return;                       // not enough allowance: say so, don't create a measurement
+  if (low) { nudgeQuota(); return; }     // not enough allowance: say so, don't create a measurement
   const tg = target();
   if (!tg) { $("target").focus(); return; }
   const id = ++run;
@@ -110,7 +118,7 @@ async function start(ev) {
       return { country: l.country || "", city: l.city || "", network: "", probe: null, res: null };
     }) };
   draw(s);
-  running = true; $("go").disabled = true;
+  running = true; $("go").setAttribute("aria-disabled", "true");
   const proto = tg.port === 443 ? "HTTPS" : "HTTP";
   let j;
   try {

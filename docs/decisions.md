@@ -5,7 +5,7 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 
 ## The server (server/)
 
-- **Depth, not breadth.** One machine can't tell what another country sees; Globalping's 18 regions do that. The
+- **Depth, not breadth.** One machine can't tell what another country sees; Globalping's 16 regions do that. The
   server adds what neither the browser nor Globalping can: what a non-web service says on its port, the full TLS
   chain and why it isn't trusted, and UDP. Ping, traceroute and MTR stay with Globalping: run from the region that
   failed, they say more than one fixed point.
@@ -32,7 +32,7 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 - **Limits** (server/limits.go): 10 checks and 5 different targets an hour per visitor (an IPv6 visitor by their /64);
   30 connections an hour to one address, whoever asks; 60 a minute and 1000 an hour for the whole site; 16 at once.
   An answer is reused for 5 minutes, so repeats don't reach the target again. The visitor's 10 roughly match what
-  Globalping lets them run in an hour (13 checks of 18 regions).
+  Globalping lets them run in an hour (13 checks of 16 regions).
 - **Nothing is kept.** No access log (`StandardOutput=null`, `LogLevelMax=err`). Visitors are counted by a keyed hash
   of their IP, with a key made at start that never leaves memory.
 - **No proxy in front.** Visitors connect directly (a CDN proxy would hide their IPs and the limits would count the
@@ -61,7 +61,7 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 - **The share card never cuts text short**: the title shrinks, then wraps to two lines; the target sits
   right under it; region names are short ("Los Angeles, US"); fewer columns when a name doesn't fit.
 - **The way on to Global Ping**: after a check, the region table's heading carries "See ping latency from these
-  regions" — the same target and the same 18 regions, but timed with 16 ICMP packets instead of one HTTP request.
+  regions" — the same target and the same 16 regions, but timed with 16 ICMP packets instead of one HTTP request.
   Its address is the shell's `<meta name="ping">`, and the target goes in `?t=`: a self-hosted copy (no shell) shows
   no link, a UDP check (no region rows) hides it, and so does a private or CGNAT address, which Ping refuses exactly as
   our probes do. (Audit 1ms-shell#93, item 1.)

@@ -2,7 +2,7 @@
 
 [English](README.md) · **简体中文**
 
-别人能连上你的网站、NAS 或游戏服务吗？连不上的话，卡在哪一步？[可达性检测](https://reach.1ms.dog) 从全球 18 个地区（含中国电信、联通、移动）去连你的服务，再从你自己的浏览器连一次。每个地区分段显示 DNS、TCP、TLS、首字节耗时；连不上就指出停在哪一步、下一步查哪里。
+别人能连上你的网站、NAS 或游戏服务吗？连不上的话，卡在哪一步？[可达性检测](https://reach.1ms.dog) 从全球 16 个地区去连你的服务，再从你自己的浏览器连一次。每个地区分段显示 DNS、TCP、TLS、首字节耗时；连不上就指出停在哪一步、下一步查哪里。
 
 **线上地址：** https://reach.1ms.dog（原型，尚未部署）
 
@@ -11,7 +11,7 @@
 >
 > **IP 与隐私**：[出口照妖镜](https://github.com/yt1988/egresslens "你的流量用了哪些出口 IP，各网站分别看到哪个") · [IP 质量测试](https://github.com/yt1988/ip-quality-test "你的 IP 有多干净，汇总十几个来源打 0–100 分") · [你是谁](https://github.com/yt1988/who-are-you "网站不用你授权，就能看出你的哪些信息") · [ASN 查询](https://github.com/yt1988/asn-lookup "IP 归谁，以及每个 AS 的前缀和上下游") · [流媒体/AI 解锁检测](https://github.com/yt1988/unlock-check "你的 IP 能用哪些流媒体和 AI 服务")
 >
-> **网速与连通**：[1ms.dog](https://github.com/yt1988/1ms.dog "你的流量从哪出去，常用服务离你多远") · [网络透视](https://github.com/yt1988/connection-checkup "一次跑完其中 8 项检测，给出一个总等级") · [网速测试](https://github.com/yt1988/speed-test "下载、上传、延迟和满载延迟") · [DNS 测试](https://github.com/yt1988/dns-test "哪家公共 DNS 在你的网络上最快") · [域名透视](https://github.com/yt1988/dns-records "一个域名的全部 DNS 记录、各家解析器的回答和注册信息") · [IPv6 测试](https://github.com/yt1988/ipv6-test "你的网络是否真的支持 IPv6，10 分制打分") · [CDN 雷达](https://github.com/yt1988/cdn-radar "每家大 CDN 由哪个节点为你服务，离你多远") · [网络诊断](https://github.com/yt1988/net-diagnosis "网卡了是哪一段的问题：Wi-Fi、宽带、跨境线路、代理还是某个服务") · [路由追踪](https://github.com/yt1988/route-trace "从和你同网的探针出发，逐跳看清到任何地方的线路：走哪条线、在哪出境、哪段慢") · [全球 Ping](https://github.com/yt1988/global-ping "从 18 个地区 ping 一个域名或 IP：16 个包逐包可见，丢包发生在第几包也看得见")
+> **网速与连通**：[1ms.dog](https://github.com/yt1988/1ms.dog "你的流量从哪出去，常用服务离你多远") · [网络透视](https://github.com/yt1988/connection-checkup "一次跑完其中 8 项检测，给出一个总等级") · [网速测试](https://github.com/yt1988/speed-test "下载、上传、延迟和满载延迟") · [DNS 测试](https://github.com/yt1988/dns-test "哪家公共 DNS 在你的网络上最快") · [域名透视](https://github.com/yt1988/dns-records "一个域名的全部 DNS 记录、各家解析器的回答和注册信息") · [IPv6 测试](https://github.com/yt1988/ipv6-test "你的网络是否真的支持 IPv6，10 分制打分") · [CDN 雷达](https://github.com/yt1988/cdn-radar "每家大 CDN 由哪个节点为你服务，离你多远") · [网络诊断](https://github.com/yt1988/net-diagnosis "网卡了是哪一段的问题：Wi-Fi、宽带、跨境线路、代理还是某个服务") · [路由追踪](https://github.com/yt1988/route-trace "从和你同网的探针出发，逐跳看清到任何地方的线路：走哪条线、在哪出境、哪段慢") · [全球 Ping](https://github.com/yt1988/global-ping "从 16 个地区 ping 一个域名或 IP：16 个包逐包可见，丢包发生在第几包也看得见")
 >
 > **选云与成本**：[Me2Cloud](https://github.com/yt1988/me2cloud "到各大云厂商每个区域的延迟、抖动和超时率") · [Lightsail 省钱计算器](https://github.com/yt1988/lightsail-cost-saver "预估 Lightsail 流量超额，找最省钱的加流量方式") · [云成本规划器](https://github.com/yt1988/cloud-cost-planner "按你的流量，算出最便宜的 VPS、存储和 CDN 组合")
 >
@@ -20,7 +20,7 @@
 
 ## 检测什么
 
-- **从 18 个地区连过去**：每个地区一个 [Globalping](https://globalping.io) 探针，分布在中国大陆三网、香港、中国台湾、东京、韩国、新加坡、印度、澳大利亚、伦敦、法兰克福、俄罗斯、阿联酋、南非、洛杉矶、纽约、圣保罗。每个探针向这个端口发一次 HTTP(S) 请求，能分清这几种结果：
+- **从 16 个地区连过去**：每个地区一个 [Globalping](https://globalping.io) 探针，分布在中国大陆、香港、中国台湾、东京、韩国、新加坡、印度、澳大利亚、伦敦、法兰克福、俄罗斯、阿联酋、南非、洛杉矶、纽约、圣保罗。每个探针向这个端口发一次 HTTP(S) 请求，能分清这几种结果：
   - 网页正常返回；
   - 端口开着，但不是网页服务（SSH、Minecraft……）；
   - 拒绝连接：没有程序在监听；
@@ -47,7 +47,7 @@
 
 ## 在哪里运行
 
-检测在访客的浏览器里运行。数据来源在页面上注明：Globalping（外部检测和追踪路由），以及我们东京的服务器。页面直接调用 Globalping 的接口，每个访客用自己的额度：每个 IP 每小时 250 个探针结果，一次检测用 18 个。额度用完时，页面会告诉你多久后恢复。站点是静态文件，加一个只在打开分享链接时运行的小 Worker（给链接生成预览标题）。
+检测在访客的浏览器里运行。数据来源在页面上注明：Globalping（外部检测和追踪路由），以及我们东京的服务器。页面直接调用 Globalping 的接口，每个访客用自己的额度：每个 IP 每小时 250 个探针结果，一次检测用 16 个。额度用完时，页面会告诉你多久后恢复。站点是静态文件，加一个只在打开分享链接时运行的小 Worker（给链接生成预览标题）。
 
 东京的服务器（[server/](server/)，Go 写的单个程序）能看到被检测的地址和端口；关于访客，只知道 IP，而且只以带随机密钥的哈希存在内存里做限流。它不写访问日志，结果只缓存 5 分钟，免得重复检测时再连一次。因为谁都能调用它，限流就是防止被拿去扫描别人的那道关：每次只测一个地址和端口；从不连接内网、保留地址和它自己的地址（程序里查一次，systemd 的 `IPAddressDeny=` 再拦一次）；每位访客每小时最多 10 次、5 个不同地址（IPv6 访客按 /64 算）；同一个地址每小时最多被连 30 次；全站每分钟 60 次、每小时 1000 次。
 

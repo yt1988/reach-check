@@ -15,7 +15,7 @@ const b64 = async f => Buffer.from(await readFile(new URL(f, pub))).toString("ba
 const render = svg => new Resvg(svg, { fitTo: { mode: "width", value: 1200 }, font: { loadSystemFonts: true, defaultFontFamily: "Segoe UI" } }).render().asPng();
 
 // The picture: a few regions as the page shows them, one of them failing, so the card says "where it stops"
-const SAMPLE = [["c_4134", "bad", "✕"], ["c_4837", "ok", "86 ms"], ["city_Tokyo", "ok", "52 ms"], ["city_Frankfurt", "ok", "31 ms"],
+const SAMPLE = [["city_NewYork", "bad", "✕"], ["city_London", "ok", "86 ms"], ["city_Tokyo", "ok", "52 ms"], ["city_Frankfurt", "ok", "31 ms"],
   ["city_London", "ok", "34 ms"], ["city_NewYork", "ok", "46 ms"]];
 const COLOR = { ok: "#34d399", bad: "#f87171" };
 

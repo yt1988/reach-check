@@ -295,7 +295,7 @@ export async function build({ check = false } = {}) {
 
 > Free reachability check: can other people reach a website, NAS or game server, and if not, where does the
 > connection stop? From the visitor's browser, one Globalping HTTP(S) measurement runs against the address and port
-> from 18 regions (China Telecom, China Unicom and China Mobile; Hong Kong; Taiwan, China; Tokyo; Korea; Singapore; India;
+> from 16 regions (mainland China; Hong Kong; Taiwan, China; Tokyo; Korea; Singapore; India;
 > Australia; London; Frankfurt; Russia; the UAE; South Africa; Los Angeles; New York; São Paulo), with DNS, TCP, TLS,
 > first-byte and download times per region. Each result is classed as a web answer, open but not HTTP, refused,
 > timed out, DNS failure, reset, TLS failure or no response, and the page names the likely cause and next steps

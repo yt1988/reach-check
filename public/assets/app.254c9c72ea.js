@@ -242,9 +242,7 @@
       b.onclick = () => showHelp(helpIdx + +b.dataset.hstep);
     });
     const REGIONS = [
-      { g: "cn", cc: "CN", carrier: 4134, loc: { country: "CN", asn: 4134 } },
-      { g: "cn", cc: "CN", carrier: 4837, loc: { country: "CN", asn: 4837 } },
-      { g: "cn", cc: "CN", carrier: 9808, loc: { country: "CN", asn: 9808 } },
+      { g: "apac", cc: "CN", loc: { country: "CN" } },
       { g: "apac", cc: "HK", loc: { country: "HK" } },
       { g: "apac", cc: "TW", loc: { country: "TW" } },
       { g: "apac", cc: "JP", city: "Tokyo", loc: { city: "Tokyo" } },
@@ -261,7 +259,7 @@
       { g: "am", cc: "US", city: "NewYork", loc: { city: "New York" } },
       { g: "am", cc: "BR", city: "SaoPaulo", loc: { city: "Sao Paulo" } }
     ];
-    REGIONS.forEach((x) => x.cn = x.g === "cn");
+    REGIONS.forEach((x) => x.cn = x.cc === "CN");
     const TW = { "zh-CN": "\u4E2D\u56FD\u53F0\u6E7E", "zh-TW": "\u4E2D\u570B\u53F0\u7063", en: "Taiwan, China", ja: "\u4E2D\u56FD\u53F0\u6E7E", ko: "\uC911\uAD6D \uB300\uB9CC", es: "Taiw\xE1n, China", fr: "Ta\xEFwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "\u0422\u0430\u0439\u0432\u0430\u043D\u044C, \u041A\u0438\u0442\u0430\u0439" };
     const regionName = (cc, lang) => cc === "TW" ? TW[lang] || TW.en : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
     const regionOf = (cc) => {
@@ -534,11 +532,31 @@
         $("quota").textContent = "";
       }
     }
+    function nudgeQuota() {
+      const q = $("quota"), live = $("quotaLive");
+      if (!q) return;
+      q.classList.remove("flash");
+      void q.offsetWidth;
+      q.classList.add("flash");
+      setTimeout(() => q.classList.remove("flash"), 1400);
+      if (live) {
+        live.textContent = "";
+        setTimeout(() => {
+          live.textContent = q.textContent;
+        }, 30);
+      }
+    }
+    $("go").addEventListener("click", (e) => {
+      if ($("go").getAttribute("aria-disabled") === "true") {
+        e.preventDefault();
+        nudgeQuota();
+      }
+    });
     function showQuota(left, reset) {
       if (state) state.quota = { left, reset };
       const cost = REGIONS.length;
       $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
-      $("go").disabled = left < cost;
+      $("go").setAttribute("aria-disabled", left < cost ? "true" : "false");
     }
     let inviteUrl = "";
     $("inviteBtn").title = t("invite_tip");
@@ -595,7 +613,7 @@
       const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}${udp ? "&u=1" : ""}`;
       history.replaceState(null, "", D.paths[D.lang] + q);
       $("verdict").hidden = $("table").hidden = false;
-      $("go").disabled = true;
+      $("go").setAttribute("aria-disabled", "true");
       showOut(tg);
       $("shareBtn").hidden = true;
       $("inviteBtn").hidden = udp;
@@ -605,7 +623,7 @@
       const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
       Promise.allSettled(jobs).then(() => {
         if (state.id === id) {
-          $("go").disabled = false;
+          $("go").setAttribute("aria-disabled", "false");
           drawVerdict();
           $("shareBtn").hidden = udp;
           if (!udp) loadQuota();
@@ -951,7 +969,7 @@
       const ms = (l == null ? void 0 : l.k) === "ok" || (l == null ? void 0 : l.k) === "answered" ? ` <span class="m">\xB7 ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
       const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
       $("kpis").hidden = !!s.udp;
-      $("kpis").innerHTML = fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "\u2026", done ? tone(ok.length, rows.length) : "") + fact("fa_cn", done && cn.length ? t(pk("fa_ok", cnOk), { ok: cnOk, n: cn.length }) : "\u2026", done ? tone(cnOk, cn.length) : "") + fact(
+      $("kpis").innerHTML = fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "\u2026", done ? tone(ok.length, rows.length) : "") + fact(
         "fa_you",
         l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "\u2026",
         l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "",

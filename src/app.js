@@ -74,9 +74,7 @@ all("[data-hstep]").forEach(b => { b.onclick = () => showHelp(helpIdx + +b.datas
 // `loc` is a Globalping location filter; names come from the browser (Intl.DisplayNames) plus a city or carrier,
 // except Taiwan's, which is written out per the 1ms.dog tool contract.
 const REGIONS = [
-  { g: "cn", cc: "CN", carrier: 4134, loc: { country: "CN", asn: 4134 } },
-  { g: "cn", cc: "CN", carrier: 4837, loc: { country: "CN", asn: 4837 } },
-  { g: "cn", cc: "CN", carrier: 9808, loc: { country: "CN", asn: 9808 } },
+  { g: "apac", cc: "CN", loc: { country: "CN" } },
   { g: "apac", cc: "HK", loc: { country: "HK" } },
   { g: "apac", cc: "TW", loc: { country: "TW" } },
   { g: "apac", cc: "JP", city: "Tokyo", loc: { city: "Tokyo" } },
@@ -93,7 +91,7 @@ const REGIONS = [
   { g: "am", cc: "US", city: "NewYork", loc: { city: "New York" } },
   { g: "am", cc: "BR", city: "SaoPaulo", loc: { city: "Sao Paulo" } },
 ];
-REGIONS.forEach(x => x.cn = x.g === "cn");
+REGIONS.forEach(x => x.cn = x.cc === "CN");
 const TW = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
 const regionName = (cc, lang) => cc === "TW" ? (TW[lang] || TW.en) : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
 const regionOf = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
@@ -238,11 +236,19 @@ async function loadQuota() {
     showQuota(j.rateLimit.measurements.create.remaining, j.rateLimit.measurements.create.reset);
   } catch { $("quota").textContent = ""; }
 }
+function nudgeQuota() {
+  const q = $("quota"), live = $("quotaLive");
+  if (!q) return;
+  q.classList.remove("flash"); void q.offsetWidth; q.classList.add("flash");
+  setTimeout(() => q.classList.remove("flash"), 1400);
+  if (live) { live.textContent = ""; setTimeout(() => { live.textContent = q.textContent; }, 30); }
+}
+$("go").addEventListener("click", e => { if ($("go").getAttribute("aria-disabled") === "true") { e.preventDefault(); nudgeQuota(); } });
 function showQuota(left, reset) {
   if (state) state.quota = { left, reset };
   const cost = REGIONS.length;
   $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
-  $("go").disabled = left < cost;
+  $("go").setAttribute("aria-disabled", left < cost ? "true" : "false");
 }
 
 // "Ask a friend": copies a link that runs the same check in the friend's browser
@@ -276,14 +282,14 @@ function start() {
   const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}${udp ? "&u=1" : ""}`;
   history.replaceState(null, "", D.paths[D.lang] + q);    // also leaves a shared result's /r/ link
   $("verdict").hidden = $("table").hidden = false;
-  $("go").disabled = true;
+  $("go").setAttribute("aria-disabled", "true");
   showOut(tg);
   // UDP is our server's check alone: nothing for a result link's regions, nothing a friend's browser could add
   $("shareBtn").hidden = true; $("inviteBtn").hidden = udp;
   drawRegions(); drawVerdict(); showPing(state);
 
   const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
-  Promise.allSettled(jobs).then(() => { if (state.id === id) { $("go").disabled = false; drawVerdict(); $("shareBtn").hidden = udp; if (!udp) loadQuota(); } });
+  Promise.allSettled(jobs).then(() => { if (state.id === id) { $("go").setAttribute("aria-disabled", "false"); drawVerdict(); $("shareBtn").hidden = udp; if (!udp) loadQuota(); } });
 }
 
 // ---------- up close: our server in Tokyo ----------
@@ -606,7 +612,6 @@ function drawVerdict() {
   $("kpis").hidden = !!s.udp;
   $("kpis").innerHTML =
     fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
-    fact("fa_cn", done && cn.length ? t(pk("fa_ok", cnOk), { ok: cnOk, n: cn.length }) : "…", done ? tone(cnOk, cn.length) : "") +
     fact("fa_you", l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…",
       l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "", ms);
   const steps = v.steps || [];
