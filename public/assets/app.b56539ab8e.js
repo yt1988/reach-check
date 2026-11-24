@@ -698,6 +698,9 @@
         case "dns":
         case "other":
           return ["bad", t("pl_" + v.k), t("st_" + v.k)];
+        // the server refuses a host it will not resolve (e.g. "localhost") before connecting; shown as a refusal, not silence
+        case "bad":
+          return ["bad", t("pl_refused"), t("st_other")];
         case "private":
           return ["bad", t("pl_priv"), t("sv_priv")];
         case "limit":

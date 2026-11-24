@@ -333,6 +333,8 @@ function srvStatus(v, s) {
     case "silent": return ["ok", t("pl_open"), t("sv_silent")];
     case "closed": return ["warn", t("pl_reset"), t("sv_closed")];
     case "refused": case "timeout": case "unreach": case "dns": case "other": return ["bad", t("pl_" + v.k), t("st_" + v.k)];
+    // the server refuses a host it will not resolve (e.g. "localhost") before connecting; shown as a refusal, not silence
+    case "bad": return ["bad", t("pl_refused"), t("st_other")];
     case "private": return ["bad", t("pl_priv"), t("sv_priv")];
     case "limit": return ["m", t("pl_limit"), t(v.which === "dest" ? "sv_limit_dest" : v.which === "visitor" || v.which === "targets" ? "sv_limit" : "sv_limit_site", { min })];
   }
