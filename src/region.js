@@ -33,9 +33,11 @@ let low = false, running = false;
 function showQuota(left, reset) {
   low = left < COST;
   const el = $("quota");
-  if (el) el.textContent = low
-    ? t("quota_out", { min: Math.ceil((reset || 60) / 60) })
-    : t(left === 1 && L.quota_ok_one ? "quota_ok_one" : "quota_ok", { left, cost: COST });
+  if (el) {
+    const min = Math.ceil((reset || 60) / 60);
+    el.textContent = left >= COST ? t(left === 1 && L.quota_ok_one ? "quota_ok_one" : "quota_ok", { left, cost: COST })
+      : left > 0 ? t("quota_short", { cost: COST, left, min }) : t("quota_out", { min });
+  }
   $("go").setAttribute("aria-disabled", low || running ? "true" : "false");
 }
 function nudgeQuota() {

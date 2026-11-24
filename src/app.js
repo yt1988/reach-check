@@ -254,7 +254,9 @@ $("go").addEventListener("click", e => { if ($("go").getAttribute("aria-disabled
 function showQuota(left, reset) {
   if (state) state.quota = { left, reset };
   const cost = REGIONS.length;
-  $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
+  const min = Math.ceil(reset / 60);
+  $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost })
+    : left > 0 ? t("quota_short", { cost, left, min }) : t("quota_out", { min });
   $("go").setAttribute("aria-disabled", left < cost ? "true" : "false");
 }
 

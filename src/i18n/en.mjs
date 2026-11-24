@@ -232,4 +232,5 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
   rg_assigning: "Assigning test probes…",
   srv_tokyo: "This site (Tokyo)", srv_shanghai: "This site (Shanghai)",
   gp_partial: "{n} probes did not return in time.", rg_noanswer: "No answer in time",
+  quota_short: "Not enough allowance: this check needs {cost} region checks, {left} left, back in about {min} min",
 };

@@ -231,4 +231,5 @@ lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: 
   rg_assigning: "Atribuindo sondas de teste…",
   srv_tokyo: "Nosso servidor (Tóquio)", srv_shanghai: "Nosso servidor (Xangai)",
   gp_partial: "{n} sondas não responderam a tempo.", rg_noanswer: "Sem resposta a tempo",
+  quota_short: "Saldo insuficiente: este teste precisa de {cost} testes de região, restam {left}, volta em cerca de {min} min",
 };

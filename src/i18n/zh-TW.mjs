@@ -215,4 +215,5 @@ lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_
   rg_assigning: "正在分配測試節點…",
   srv_tokyo: "本站（東京）", srv_shanghai: "本站（上海）",
   gp_partial: "{n} 個探針未在時限內返回。", rg_noanswer: "未在時限內返回",
+  quota_short: "額度不足：本次需要 {cost} 個地區次，目前還剩 {left} 個，約 {min} 分鐘後恢復",
 };
