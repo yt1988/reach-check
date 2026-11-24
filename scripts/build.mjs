@@ -38,13 +38,49 @@ export async function loadI18n() {
 // heading after every check, so it ships.
 export const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "intro", "lang_label", "f_target", "f_target_ph", "f_port", "f_ipv",
   "go", "lg_dns", "lg_tcp", "lg_tls", "lg_fb", "lg_dl", "a_theme", "docs", "faq_h", "a_close", "a_prev", "a_next",
-  "src_gp", "src_dns", "foot_src"]);
+  "src_gp", "src_dns", "foot_src",
+  // country and continent pages
+  "rg_crumbs", "rg_nav", "rg_start", "rg_single", "rg_cities_h", "rg_about_h", "home_countries", "rg_h1", "rg_title", "rg_desc", "rg_intro", "rg_stats_h", "rg_line", "rg_few", "rg_neighbors_h", "rg_data",
+  "L_probes", "L_cities", "L_home", "L_networks", "L_continent", "L_countries", "ct_eu", "ct_na", "ct_as", "ct_sa", "ct_oc", "ct_af",
+  "ct_h1", "ct_title", "ct_desc", "ct_intro", "ct_about_h", "ct_countries_h",
+  "ct_note_eu", "ct_note_na", "ct_note_as", "ct_note_sa", "ct_note_oc", "ct_note_af"]);
 
 // Data sources named in the page link to their sites
 const SOURCES = { gp: ["Globalping", "https://globalping.io"] };
 const links = s => esc(s).replace(/\{(\w+)\}/g, (m, k) => SOURCES[k] ? `<a href="${SOURCES[k][1]}" target="_blank" rel="noopener">${SOURCES[k][0]}</a>` : m);
 
 const pathOf = slug => "/" + (slug ? slug + "/" : "");
+
+// ---------- country and continent pages (docs/regions.md in 1ms.dog) ----------
+const TWNAME = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
+const cname = (cc, lang) => cc === "TW" ? (TWNAME[lang] || TWNAME.en) : (() => { try { return new Intl.DisplayNames([lang], { type: "region" }).of(cc) || cc; } catch (e) { return cc; } })();
+const contName = (code, T) => T("ct_" + code.toLowerCase());
+const pctOf = c => Math.round((c.eyeball / c.probes) * 100);
+// URL slugs, fixed for both tools (docs/regions.md): /<lang>/<continent>[/<country>]/
+const CONT_SLUG = { EU: "europe", NA: "north-america", AS: "asia", SA: "south-america", OC: "oceania", AF: "africa" };
+
+// Hand-written network notes (no Globalping inventory numbers on any page). Public reviews these five samples before
+// the remaining countries are written.
+const NOTES_FILE = JSON.parse(await readFile(new URL("regions-notes.json", src), "utf8"));
+const NOTES = {};
+const NOTE_LANG = { "zh-CN": "zh" };
+const noteOf = (cc, lang) => { const n = NOTES_FILE.notes && NOTES_FILE.notes[cc]; return (n && (n[NOTE_LANG[lang] || lang])) || ""; };
+
+const cityName = (n, d) => { const k = "city_" + String(n).replace(/[^A-Za-z]/g, ""); return k in d ? d[k] : n; };
+const flag = cc => "/flags/" + (cc === "TW" ? "cn" : cc.toLowerCase()) + ".svg";
+
+function crumbs(items) {
+  return items.map((x, i) => i === items.length - 1
+    ? `<span aria-current="page">${esc(x.name)}</span>`
+    : `<a href="${x.href}">${esc(x.name)}</a><span class="crumb-sep" aria-hidden="true">›</span>`).join("");
+}
+
+function regionNav(regions, lang, base, current, T, skip) {
+  const globe = `<p class="rg-nav-h"><span role="img" aria-label="${esc(T("rg_nav"))}"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg></span>${esc(T("rg_nav"))}</p>`;
+  return globe + regions.continents.filter(c => c.code !== skip).map(c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${base}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}">${esc(contName(c.code, T))}<span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
+    c.countries.map(x => `<a href="${base}${CONT_SLUG[c.code]}/${x.cc.toLowerCase()}/" data-n="${esc(cname(x.cc, lang))}" data-e="${esc(cname(x.cc, "en"))}" data-c="${x.cc}"${x.cc === current ? ' aria-current="page"' : ""}><img src="${flag(x.cc)}" alt="" width="16" height="12" loading="lazy">${esc(cname(x.cc, lang))}</a>`).join("")
+  }</div></div>`).join("");
+}
 
 export async function build({ check = false } = {}) {
   const I = await loadI18n(), en = I.en;
@@ -64,11 +100,14 @@ export async function build({ check = false } = {}) {
   const jsName = `app.${hash(js)}.js`, cssName = `app.${hash(css)}.css`;
   const files = { ["assets/" + jsName]: js, ["assets/" + cssName]: css };
 
+  const regions = JSON.parse(await readFile(new URL("regions.json", src), "utf8"));
+  const stringsName = {};
   for (const [lang, slug, locale] of langs) {
     const d = I[lang], T = k => { if (!(k in d)) throw new Error(`i18n/${lang}.mjs has no "${k}"`); return d[k]; };
     const strings = Object.fromEntries(Object.keys(en).filter(k => !BUILD_ONLY.has(k)).map(k => [k, T(k)]));
     const sjs = `window.L1MS=${JSON.stringify(strings).replace(/</g, "\\u003c")};\n`;
     const sName = `l.${lang.toLowerCase()}.${hash(sjs)}.js`;
+    stringsName[lang] = sName;
     files["assets/" + sName] = sjs;
 
     const url = SITE + pathOf(slug), title = T("seo_title"), desc = T("seo_desc");
@@ -99,6 +138,20 @@ export async function build({ check = false } = {}) {
       `<script type="application/ld+json">${JSON.stringify(graph).replace(/</g, "\\u003c")}</script>`,
     ].join("\n");
 
+    const allCountries = regions.continents.flatMap(c => c.countries.map(x => ({ ...x, cont: c.code })));
+    const group = c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${pathOf(slug)}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}">${esc(contName(c.code, T))}<span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
+      c.countries.map(x => `<a href="${pathOf(slug)}${CONT_SLUG[c.code]}/${x.cc.toLowerCase()}/" data-n="${esc(cname(x.cc, lang))}" data-e="${esc(cname(x.cc, "en"))}" data-c="${x.cc}"><img src="${flag(x.cc)}" alt="" width="16" height="12" loading="lazy">${esc(cname(x.cc, lang))}</a>`).join("")
+    }</div></div>`;
+    const countryIndex = `<section class="card sec country-index">
+  <h2>${esc(T("home_countries"))}</h2>
+  <div class="rg-filter" data-total="${allCountries.length}" data-scope="home">
+    <input id="countryFilter" type="search" placeholder="${esc(T("rg_filter"))}" aria-label="${esc(T("rg_filter"))}" autocomplete="off" spellcheck="false">
+    <span class="m" id="cfCount">${allCountries.length} / ${allCountries.length}</span>
+    <button class="link" id="cfClear" type="button" hidden>${esc(T("rg_clear"))}</button>
+  </div>
+  ${regions.continents.map(group).join("")}
+  <p class="m rg-nores" id="cfNores" hidden>${esc(T("rg_no_match"))}</p>
+</section>`;
     const helpNav = docs.map((x, i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(x.q)}</button>`).join("");
     const helpC = docs.map((x, i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(x.q)}</h3>${x.h}</article>`).join("");
     const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
@@ -111,15 +164,132 @@ export async function build({ check = false } = {}) {
       .replace("{{homeHref}}", pathOf(slug)).replace("{{appName}}", esc(T("app_name"))).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T("h1")))
       .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
       .replace("{{srcGp}}", links(T("src_gp"))).replace("{{footSrc}}", links(T("foot_src")))
+      .replace("{{countryIndex}}", countryIndex)
       .replace("{{data}}", JSON.stringify({ lang, paths }).replace(/</g, "\\u003c"));
     if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + pathOf(slug) + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
     files[pathOf(slug).slice(1) + "index.html"] = html;
   }
 
+  // ---------- country and continent pages ----------
+  const rtpl = await readFile(new URL("region.html", src), "utf8");
+  const rjs = (await bundle({ entryPoints: [fileURLToPath(new URL("region.js", src))], bundle: true, format: "iife",
+    target: ["es2019", "chrome70", "safari13", "firefox68", "edge79"], legalComments: "none", write: false })).outputFiles[0].text;
+  const rjsName = `region.${hash(rjs)}.js`;
+  files["assets/" + rjsName] = rjs;
+  const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => (v[k] != null ? String(v[k]) : m));
+  const pathsOf = () => Object.fromEntries(langs.map(([l, sl]) => [l, pathOf(sl)]));
+  const sitemapExtra = [];
+
+  for (const [lang, slug, locale] of langs) {
+    const d = I[lang], T = k => { if (!(k in d)) throw new Error(`i18n/${lang}.mjs has no "${k}"`); return d[k]; };
+    const base = pathOf(slug), paths = pathsOf();
+    const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
+    const altLinks = tail => langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + pathOf(sl) + tail}">`).join("\n") +
+      `\n<link rel="alternate" hreflang="x-default" href="${SITE}/${tail}">`;
+    const headFor = (tail, title, desc, ld) => {
+      const url = SITE + base + tail;
+      return [
+        `<title>${esc(title)}</title>`,
+        `<meta name="description" content="${esc(desc)}">`,
+        `<meta name="robots" content="index, follow">`,
+        `<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">`,
+        `<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">`,
+        `<link rel="canonical" href="${url}">`, altLinks(tail),
+        `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
+        `<meta property="og:title" content="${esc(title)}">`, `<meta property="og:description" content="${esc(desc)}">`, `<meta property="og:url" content="${url}">`,
+        `<meta property="og:locale" content="${locale}">`, `<meta property="og:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
+        `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
+        `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`,
+        `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`,
+      ].join("\n");
+    };
+    const filterHTML = (scope, total) => `<div class="rg-filter" data-scope="${scope}" data-total="${total}">
+  <input id="filter" type="search" placeholder="${esc(T("rg_filter"))}" aria-label="${esc(T("rg_filter"))}" autocomplete="off" spellcheck="false">
+  <span class="m" id="fcount">${total} / ${total}</span>
+  <button class="link" id="fclear" type="button" hidden>${esc(T("rg_clear"))}</button>
+</div>
+<p class="m rg-nores" id="nores" hidden>${esc(T("rg_no_match"))}</p>`;
+    const ldOf = (name, url, desc, crumbItems) => ({ "@context": "https://schema.org", "@graph": [
+      { "@type": "WebApplication", name, url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
+        browserRequirements: "Requires JavaScript", description: desc, inLanguage: lang, isAccessibleForFree: true,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+      { "@type": "BreadcrumbList", itemListElement: crumbItems.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: SITE + c.href })) },
+    ] });
+    const render = p => {
+      let html = rtpl
+        .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k) => open + esc(T(k)) + `</${tag}>`)
+        .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))
+        .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{prepaint}}", PREPAINT)
+        .replace("{{head}}", headFor(p.tail, p.title, p.desc, p.ld))
+        .replace("{{css}}", cssName).replace("{{js}}", rjsName).replace("{{strings}}", stringsName[lang])
+        .replace("{{homeHref}}", base).replace("{{appName}}", esc(T("app_name"))).replace("{{langOpts}}", langOpts)
+        .replace("{{crumbs}}", crumbs(p.crumbs)).replace("{{h1}}", esc(p.h1)).replace("{{intro}}", esc(p.intro))
+        .replace("{{body}}", p.body).replace("{{nav}}", p.filter + regionNav(regions, lang, base, p.current, T, p.navSkip))
+        .replace("{{footSrc}}", links(T("foot_src")))
+        .replace("{{data}}", JSON.stringify(p.data).replace(/</g, "\\u003c"));
+      if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + p.tail + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
+      return html;
+    };
+
+    for (const cont of regions.continents) {
+      const cnameT = contName(cont.code, T);
+      for (const c of cont.countries) {
+        const name = cname(c.cc, lang), tail = `${CONT_SLUG[cont.code]}/${c.cc.toLowerCase()}/`;
+        const title = fill(T("rg_title"), { country: name }), desc = fill(T("rg_desc"), { country: name });
+        const i = cont.countries.indexOf(c), nb = [cont.countries[i - 1], cont.countries[i + 1]].filter(Boolean);
+        const neighbors = nb.map(x => `<a class="xl" href="${base}${CONT_SLUG[cont.code]}/${x.cc.toLowerCase()}/">${esc(cname(x.cc, lang))}</a>`).join("");
+        const body = `<section class="card sec">
+  <h2>${esc(fill(T("rg_about_h"), { country: name }))}</h2>
+  <p>${esc(noteOf(c.cc, lang))}</p>
+  <p class="m">${esc(T("L_continent"))}: ${esc(cnameT)}</p>
+  <p class="links" data-other hidden></p>
+</section>`;
+        const crumbItems = [{ name: T("app_name"), href: base }, { name: cnameT, href: `${base}${CONT_SLUG[cont.code]}/` }, { name, href: base + tail }];
+        files[pathOf(slug).slice(1) + tail + "index.html"] = render({ tail, title, desc, h1: fill(T("rg_h1"), { country: name }),
+          intro: fill(T("rg_intro"), { country: name }), body, current: c.cc, crumbs: crumbItems,
+          ld: ldOf(title, SITE + base + tail, desc, crumbItems), filter: filterHTML("nav-all", 86),
+          data: { lang, paths, suffix: tail, slots: 5, locations: [{ country: c.cc, limit: 5 }] } });
+        sitemapExtra.push({ tail, priority: c.probes >= 20 ? "0.7" : "0.5" });
+      }
+    }
+
+    for (const cont of regions.continents) {
+      const name = contName(cont.code, T), tail = `${CONT_SLUG[cont.code]}/`;
+      const reps = cont.countries.slice(0, 10);
+      const title = fill(T("ct_title"), { continent: name, countries: cont.countries.length });
+      const desc = fill(T("ct_desc"), { continent: name });
+      const cards = cont.countries.map(x => `<a class="cc" href="${base}${CONT_SLUG[cont.code]}/${x.cc.toLowerCase()}/" data-n="${esc(cname(x.cc, lang))}" data-e="${esc(cname(x.cc, "en"))}" data-c="${x.cc}"><img src="${flag(x.cc)}" alt="" width="16" height="12" loading="lazy"><span class="cc-n">${esc(cname(x.cc, lang))}</span></a>`).join("");
+      const body = `<section class="card sec">
+  <h2>${esc(fill(T("ct_about_h"), { continent: name }))}</h2>
+  <div class="kpis">
+    <div class="kpi"><b>${cont.countries.length}</b><span>${esc(T("L_countries"))}</span></div>
+  </div>
+  <p>${esc(T("ct_note_" + cont.code.toLowerCase()))}</p>
+  <p class="links" data-other hidden></p>
+</section>
+<section class="card sec">
+  <h2>${esc(fill(T("ct_countries_h"), { continent: name }))}</h2>
+  ${filterHTML("cards", cont.countries.length)}
+  <div class="cc-grid">${cards}</div>
+</section>`;
+      const crumbItems = [{ name: T("app_name"), href: base }, { name, href: base + tail }];
+      files[pathOf(slug).slice(1) + tail + "index.html"] = render({ tail, title, desc, h1: fill(T("ct_h1"), { continent: name }),
+        intro: fill(T("ct_intro"), { continent: name, countries: reps.length }), body, current: cont.code, navSkip: cont.code, crumbs: crumbItems,
+        ld: ldOf(title, SITE + base + tail, desc, crumbItems), filter: "",
+        data: { lang, paths, suffix: tail, slots: reps.length, locations: reps.map(x => ({ country: x.cc, limit: 1, label: cname(x.cc, lang) })) } });
+      sitemapExtra.push({ tail, priority: "0.8" });
+    }
+  }
+
+  const uniq = [...new Map(sitemapExtra.map(e => [e.tail, e])).values()];
+  const smAlt = tail => langs.map(([l, s]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + pathOf(s) + tail}"/>`).join("\n") +
+    `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/${tail}"/>`;
+  const smRegion = uniq.flatMap(e => langs.map(([, s]) => `  <url>\n    <loc>${SITE + pathOf(s) + e.tail}</loc>\n    <priority>${e.priority}</priority>\n${smAlt(e.tail)}\n  </url>`)).join("\n");
+
   files["sitemap.xml"] = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
     langs.map(([, s]) => `  <url>\n    <loc>${SITE + pathOf(s)}</loc>\n` +
       langs.map(([l, s2]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + pathOf(s2)}"/>`).join("\n") +
-      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>\n  </url>`).join("\n") + "\n</urlset>\n";
+      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>\n  </url>`).join("\n") + (smRegion ? "\n" + smRegion : "") + "\n</urlset>\n";
   files["robots.txt"] = `User-agent: *\nAllow: /\nDisallow: /r/\n\nSitemap: ${SITE}/sitemap.xml\n`;
   files["llms.txt"] = `# ${en.app_name} · 1ms.dog
 
@@ -164,6 +334,8 @@ export async function build({ check = false } = {}) {
   ! Cache-Control
   Cache-Control: public, max-age=0, must-revalidate
 /og/*
+  Cache-Control: public, max-age=604800
+/flags/*
   Cache-Control: public, max-age=604800
 /llms.txt
   Access-Control-Allow-Origin: *

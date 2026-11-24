@@ -242,6 +242,7 @@ function showQuota(left, reset) {
   if (state) state.quota = { left, reset };
   const cost = REGIONS.length;
   $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : t("quota_out", { min: Math.ceil(reset / 60) });
+  $("go").disabled = left < cost;
 }
 
 // "Ask a friend": copies a link that runs the same check in the friend's browser
@@ -898,4 +899,33 @@ if (sp) {
     if (qs.get("from") === "friend") start();
   }
 }
+})();
+
+// Home: the country/region index under the main card. Chips filter as you type; "/" focuses, Esc clears.
+(() => {
+  const f = document.getElementById("countryFilter");
+  if (!f) return;
+  const chips = [...document.querySelectorAll(".country-index .rg-nav-l a")];
+  const groups = [...document.querySelectorAll(".country-index .rg-nav-g")];
+  const count = document.getElementById("cfCount"), clear = document.getElementById("cfClear"), nores = document.getElementById("cfNores");
+  const norm = s => String(s || "").toLowerCase().replace(/\s+/g, "");
+  const apply = () => {
+    const q = norm(f.value);
+    let n = 0;
+    chips.forEach(el => {
+      const ok = !q || norm((el.dataset.n || "") + (el.dataset.e || "") + (el.dataset.c || "")).includes(q);
+      el.hidden = !ok; if (ok) n++;
+    });
+    groups.forEach(g => { g.hidden = ![...g.querySelectorAll(".rg-nav-l a")].some(el => !el.hidden); });
+    count.textContent = n + " / " + chips.length;
+    clear.hidden = !q; nores.hidden = n > 0;
+  };
+  f.oninput = apply;
+  clear.onclick = () => { f.value = ""; apply(); f.focus(); };
+  document.addEventListener("keydown", e => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if (e.key === "/" && !typing) { e.preventDefault(); f.focus(); }
+    else if (e.key === "Escape" && (document.activeElement === f || f.value)) { f.value = ""; apply(); f.blur(); }
+  });
+  apply();
 })();

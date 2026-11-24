@@ -68,7 +68,7 @@ select option { background-color: var(--panel); color: var(--fg); }
 .btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
 .sub { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; font-size: 12.5px; min-height: 19px; }
 .link { background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; font: inherit; }
-.quota { margin-left: auto; font-variant-numeric: tabular-nums; }
+.quota { margin-left: 0; flex-basis: 100%; font-variant-numeric: tabular-nums; }
 
 /* 2. the answer */
 .verdict { padding: 18px 22px 20px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); }
@@ -210,3 +210,61 @@ select option { background-color: var(--panel); color: var(--fg); }
   .help-b .help-pick { display: flex; }
 }
 #checkLink:empty { display: none; }
+
+/* country and continent pages (scripts/build.mjs): breadcrumbs, the data blocks, the continent nav and the test rows */
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: var(--fs-small); color: var(--muted); }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--fg); text-decoration: underline; }
+.crumb-sep { color: var(--line); }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.kpi b.t { font: 600 var(--fs-title)/1.25 var(--f-ui); }
+.kpi b .hint { display: inline; margin-left: 1px; }
+.rg-nav { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.rg-nav-h { display: flex; align-items: center; gap: 8px; padding: 10px 2px; font-size: var(--fs-caption); font-weight: 600; letter-spacing: .03em; color: var(--muted); }
+.rg-nav-h span { display: inline-flex; }
+.rg-nav-h svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.rg-nav details { border-bottom: 1px solid var(--line); }
+.rg-nav summary { display: flex; justify-content: space-between; gap: 8px; padding: 11px 2px; cursor: pointer; font-weight: 600; font-size: var(--fs-small); }
+.rg-nav-l { padding: 0 0 8px 12px; }
+
+.rg-nav-l a[aria-current] { color: var(--ink); font-weight: 600; }
+/* Country chips: one inline label per country, wrapping, no card grid (reference: dense-chips.webp). The chip is the
+   link; flags and names only. */
+.cc-grid, .rg-nav-l { display: flex; flex-wrap: wrap; gap: 8px; }
+.cc, .rg-nav-l a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 10px; border: 0; border-radius: 8px; background: var(--soft); color: var(--fg); text-decoration: none; font-size: 14px; font-weight: 400; white-space: nowrap; min-width: 96px; justify-content: flex-start; }
+.cc:hover, .rg-nav-l a:hover { background: color-mix(in srgb, var(--soft) 60%, var(--line)); color: var(--fg); }
+.cc img { flex: none; border-radius: 2px; width: 16px; height: 12px; }
+.cc-n { min-width: 0; }
+.rows { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.rg-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-ctl-sm); background: var(--soft); font-size: var(--fs-small); }
+.rg-row .rg-ms { text-align: right; font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: var(--fs-caption); }
+.rg-where { display: flex; align-items: center; gap: 7px; min-width: 0; overflow-wrap: anywhere; }
+.rg-where img { flex: none; border-radius: 2px; width: 16px; height: 12px; }
+@media (max-width: 640px) {
+  .cc-grid, .rg-nav-l { gap: 6px; }
+  .cc, .rg-nav-l a { min-height: 34px; min-width: 0; padding: 4px 8px; }
+}
+
+/* country filter: no request, the list narrows as you type; sticky on phones but only one row tall */
+.rg-filter { display: flex; align-items: center; gap: 8px; }
+.rg-filter input { flex: 1; min-width: 0; height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--r-ctl-sm); background: var(--panel); color: var(--fg); font-size: 16px; }
+.rg-filter .m { flex: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rg-filter .link { flex: none; }
+.rg-nores { margin-top: 8px; }
+.city-list { display: flex; flex-wrap: wrap; gap: 6px 8px; font-size: var(--fs-small); }
+.city-list span { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 9px; border-radius: var(--r-chip); background: var(--soft); }
+.city-list b { font: 600 var(--fs-micro) var(--f-num); color: var(--muted); font-variant-numeric: tabular-nums; }
+.cc[hidden], .rg-nav-l a[hidden], .rg-nav details[hidden] { display: none !important; }
+@media (max-width: 640px) {
+  .rg-filter { position: sticky; top: 0; z-index: 20; background: var(--bg); padding: 6px 0; margin: -6px 0 0; }
+}
+
+/* home country index: continent chips on their own row, then the country chip flow */
+.cont-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
+.cont-chips .cc { background: var(--panel); border: 1px solid var(--line); }
+.country-index .rg-filter { margin-top: 2px; }
+
+/* continent nav: every continent open, its title is a link to the continent page */
+.rg-nav-g { border-bottom: 1px solid var(--line); padding: 6px 0 8px; }
+.rg-nav-t { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 2px; min-height: 32px; font-weight: 500; font-size: var(--fs-small); color: var(--fg); text-decoration: none; }
+.rg-nav-t:hover { color: var(--ink); }
