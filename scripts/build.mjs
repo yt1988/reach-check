@@ -77,7 +77,7 @@ function crumbs(items) {
 
 function regionNav(regions, lang, base, current, T, skip) {
   const globe = `<p class="rg-nav-h"><span role="img" aria-label="${esc(T("rg_nav"))}"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg></span>${esc(T("rg_nav"))}</p>`;
-  return globe + regions.continents.filter(c => c.code !== skip).map(c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${base}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}">${esc(contName(c.code, T))}<span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
+  return globe + regions.continents.filter(c => c.code !== skip).map(c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${base}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="rg-nav-n">${esc(contName(c.code, T))}</span><span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
     c.countries.map(x => `<a href="${base}${CONT_SLUG[c.code]}/${x.cc.toLowerCase()}/" data-n="${esc(cname(x.cc, lang))}" data-e="${esc(cname(x.cc, "en"))}" data-c="${x.cc}"${x.cc === current ? ' aria-current="page"' : ""}><img src="${flag(x.cc)}" alt="" width="16" height="12" loading="lazy">${esc(cname(x.cc, lang))}</a>`).join("")
   }</div></div>`).join("");
 }
@@ -139,7 +139,7 @@ export async function build({ check = false } = {}) {
     ].join("\n");
 
     const allCountries = regions.continents.flatMap(c => c.countries.map(x => ({ ...x, cont: c.code })));
-    const group = c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${pathOf(slug)}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}">${esc(contName(c.code, T))}<span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
+    const group = c => `<div class="rg-nav-g"><a class="rg-nav-t" href="${pathOf(slug)}${CONT_SLUG[c.code]}/" aria-label="${esc(T("ct_countries_h").replace("{continent}", contName(c.code, T)))}"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M1.8 8h12.4M8 1.8c1.8 1.7 2.7 3.8 2.7 6.2S9.8 12.5 8 14.2C6.2 12.5 5.3 10.4 5.3 8S6.2 3.5 8 1.8z"/></svg><span class="rg-nav-n">${esc(contName(c.code, T))}</span><span class="m">${c.countries.length}</span></a><div class="rg-nav-l">${
       c.countries.map(x => `<a href="${pathOf(slug)}${CONT_SLUG[c.code]}/${x.cc.toLowerCase()}/" data-n="${esc(cname(x.cc, lang))}" data-e="${esc(cname(x.cc, "en"))}" data-c="${x.cc}"><img src="${flag(x.cc)}" alt="" width="16" height="12" loading="lazy">${esc(cname(x.cc, lang))}</a>`).join("")
     }</div></div>`;
     const countryIndex = `<section class="card sec country-index">

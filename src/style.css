@@ -266,8 +266,10 @@ select option { background-color: var(--panel); color: var(--fg); }
 
 /* continent nav: every continent open, its title is a link to the continent page */
 .rg-nav-g { border-bottom: 1px solid var(--line); padding: 6px 0 8px; }
-.rg-nav-t { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 2px; min-height: 32px; font-weight: 500; font-size: var(--fs-small); color: var(--fg); text-decoration: none; }
+.rg-nav-t { display: flex; align-items: center; gap: 7px; padding: 6px 2px; min-height: 32px; font-weight: 500; font-size: var(--fs-small); color: var(--fg); text-decoration: none; }
 .rg-nav-t:hover { color: var(--ink); }
+.rg-nav-t svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.rg-nav-n { margin-right: auto; }
 
 /* allowance: the button stays clickable so a tap can explain itself, but looks clearly unavailable */
 .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
