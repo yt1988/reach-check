@@ -5,6 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { encodeResult, decodeResult, sharePath } from "../src/code.mjs";
+import { endpoints } from "../src/egress.js";
 
 const sample = { t: ["nas.example.com", 5001, "/", "", "4", "HTTPS", 1, "", 1, 0, "nas.example.com:5001"], ts: 1762160000000,
   v: ["v_part", 16, 18], e: "", r: [["timeout", 0, [12, null, null, null, null, 15000], 0, "203.0.113.7", "Wuhan", "China Unicom", 4837, "CN", 0], null],
@@ -44,4 +45,13 @@ test("result paths, with and without a language folder", () => {
   assert.deepEqual(sharePath("/zh-cn/r/1~abc"), { slug: "zh-cn", code: "1~abc" });
   assert.equal(sharePath("/zh-cn/"), null);
   assert.equal(sharePath("/r/"), null);
+});
+
+// A self-hosted copy has no <meta name="ms-servers">: the parser returns {}, and app.js then has no server rows.
+test("our servers come from the shell's meta, and its absence is a clean fallback", () => {
+  const meta = { getAttribute: () => "reach=https://tokyo:2096,https://shanghai:2096;ping=x" };
+  const doc = { querySelector: sel => sel.includes("ms-servers") ? meta : null };
+  assert.equal(endpoints("ms-servers", doc).reach, "https://tokyo:2096,https://shanghai:2096");
+  assert.deepEqual(endpoints("ms-servers"), {});
+  assert.deepEqual(endpoints("ms-servers", null), {});
 });

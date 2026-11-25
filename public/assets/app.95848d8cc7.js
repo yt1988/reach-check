@@ -124,13 +124,31 @@
     return m ? { slug: m[1] || "", code: m[2] } : null;
   }
 
+  // src/egress.js
+  function endpoints(name, doc = globalThis.document) {
+    const out = {};
+    const el = doc && doc.querySelector ? doc.querySelector(`meta[name="${name}"]`) : null;
+    const text2 = el && el.getAttribute("content") || "";
+    for (const part of String(text2).split(";")) {
+      const at = part.indexOf("=");
+      if (at < 1) continue;
+      const k = part.slice(0, at).trim(), v = part.slice(at + 1).trim();
+      if (k && v) out[k] = v;
+    }
+    return out;
+  }
+
   // src/app.js
   (() => {
     const GP = "https://api.globalping.io/v1";
-    const SERVERS = [
-      { id: "tokyo", api: "https://reach-api.1ms.dog:2096/v1/probe", cc: "JP", label: "srv_tokyo" },
-      { id: "shanghai", api: "https://reach-api.dog.1msapp.com:2096/v1/probe", cc: "CN", label: "srv_shanghai" }
-    ];
+    const SERVER_URLS = (endpoints("ms-servers").reach || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const SERVERS = SERVER_URLS.map((api, i) => ({
+      id: "srv" + i,
+      api: api.replace(/\/+$/, "") + "/v1/probe",
+      cc: i === 0 ? "JP" : "CN",
+      label: i === 0 ? "srv_tokyo" : "srv_shanghai"
+    }));
+    const FIRST = SERVERS[0] && SERVERS[0].id;
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -1015,7 +1033,7 @@
       const idx = (r) => s.rows.indexOf(r), rname = (r) => nameOf(REGIONS[idx(r)]);
       if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t(pk("v_wait_sub", rows.length), { n: rows.length, of: total }) };
       if (s.gpError && !rows.length) return { key: "v_gpoff", cls: "warn", title: t("v_gpoff"), sub: s.gpError, steps: localSteps(s, null) };
-      const priv = allIps.find((ip) => ipKind(ip) === "private") || srvPrivIp((_a = s.srvs) == null ? void 0 : _a.tokyo);
+      const priv = allIps.find((ip) => ipKind(ip) === "private") || srvPrivIp((_a = s.srvs) == null ? void 0 : _a[FIRST]);
       if (priv || rows.some((r) => r.c.k === "priv")) return privVerdict(s, priv);
       const steps = [];
       const cf = allIps.some((ip) => ipKind(ip) === "cf");
@@ -1071,7 +1089,7 @@
         return ((_a2 = r.res.timings) == null ? void 0 : _a2.tcp) > 1e3;
       });
       if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
-      const sv = (_c = s.srvs) == null ? void 0 : _c.tokyo, pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
+      const sv = (_c = s.srvs) == null ? void 0 : _c[FIRST], pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
       if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
       if (pb === "chain") steps.push(tm("sv_step_chain"));
       else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
@@ -1107,7 +1125,7 @@
     }
     function udpVerdict(s) {
       var _a;
-      const v = (_a = s.srvs) == null ? void 0 : _a.tokyo, port = s.t.port;
+      const v = (_a = s.srvs) == null ? void 0 : _a[FIRST], port = s.t.port;
       if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
       if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
       if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
@@ -1229,7 +1247,7 @@
         }),
         l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
         d: 0,
-        s: srvPack((_a = s.srvs) == null ? void 0 : _a.tokyo)
+        s: srvPack((_a = s.srvs) == null ? void 0 : _a[FIRST])
       };
     }
     function srvPack(v) {

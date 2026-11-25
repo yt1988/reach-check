@@ -4,13 +4,20 @@
 // own server in Tokyo (server/ in this repo) connects once and reads what the service says first and its TLS handshake,
 // and is the only view for UDP. Strings come from window.L1MS (assets/l.<lang>.*.js, built from src/i18n/).
 import { encodeResult, decodeResult, sharePath } from "./code.mjs";
+import { endpoints } from "./egress.js";
 
 (() => {
 const GP = "https://api.globalping.io/v1";
-const SERVERS = [
-  { id: "tokyo", api: "https://reach-api.1ms.dog:2096/v1/probe", cc: "JP", label: "srv_tokyo" },
-  { id: "shanghai", api: "https://reach-api.dog.1msapp.com:2096/v1/probe", cc: "CN", label: "srv_shanghai" },
-];
+// The two "up close" servers come from the shell's <meta name="ms-servers">, in display order (Tokyo, Shanghai);
+// a self-hosted copy has no meta, so those rows simply don't exist and everything else still runs.
+const SERVER_URLS = (endpoints("ms-servers").reach || "").split(",").map(x => x.trim()).filter(Boolean);
+const SERVERS = SERVER_URLS.map((api, i) => ({
+  id: "srv" + i,
+  api: api.replace(/\/+$/, "") + "/v1/probe",
+  cc: i === 0 ? "JP" : "CN",
+  label: i === 0 ? "srv_tokyo" : "srv_shanghai",
+}));
+const FIRST = SERVERS[0] && SERVERS[0].id;
 const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -655,7 +662,7 @@ function verdict(s, rows) {
   if (!s.gpDone && !s.gpError) return { title: t("v_wait"), sub: t(pk("v_wait_sub", rows.length), { n: rows.length, of: total }) };
   if (s.gpError && !rows.length) return { key: "v_gpoff", cls: "warn", title: t("v_gpoff"), sub: s.gpError, steps: localSteps(s, null) };
   // a private address: the probes refuse it without saying which; our server says which (and doesn't connect either)
-  const priv = allIps.find(ip => ipKind(ip) === "private") || srvPrivIp(s.srvs?.tokyo);
+  const priv = allIps.find(ip => ipKind(ip) === "private") || srvPrivIp(s.srvs?.[FIRST]);
   if (priv || rows.some(r => r.c.k === "priv")) return privVerdict(s, priv);
 
   const steps = [];
@@ -698,7 +705,7 @@ function verdict(s, rows) {
   const slow = rows.filter(r => r.res.timings?.tcp > 1000);
   if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
   // What our server read up close: which service answers, and exactly what's wrong with the certificate
-  const sv = s.srvs?.tokyo, pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
+  const sv = s.srvs?.[FIRST], pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
   if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
   if (pb === "chain") steps.push(tm("sv_step_chain"));
   else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
@@ -725,7 +732,7 @@ function privVerdict(s, ip) {
 
 // UDP: what our server found is the whole answer
 function udpVerdict(s) {
-  const v = s.srvs?.tokyo, port = s.t.port;
+  const v = s.srvs?.[FIRST], port = s.t.port;
   if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
   if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
   if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
@@ -801,7 +808,7 @@ function pack(s) {
     }),
     l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
     d: 0,
-    s: srvPack(s.srvs?.tokyo),
+    s: srvPack(s.srvs?.[FIRST]),
   };
 }
 // what our server found, without what the link holds already or what only mattered at the time
