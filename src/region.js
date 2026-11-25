@@ -223,10 +223,12 @@ if (filt) {
 // The other tool's page for the same country/continent, from the shell's <meta name="ping">; a self-hosted copy has no
 // meta, so the link stays hidden.
 const other = document.querySelector("[data-other]"), pingMeta = document.querySelector('meta[name="ping"]');
-if (other && pingMeta && pingMeta.content) {
-  const a = document.createElement("a");
-  a.className = "xl"; a.target = "_blank"; a.rel = "noopener";
-  a.href = pingMeta.content.replace(/\/+$/, "") + (D.paths[D.lang] || "/") + D.suffix;
-  a.textContent = D.countryName ? "Global Ping · " + D.countryName : t("rg_other");
-  other.appendChild(a); other.hidden = false;
+if (other) {
+  const a = other.querySelector("a");
+  if (pingMeta && pingMeta.content && a) {
+    a.href = pingMeta.content.replace(/\/+$/, "") + (D.paths[D.lang] || "/") + D.suffix;   // self-hosted: point at their Ping
+    other.hidden = false;
+  } else {
+    other.hidden = true;   // no Ping on this deployment: the static default link would be ours, so hide it
+  }
 }

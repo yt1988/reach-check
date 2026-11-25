@@ -242,7 +242,7 @@ export async function build({ check = false } = {}) {
   <h2>${esc(fill(T("rg_about_h"), { country: name }))}</h2>
   <p>${esc(noteOf(c.cc, lang))}</p>
   <p class="m">${esc(T("L_continent"))}: ${esc(cnameT)}</p>
-  <p class="links" data-other hidden></p>
+  <p class="links" data-other><a class="xl" href="https://ping.1ms.dog${base}${tail}" target="_blank" rel="noopener">Global Ping · ${esc(name)}</a></p>
 </section>`;
         const crumbItems = [{ name: T("app_name"), href: base }, { name: cnameT, href: `${base}${CONT_SLUG[cont.code]}/` }, { name, href: base + tail }];
         files[pathOf(slug).slice(1) + tail + "index.html"] = render({ tail, title, desc, h1: fill(T("rg_h1"), { country: name }),
