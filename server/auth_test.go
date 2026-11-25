@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -15,7 +15,7 @@ import (
 func token(secret, scope string, exp int64) string {
 	m := hmac.New(sha256.New, []byte(secret))
 	m.Write([]byte("v1|" + itoa(exp) + "|n0nce|" + scope))
-	return "v1." + itoa(exp) + ".n0nce." + hex.EncodeToString(m.Sum(nil))
+	return "v1." + itoa(exp) + ".n0nce." + scope + "." + base64.RawURLEncoding.EncodeToString(m.Sum(nil))
 }
 
 func itoa(n int64) string {
@@ -44,12 +44,12 @@ func TestCheckAuth(t *testing.T) {
 		{"secret, no header", "s3cret", "", false, "no_token"},
 		{"secret, wrong scheme", "s3cret", "Basic abc", false, "no_token"},
 		{"expired", "s3cret", "Bearer " + token("s3cret", "reach", past), false, "bad_token"},
-		{"wrong scope", "s3cret", "Bearer " + token("s3cret", "ping", future), false, "bad_token"},
+		{"scope ping (signature valid, not for reach)", "s3cret", "Bearer " + token("s3cret", "ping", future), false, "bad_token"},
 		{"wrong secret", "s3cret", "Bearer " + token("other", "reach", future), false, "bad_token"},
 		{"reach scope", "s3cret", "Bearer " + token("s3cret", "reach", future), true, ""},
 		{"page token (all scopes)", "s3cret", "Bearer " + token("s3cret", "probe,reach,ping,rtc,ipv6,seg,dns,data", future), true, ""},
 		{"service token", "s3cret", "Bearer " + token("s3cret", "*", future), true, ""},
-		{"garbage", "s3cret", "Bearer v1.x.y.z", false, "bad_token"},
+		{"garbage", "s3cret", "Bearer v1.x.y.z.w", false, "bad_token"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
