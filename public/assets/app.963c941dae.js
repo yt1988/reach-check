@@ -138,6 +138,44 @@
     return out;
   }
 
+  // src/auth.js
+  function tokenFromDoc(doc = globalThis.document) {
+    const el = doc && doc.querySelector ? doc.querySelector('meta[name="ms-auth"]') : null;
+    return el && el.getAttribute("content") || "";
+  }
+  function storeToken(tok, doc) {
+    const el = doc && doc.querySelector ? doc.querySelector('meta[name="ms-auth"]') : null;
+    if (el && tok) el.setAttribute("content", tok);
+    return tok;
+  }
+  async function refreshToken(fetchImpl = globalThis.fetch, doc = globalThis.document) {
+    try {
+      const r = await fetchImpl("/_ms/token", { credentials: "same-origin", cache: "no-store" });
+      if (!r.ok) return "";
+      const text2 = (await r.text()).trim();
+      if (text2.startsWith("v1.")) return storeToken(text2, doc);
+      try {
+        return storeToken(JSON.parse(text2).token || "", doc);
+      } catch (e) {
+        return "";
+      }
+    } catch (e) {
+      return "";
+    }
+  }
+  async function authFetch(url, init = {}, opts = {}) {
+    const fetchImpl = opts.fetchImpl || globalThis.fetch;
+    const doc = opts.doc || globalThis.document;
+    const token = opts.token != null ? opts.token : tokenFromDoc(doc);
+    const call = (t) => fetchImpl(url, { ...init, headers: { ...init.headers || {}, ...t ? { Authorization: "Bearer " + t } : {} } });
+    let r = await call(token);
+    if (r.status === 401) {
+      const fresh = await refreshToken(fetchImpl, doc);
+      if (fresh) r = await call(fresh);
+    }
+    return r;
+  }
+
   // src/app.js
   (() => {
     const GP = "https://api.globalping.io/v1";
@@ -663,7 +701,7 @@
       await Promise.all(SERVERS.map(async (srv) => {
         const c = new AbortController(), timer = setTimeout(() => c.abort(), SRV_LIMIT);
         try {
-          s.srvs[srv.id] = await (await fetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
+          s.srvs[srv.id] = await (await authFetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json();
         } catch {
           s.srvs[srv.id] = { k: "down" };
         } finally {

@@ -5,6 +5,7 @@
 // and is the only view for UDP. Strings come from window.L1MS (assets/l.<lang>.*.js, built from src/i18n/).
 import { encodeResult, decodeResult, sharePath } from "./code.mjs";
 import { endpoints } from "./egress.js";
+import { authFetch } from "./auth.js";
 
 (() => {
 const GP = "https://api.globalping.io/v1";
@@ -317,7 +318,7 @@ async function runServer(s) {
   if (!s.t.isIp) q.set("ipv", s.ipv);
   await Promise.all(SERVERS.map(async srv => {
     const c = new AbortController(), timer = setTimeout(() => c.abort(), SRV_LIMIT);
-    try { s.srvs[srv.id] = await (await fetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json(); }
+    try { s.srvs[srv.id] = await (await authFetch(`${srv.api}?${q}`, { signal: c.signal, credentials: "omit", cache: "no-store" })).json(); }
     catch { s.srvs[srv.id] = { k: "down" }; }
     finally { clearTimeout(timer); }
   }));
