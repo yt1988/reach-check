@@ -1,4 +1,5 @@
 // vendored from 1ms.dog/src/egress.js VERSION 7 (414073e)
+// One exit verdict for the whole site. docs/egress-contract.md has the rules; this file implements them.
 //
 // Every page that says 「直连 / 代理」 calls classify() with the addresses it saw and the two anchors, instead of
 // carrying its own regex, time-zone table and quorum. The file is dependency-free so a tool can vendor it:
