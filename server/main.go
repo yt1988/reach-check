@@ -84,6 +84,7 @@ func allowedOrigin(o string) bool {
 }
 
 func handler(lim *limits) http.Handler {
+	secret := authSecret()
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok\n")) })
 	mux.HandleFunc("GET /v1/probe", func(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +99,29 @@ func handler(lim *limits) http.Handler {
 		json.NewEncoder(w).Encode(res)
 	})
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.NotFound(w, r) })
-	return mux
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if o := r.Header.Get("Origin"); allowedOrigin(o) {
+			w.Header().Set("Access-Control-Allow-Origin", o)
+			w.Header().Set("Vary", "Origin")
+			if r.Method == http.MethodOptions { // the page's Authorization header needs a preflight
+				w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Authorization")
+				w.Header().Set("Access-Control-Max-Age", "600")
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+		}
+		if r.URL.Path != "/healthz" {
+			if code, ok := checkAuth(secret, r.Header.Get("Authorization"), time.Now()); !ok {
+				w.Header().Set("Cache-Control", "no-store")
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusUnauthorized)
+				json.NewEncoder(w).Encode(map[string]string{"error": code})
+				return
+			}
+		}
+		mux.ServeHTTP(w, r)
+	})
 }
 
 func serveProbe(r *http.Request, lim *limits) (*Result, int) {
