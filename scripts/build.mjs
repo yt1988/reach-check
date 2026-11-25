@@ -248,7 +248,7 @@ export async function build({ check = false } = {}) {
         files[pathOf(slug).slice(1) + tail + "index.html"] = render({ tail, title, desc, h1: fill(T("rg_h1"), { country: name }),
           intro: fill(T("rg_intro"), { country: name }), body, current: c.cc, crumbs: crumbItems,
           ld: ldOf(title, SITE + base + tail, desc, crumbItems), filter: filterHTML("nav-all", 86),
-          data: { lang, paths, suffix: tail, slots: 5, locations: [{ country: c.cc, limit: 5 }] } });
+          data: { lang, paths, suffix: tail, slots: 5, countryName: name, locations: [{ country: c.cc, limit: 5 }] } });
         sitemapExtra.push({ tail, priority: c.probes >= 20 ? "0.7" : "0.5" });
       }
     }

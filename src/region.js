@@ -227,6 +227,6 @@ if (other && pingMeta && pingMeta.content) {
   const a = document.createElement("a");
   a.className = "xl"; a.target = "_blank"; a.rel = "noopener";
   a.href = pingMeta.content.replace(/\/+$/, "") + (D.paths[D.lang] || "/") + D.suffix;
-  a.textContent = t("rg_other");
+  a.textContent = D.countryName ? "Global Ping · " + D.countryName : t("rg_other");
   other.appendChild(a); other.hidden = false;
 }
