@@ -1,8 +1,8 @@
-# Reach Check's server on the 1ms.dog VPS: https://reach-api.1ms.dog:2096 (port, user and directory as allocated in
+# Reach Check's server: https://<your-domain>:2096 (port, user and directory as allocated in
 # 1ms-shell docs/processes.md, "专用服务器"). Install: the binary at /opt/1ms/reach/1ms-reach, this file at
 # /etc/systemd/system/1ms-reach.service. The certificate is renewed by certbot, which then restarts this service.
 [Unit]
-Description=1ms-reach: Reach Check's server (reach-api.1ms.dog:2096)
+Description=Reach Check's server
 After=network-online.target
 Wants=network-online.target
 
@@ -11,8 +11,8 @@ User=1ms-reach
 Group=1ms-reach
 # -self: the machine's public IPv4 is behind the cloud's NAT, not on an interface, so it is named here to be refused
 ExecStart=/opt/1ms/reach/1ms-reach -addr :2096 -self 16.76.79.94
-LoadCredential=fullchain.pem:/etc/letsencrypt/live/reach-api.1ms.dog/fullchain.pem
-LoadCredential=privkey.pem:/etc/letsencrypt/live/reach-api.1ms.dog/privkey.pem
+LoadCredential=fullchain.pem:/etc/letsencrypt/live/<your-domain>/fullchain.pem
+LoadCredential=privkey.pem:/etc/letsencrypt/live/<your-domain>/privkey.pem
 Restart=on-failure
 RestartSec=5
 

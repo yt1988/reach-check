@@ -1,4 +1,4 @@
-// 1ms-reach: Reach Check's server, at https://reach-api.1ms.dog:2096 (one machine, in Tokyo).
+// Reach Check's server, at https://<your-domain>:2096.
 //
 // For the one host:port a visitor asks about, it connects once and says what it found:
 //   - TCP: what the service says first (SSH, SMTP, FTP… banners); for a service that waits, the TLS handshake
