@@ -80,10 +80,19 @@ func TestHandlerAuth(t *testing.T) {
 	t.Run("secret: no token is 401 no_token, healthz still answers", func(t *testing.T) {
 		t.Setenv("MS_AUTH_SECRET", "s3cret")
 		h := handler(newLimits(time.Now))
+		req := httptest.NewRequest("GET", probe, nil)
+		req.Header.Set("Origin", "https://reach.1ms.dog")
 		rr := httptest.NewRecorder()
-		h.ServeHTTP(rr, httptest.NewRequest("GET", probe, nil))
+		h.ServeHTTP(rr, req)
 		if rr.Code != http.StatusUnauthorized {
 			t.Fatalf("status %d, want 401", rr.Code)
+		}
+		// The browser can only see the 401 (and refresh its token) if CORS allows reading it.
+		if got := rr.Header().Get("Access-Control-Allow-Origin"); got != "https://reach.1ms.dog" {
+			t.Fatalf("ACAO %q, want the request origin echoed", got)
+		}
+		if got := rr.Header().Get("Vary"); !strings.Contains(got, "Origin") {
+			t.Fatalf("Vary %q, want Origin", got)
 		}
 		var body map[string]string
 		json.NewDecoder(rr.Body).Decode(&body)
