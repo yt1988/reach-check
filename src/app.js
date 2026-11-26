@@ -4,19 +4,23 @@
 // own server in Tokyo (server/ in this repo) connects once and reads what the service says first and its TLS handshake,
 // and is the only view for UDP. Strings come from window.L1MS (assets/l.<lang>.*.js, built from src/i18n/).
 import { encodeResult, decodeResult, sharePath } from "./code.mjs";
-import { endpoints } from "./egress.js";
+import { endpoints, servers } from "./egress.js";
 import { authFetch } from "./auth.js";
 
 (() => {
 const GP = "https://api.globalping.io/v1";
-// The two "up close" servers come from the shell's <meta name="ms-servers">, in display order (Tokyo, Shanghai);
+// The "up close" servers come from the shell's <meta name="ms-servers">, each named by its city (`tyo@https://…`);
 // a self-hosted copy has no meta, so those rows simply don't exist and everything else still runs.
-const SERVER_URLS = (endpoints("ms-servers").reach || "").split(",").map(x => x.trim()).filter(Boolean);
-const SERVERS = SERVER_URLS.map((api, i) => ({
+const CITIES = {
+  tyo: { cc: "JP", label: "srv_tokyo" },
+  sha: { cc: "CN", label: "srv_shanghai" },
+  lax: { cc: "US", label: "srv_los_angeles" },
+};
+const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
   id: "srv" + i,
-  api: api.replace(/\/+$/, "") + "/v1/probe",
-  cc: i === 0 ? "JP" : "CN",
-  label: i === 0 ? "srv_tokyo" : "srv_shanghai",
+  api: s.url.replace(/\/+$/, "") + "/v1/probe",
+  // an entry without a city is from an older injection: two of them were Tokyo then Shanghai
+  ...(CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }),
 }));
 const FIRST = SERVERS[0] && SERVERS[0].id;
 const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);

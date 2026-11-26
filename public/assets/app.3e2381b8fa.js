@@ -137,6 +137,17 @@
     }
     return out;
   }
+  function servers(value) {
+    return String(value || "").split(",").map((item) => {
+      const u = item.trim();
+      if (!u) return null;
+      const at = u.indexOf("@");
+      if (at < 0) return { city: "", url: u };
+      const city = u.slice(0, at).trim().toLowerCase();
+      const url = u.slice(at + 1).trim();
+      return url ? { city, url } : null;
+    }).filter(Boolean);
+  }
 
   // src/auth.js
   function tokenFromDoc(doc = globalThis.document) {
@@ -179,12 +190,16 @@
   // src/app.js
   (() => {
     const GP = "https://api.globalping.io/v1";
-    const SERVER_URLS = (endpoints("ms-servers").reach || "").split(",").map((x) => x.trim()).filter(Boolean);
-    const SERVERS = SERVER_URLS.map((api, i) => ({
+    const CITIES = {
+      tyo: { cc: "JP", label: "srv_tokyo" },
+      sha: { cc: "CN", label: "srv_shanghai" },
+      lax: { cc: "US", label: "srv_los_angeles" }
+    };
+    const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
       id: "srv" + i,
-      api: api.replace(/\/+$/, "") + "/v1/probe",
-      cc: i === 0 ? "JP" : "CN",
-      label: i === 0 ? "srv_tokyo" : "srv_shanghai"
+      api: s.url.replace(/\/+$/, "") + "/v1/probe",
+      // an entry without a city is from an older injection: two of them were Tokyo then Shanghai
+      ...CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }
     }));
     const FIRST = SERVERS[0] && SERVERS[0].id;
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
