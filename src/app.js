@@ -23,6 +23,8 @@ const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
   ...(CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }),
 }));
 const FIRST = SERVERS[0] && SERVERS[0].id;
+// the i18n key each city's name lives under
+const CITY_NAME = { lax: "LosAngeles", tyo: "Tokyo", sha: "Shanghai" };
 const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -583,7 +585,8 @@ function srvRow(srv, s) {
         if (x.chain?.length) p.push(`<ol class="chain">${x.chain.map(c => `<li>${esc(c.subject)} <span class="m">· ${esc(t("sv_by", { issuer: c.issuer }))} · ${esc(t("sv_until", { date: c.until }))}</span></li>`).join("")}</ol>`);
       }
       const ips = v.ip ? [v.ip] : (v.addrs || []).map(a => a.ip);
-      if (ips.length) p.push(`<p class="m">${esc(t("city_Tokyo"))} → ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " · " + esc(t("sv_cached")) : ""}</p>`);
+      // the address the service resolved to, named by the city that saw it
+      if (ips.length) p.push(`<p class="m">${esc(t("city_" + CITY_NAME[srv.city] || "city_Tokyo"))} → ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " · " + esc(t("sv_cached")) : ""}</p>`);
       more = `<div class="rg-more">${p.join("")}</div>`;
     }
   }

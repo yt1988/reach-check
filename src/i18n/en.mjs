@@ -20,7 +20,7 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
  copied: "Copied",
   src_gp: "Data: {gp}'s volunteer probes",
 
-  foot_src: "Data source: {gp} (the outside check and trace route) and our own servers in Tokyo and Shanghai.",
+  foot_src: "Data source: {gp} (the outside check and trace route) and our own servers in Los Angeles, Tokyo and Shanghai.",
 
   // runtime
   sep: ", ",
@@ -123,19 +123,19 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
   share: "Share", share_desc: "{ok} of {n} regions reach {target}", share_desc_one: "{ok} of {n} regions reaches {target}", lk_ipv6: "Does your own network support IPv6?", lk_asn: "Who owns this IP (ASN lookup)",
   faq_h: "Help", a_close: "Close", a_prev: "Previous", a_next: "Next", lk_check: "Run a full checkup", lk_ping: "See ping latency from these regions",
   docs: [
-    ["How does the check work?","Globalping's volunteer probes in 16 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.\nYour own browser connects too: that's the table's first line. Then our servers in Tokyo and Shanghai each connect once more: it reads what the service says first (SSH, mail…) or its TLS certificate chain, and sends nothing else."],
+    ["How does the check work?","Globalping's volunteer probes in 16 regions each connect to your address and port and send one HTTP(S) request, timing every step: DNS lookup, TCP connection, TLS handshake, first byte. When it fails, the error says where: refused, timed out, reset, a TLS problem, or a service that isn't a web page.\nYour own browser connects too: that's the table's first line. Then our servers in Los Angeles, Tokyo and Shanghai each connect once more: it reads what the service says first (SSH, mail…) or its TLS certificate chain, and sends nothing else."],
     ["It opens for me. Why can't others reach it?", "If you're on the same network as the service, your traffic never leaves home, so opening it proves nothing about the outside. A proxy can also send you a different way from everyone else. Go by the outside check: it connects the way strangers do."],
     ["I set up port forwarding. Why does it still time out?", "The usual causes: no public IPv4 (your router's WAN address starts with 100.64–100.127 or isn't your public IP: carrier-grade NAT); a firewall on the NAS, in Windows or in a cloud security group; the ISP blocking common ports such as 80 and 443 on home lines; or a forward that still points at the device's old local IP.\nWith IPv6, the router's IPv6 firewall blocks incoming connections until you allow the port."],
     ["What's the difference between refused and timed out?", "Refused: the packets reached the machine, but nothing listens on that port. The service is off, listens on 127.0.0.1 only, or the forward goes to the wrong port.\nTimed out: no answer at all. A firewall dropped the packets, there's no forward, or the address is wrong."],
-    ["Can it check UDP ports for games or WireGuard?","Partly. Choose UDP: our servers in Tokyo and Shanghai send the port a standard hello (QUIC, DNS, a Minecraft Bedrock or Steam server query) and tells you whether it answered, replied that the port is closed, or stayed silent. Many UDP services (WireGuard, most games) only answer a message they recognise, so silence doesn't prove the port is closed. And it's one place, Tokyo: networks in mainland China may treat UDP differently."],
-    ["Who sees the address I enter?","Globalping, which runs the probes, and our servers in Tokyo and Shanghai, which each connect to it once. We don't store it: our server keeps no log, and holds an answer in memory for 5 minutes only, so a repeat doesn't connect again. A result link holds the address and the result so others see the same check; it never holds your own IP.\nEach IP gets 250 region checks an hour on Globalping, and one check uses 16; when they run out, the page says when they come back. Our server takes up to 10 checks of 5 addresses an hour from each visitor, and never connects to private addresses."],
+    ["Can it check UDP ports for games or WireGuard?","Partly. Choose UDP: our servers in Los Angeles, Tokyo and Shanghai send the port a standard hello (QUIC, DNS, a Minecraft Bedrock or Steam server query) and tells you whether it answered, replied that the port is closed, or stayed silent. Many UDP services (WireGuard, most games) only answer a message they recognise, so silence doesn't prove the port is closed. And these are three places: networks in mainland China may treat UDP differently."],
+    ["Who sees the address I enter?","Globalping, which runs the probes, and our servers in Los Angeles, Tokyo and Shanghai, which each connect to it once. We don't store it: our server keeps no log, and holds an answer in memory for 5 minutes only, so a repeat doesn't connect again. A result link holds the address and the result so others see the same check; it never holds your own IP.\nEach IP gets 250 region checks an hour on Globalping, and one check uses 16; when they run out, the page says when they come back. Our server takes up to 10 checks of 5 addresses an hour from each visitor, and never connects to private addresses."],
   ],
  b_invite: "Ask a friend", invite_tip: "Copies a link; a friend who opens it runs this check from their browser",
  ks_ok: "Opens", ks_ans: "Answered", ks_none: "No answer", ks_blocked: "Can't test", more_steps: "{n} more suggestions", more_steps_one: "{n} more suggestion", pl_open: "Open", pl_web: "Not a web page", pl_nottls: "Not HTTPS", pl_refused: "Refused", pl_timeout: "Timed out", pl_dns: "DNS failed", pl_unreach: "Unreachable", pl_reset: "Reset", pl_tls: "TLS failed", pl_slow: "No response", pl_other: "Failed",
   r_browser: "Your browser", fa_world: "Worldwide", fa_you: "From here", fa_ok: "{ok} of {n} connect", fa_ok_one: "{ok} of {n} connects",
   // our server in Tokyo (its row, UDP, what it read up close)
   f_proto: "Protocol", p_quic: "QUIC / HTTP/3", p_dns: "DNS server", p_steam: "Steam games (Source)", h_srv: "From our servers",
-  r_srv: "1ms.dog · Tokyo", v_wait_srv: "Asking from Tokyo…", v_priv_sub2: "{host} resolves to a private address.",
+  r_srv: "1ms.dog · Los Angeles", v_wait_srv: "Asking our servers…", v_priv_sub2: "{host} resolves to a private address.",
   st_priv: "Private address: the probes won't connect to it", pl_priv: "Private address", sv_banner: "Port open: the service introduced itself as {svc}",
   sv_banner_x: "Port open: the service spoke first, but it isn't one we recognise", sv_tls: "Port open: TLS handshake completed",
   sv_tlsfail: "Port open, but the TLS handshake failed: {err}", sv_http: "Port open: plain HTTP (not HTTPS)",
@@ -153,7 +153,7 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
   su_answered_x: "Something on the port answered", via_quic: "QUIC", via_dns: "DNS", via_raknet: "Minecraft Bedrock", via_a2s: "Steam server query",
   su_closed: "Port closed: the host replied that nothing listens on this UDP port", su_silent: "No answer, and no sign that the port is closed",
   u_ok: "The UDP port answers", u_ok_sub: "From Tokyo, in {ms} ms.",
-  u_ok_1: "This is from Tokyo and Shanghai only. Networks in mainland China often throttle or drop UDP, so ask someone there to try it.",
+  u_ok_1: "This is from Los Angeles, Tokyo and Shanghai only. Networks in mainland China often throttle or drop UDP, so ask someone there to try it.",
   u_closed: "Nothing is listening on this UDP port", u_closed_sub: "From Tokyo, the host replied that UDP port {port} is closed.",
   u_closed_1: "Make sure the service is running and listens on **UDP** port {port}, on all interfaces (`0.0.0.0`).",
   u_closed_2: "Check that the port forward is for **UDP** (or TCP and UDP): forwarding only TCP is a common slip.",

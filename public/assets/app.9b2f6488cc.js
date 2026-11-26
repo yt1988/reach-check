@@ -202,6 +202,7 @@
       ...CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }
     }));
     const FIRST = SERVERS[0] && SERVERS[0].id;
+    const CITY_NAME = { lax: "LosAngeles", tyo: "Tokyo", sha: "Shanghai" };
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -1015,7 +1016,7 @@
             if ((_b = x.chain) == null ? void 0 : _b.length) p.push(`<ol class="chain">${x.chain.map((c) => `<li>${esc(c.subject)} <span class="m">\xB7 ${esc(t("sv_by", { issuer: c.issuer }))} \xB7 ${esc(t("sv_until", { date: c.until }))}</span></li>`).join("")}</ol>`);
           }
           const ips = v.ip ? [v.ip] : (v.addrs || []).map((a) => a.ip);
-          if (ips.length) p.push(`<p class="m">${esc(t("city_Tokyo"))} \u2192 ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " \xB7 " + esc(t("sv_cached")) : ""}</p>`);
+          if (ips.length) p.push(`<p class="m">${esc(t("city_" + CITY_NAME[srv.city] || "city_Tokyo"))} \u2192 ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " \xB7 " + esc(t("sv_cached")) : ""}</p>`);
           more = `<div class="rg-more">${p.join("")}</div>`;
         }
       }
