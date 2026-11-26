@@ -255,7 +255,7 @@
       const m = document.querySelector(`meta[name="${id}"]`);
       return m && m.content ? m.content.replace(/\/+$/, "") + D.paths[D.lang] : "";
     };
-    const EXT = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
+    const EXT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
     const toolLink = (id, key) => {
       const u = tool(id);
       return u ? `<a class="xl" href="${esc(u)}" target="_blank" rel="noopener">${esc(t(key))}${EXT}</a>` : "";
@@ -978,7 +978,7 @@
           }
         }
         const can = !!(row == null ? void 0 : row.c);
-        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
+        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
       });
       $("regions").innerHTML = html;
       sizeBars();
@@ -990,7 +990,7 @@
     const sizeBars = () => {
       for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";
     };
-    const chev = (can) => can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>';
+    const chev = (can) => can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>';
     const srvRows = (s) => (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + SERVERS.map((srv) => srvRow(srv, s)).join("");
     function srvRow(srv, s) {
       var _a, _b;
@@ -1047,7 +1047,7 @@
         }
       }
       const can = !!l;
-      return `<div class="grp">${esc(t("h_local"))}</div><div class="rg${s.localOpen ? " open" : ""}"${can ? ` data-row="local" role="button" tabindex="0" aria-expanded="${!!s.localOpen}"` : ""}><span class="rg-name">${can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(t("r_browser"))}</span>${pl}${bar}${tot}${more}</div>`;
+      return `<div class="grp">${esc(t("h_local"))}</div><div class="rg${s.localOpen ? " open" : ""}"${can ? ` data-row="local" role="button" tabindex="0" aria-expanded="${!!s.localOpen}"` : ""}><span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${esc(t("r_browser"))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawVerdict() {
       const s = state;
