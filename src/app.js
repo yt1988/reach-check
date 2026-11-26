@@ -876,7 +876,9 @@ function cardLayout(ctx, kit, v, target) {
 async function shareResult() {
   const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter(r => r?.c));
   const target = `${s.t.host}:${s.t.port}`;
-  const { share } = await import("/assets/share/share.js?v=10");
+  const mod = await import("/assets/share/share.js?v=11").catch(() => null);
+  if (!mod) { window.msShareDown && window.msShareDown(); return; }
+  const { share } = mod;
   share({
     lang: D.lang, name: t("app_name"), file: "reach-check", show: [], never: ["ip"],
     link: () => link, home: location.origin + D.paths[D.lang],
@@ -929,7 +931,7 @@ if (sp) {
     $("verdict").hidden = $("table").hidden = false; showOut(state.t);
     drawRegions(); drawVerdict(); showPing(state);
     $("shareBtn").hidden = false;
-    const { received } = await import("/assets/share/share.js?v=10");
+    const { received } = await import("/assets/share/share.js?v=11");
     recv = received({ lang: D.lang, ts: state.ts, at: $("verdict"), test: () => start() });
   });
 } else {
