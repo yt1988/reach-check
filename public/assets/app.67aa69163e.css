@@ -317,7 +317,7 @@ select option { background-color: var(--panel); color: var(--fg); }
 .regions { display: flex; flex-direction: column; }
 .grp { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .04em; padding: 12px 0 2px; }
 .grp:first-child { padding-top: 0; }
-.rg { display: grid; grid-template-columns: 220px 14px minmax(0, 1fr) 70px; gap: 4px 12px; align-items: center; padding: 6px 4px; border-radius: 8px; min-height: 36px; font-size: 13.5px; }
+.rg { display: grid; grid-template-columns: 220px 14px minmax(0, 1fr) 70px; gap: 4px 12px; align-items: center; padding: 6px 4px 6px 18px; border-radius: 8px; min-height: 36px; font-size: 13.5px; }
 .rg[data-row] { cursor: pointer; }
 .rg[data-row]:hover, .rg.open { background: var(--soft); }
 .rg-name { display: flex; align-items: center; gap: 4px; min-width: 0; line-height: 1.3; }   /* long names (ru, de) wrap rather than lose their end */
