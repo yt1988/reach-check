@@ -991,11 +991,10 @@
       for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";
     };
     const chev = (can) => can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>';
-    const srvRows = (s) => SERVERS.map((srv) => srvRow(srv, s)).join("");
+    const srvRows = (s) => (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + SERVERS.map((srv) => srvRow(srv, s)).join("");
     function srvRow(srv, s) {
       var _a, _b;
       const v = s.srvs[srv.id];
-      if (!v || v.k === "down") return "";
       let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">\u2013</span>`, more = "";
       if (v) {
         const [cls, short, text2] = srvStatus(v, s);
@@ -1020,8 +1019,8 @@
           more = `<div class="rg-more">${p.join("")}</div>`;
         }
       }
-      const can = !!v;
-      return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
+      const can = !!v && v.k !== "down";
+      return `<div class="rg${s.srvOpen && can ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawLocal() {
       drawRegions();

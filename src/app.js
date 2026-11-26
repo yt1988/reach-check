@@ -561,10 +561,11 @@ const chev = can => can ? '<svg class="chev" viewBox="0 0 16 16" aria-hidden="tr
 
 // Our server's line, under the browser's (UDP: alone): what it found, connecting then TLS (UDP: the answer's time).
 // Its details: the sentence, what the service said, the TLS handshake and certificate chain, the address it tried.
-const srvRows = s => SERVERS.map(srv => srvRow(srv, s)).join("");
+// Our servers are one group: the heading goes above them once, and every server keeps its line from the first moment,
+// so the table's height never changes while the answers come in.
+const srvRows = s => (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + SERVERS.map(srv => srvRow(srv, s)).join("");
 function srvRow(srv, s) {
   const v = s.srvs[srv.id];
-  if (!v || v.k === "down") return "";
   let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
   if (v) {
     const [cls, short, text] = srvStatus(v, s);
@@ -590,9 +591,9 @@ function srvRow(srv, s) {
       more = `<div class="rg-more">${p.join("")}</div>`;
     }
   }
-  const can = !!v;
-  return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) +
-    `<div class="rg${s.srvOpen ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}>` +
+  // a server that has not answered yet is still a known row: it is drawn, waiting, rather than appearing later
+  const can = !!v && v.k !== "down";
+  return `<div class="rg${s.srvOpen && can ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}>` +
     `<span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
 }
 
