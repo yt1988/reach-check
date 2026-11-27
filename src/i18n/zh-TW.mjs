@@ -23,7 +23,7 @@ lang_label: "語言", a_theme: "主題", th_system: "主題：跟隨系統", th_
 
   sep: "、",
   g_cn: "中國大陸", g_apac: "亞太", g_emea: "歐洲 · 中東 · 非洲", g_am: "美洲",
-    city_Tokyo: "東京", city_London: "倫敦", city_Frankfurt: "法蘭克福", city_LosAngeles: "洛杉磯", city_NewYork: "紐約", city_SaoPaulo: "聖保羅",
+    city_Tokyo: "東京", city_London: "倫敦", city_Frankfurt: "法蘭克福", city_LosAngeles: "洛杉磯", city_Nuremberg: "紐倫堡", city_NewYork: "紐約", city_SaoPaulo: "聖保羅",
   p_web: "網站", p_web_http: "網站 HTTP", p_dsm: "Synology DSM", p_rdp: "遠端桌面",
   what_ssh: "SSH", what_rdp: "遠端桌面", what_mc: "Minecraft 伺服器",
 

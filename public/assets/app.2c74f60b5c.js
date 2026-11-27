@@ -203,7 +203,7 @@
       ...CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }
     }));
     const FIRST = SERVERS[0] && SERVERS[0].id;
-    const CITY_NAME = { lax: "LosAngeles", tyo: "Tokyo", sha: "Shanghai" };
+    const CITY_NAME = { lax: "LosAngeles", nue: "Nuremberg", tyo: "Tokyo", sha: "Shanghai" };
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s != null ? s : "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

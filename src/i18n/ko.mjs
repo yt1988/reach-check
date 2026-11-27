@@ -23,7 +23,7 @@ lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_ligh
 
   sep: ", ",
   g_cn: "중국 본토", g_apac: "아시아·태평양", g_emea: "유럽·중동·아프리카", g_am: "아메리카",
-    city_Tokyo: "도쿄", city_London: "런던", city_Frankfurt: "프랑크푸르트", city_LosAngeles: "로스앤젤레스", city_NewYork: "뉴욕", city_SaoPaulo: "상파울루",
+    city_Tokyo: "도쿄", city_London: "런던", city_Frankfurt: "프랑크푸르트", city_LosAngeles: "로스앤젤레스", city_Nuremberg: "뉘른베르크", city_NewYork: "뉴욕", city_SaoPaulo: "상파울루",
   p_web: "웹사이트", p_web_http: "웹사이트(HTTP)", p_dsm: "시놀로지 DSM", p_rdp: "원격 데스크톱",
   what_ssh: "SSH", what_rdp: "원격 데스크톱", what_mc: "마인크래프트 서버",
 

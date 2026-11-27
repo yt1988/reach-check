@@ -23,7 +23,7 @@ lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: 
 
   sep: ", ",
   g_cn: "China continental", g_apac: "Ásia-Pacífico", g_emea: "Europa, Oriente Médio e África", g_am: "Américas",
-    city_Tokyo: "Tóquio", city_London: "Londres", city_Frankfurt: "Frankfurt", city_LosAngeles: "Los Angeles", city_NewYork: "Nova York", city_SaoPaulo: "São Paulo",
+    city_Tokyo: "Tóquio", city_London: "Londres", city_Frankfurt: "Frankfurt", city_LosAngeles: "Los Angeles", city_Nuremberg: "Nuremberg", city_NewYork: "Nova York", city_SaoPaulo: "São Paulo",
   p_web: "Site", p_web_http: "Site (HTTP)", p_dsm: "Synology DSM", p_rdp: "Área de Trabalho Remota",
   what_ssh: "SSH", what_rdp: "Área de Trabalho Remota", what_mc: "um servidor de Minecraft",
 

@@ -23,7 +23,7 @@ lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_
 
   sep: "、",
   g_cn: "中国大陆", g_apac: "亚太", g_emea: "欧洲 · 中东 · 非洲", g_am: "美洲",
-    city_Tokyo: "东京", city_London: "伦敦", city_Frankfurt: "法兰克福", city_LosAngeles: "洛杉矶", city_NewYork: "纽约", city_SaoPaulo: "圣保罗",
+    city_Tokyo: "东京", city_London: "伦敦", city_Frankfurt: "法兰克福", city_LosAngeles: "洛杉矶", city_Nuremberg: "纽伦堡", city_NewYork: "纽约", city_SaoPaulo: "圣保罗",
   p_web: "网站", p_web_http: "网站 HTTP", p_dsm: "群晖 DSM", p_rdp: "远程桌面",
   what_ssh: "SSH", what_rdp: "远程桌面", what_mc: "Minecraft 服务器",
 

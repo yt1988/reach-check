@@ -25,7 +25,7 @@ const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
 }));
 const FIRST = SERVERS[0] && SERVERS[0].id;
 // the i18n key each city's name lives under
-const CITY_NAME = { lax: "LosAngeles", tyo: "Tokyo", sha: "Shanghai" };
+const CITY_NAME = { lax: "LosAngeles", nue: "Nuremberg", tyo: "Tokyo", sha: "Shanghai" };
 const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

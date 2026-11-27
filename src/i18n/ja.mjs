@@ -23,7 +23,7 @@ lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム
 
   sep: "、",
   g_cn: "中国本土", g_apac: "アジア太平洋", g_emea: "ヨーロッパ・中東・アフリカ", g_am: "南北アメリカ",
-    city_Tokyo: "東京", city_London: "ロンドン", city_Frankfurt: "フランクフルト", city_LosAngeles: "ロサンゼルス", city_NewYork: "ニューヨーク", city_SaoPaulo: "サンパウロ",
+    city_Tokyo: "東京", city_London: "ロンドン", city_Frankfurt: "フランクフルト", city_LosAngeles: "ロサンゼルス", city_Nuremberg: "ニュルンベルク", city_NewYork: "ニューヨーク", city_SaoPaulo: "サンパウロ",
   p_web: "Web サイト", p_web_http: "Web サイト（HTTP）", p_dsm: "Synology DSM", p_rdp: "リモートデスクトップ",
   what_ssh: "SSH", what_rdp: "リモートデスクトップ", what_mc: "Minecraft サーバー",
 
