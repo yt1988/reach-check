@@ -12,9 +12,10 @@ const GP = "https://api.globalping.io/v1";
 // The "up close" servers come from the shell's <meta name="ms-servers">, each named by its city (`tyo@https://…`);
 // a self-hosted copy has no meta, so those rows simply don't exist and everything else still runs.
 const CITIES = {
+  lax: { cc: "US", label: "srv_los_angeles" },
+  nue: { cc: "DE", label: "srv_nuremberg" },
   tyo: { cc: "JP", label: "srv_tokyo" },
   sha: { cc: "CN", label: "srv_shanghai" },
-  lax: { cc: "US", label: "srv_los_angeles" },
 };
 const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
   id: "srv" + i,

@@ -213,6 +213,7 @@ lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_
   home_countries: "按国家/地区测试",
   rg_assigning: "正在分配测试节点…",
   srv_tokyo: "本站（东京）", srv_shanghai: "本站（上海）", srv_los_angeles: "本站（洛杉矶）",
+  srv_nuremberg: "本站（纽伦堡）",
   gp_partial: "{n} 个探针未在限时内返回。", rg_noanswer: "未在限时内返回",
   quota_short: "额度不足：本次需要 {cost} 个地区次，当前还剩 {left} 个，约 {min} 分钟后恢复",
 };

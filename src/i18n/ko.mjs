@@ -220,6 +220,7 @@ lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_ligh
   home_countries: "국가/지역별 테스트",
   rg_assigning: "테스트 프로브를 배정하는 중…",
   srv_tokyo: "이 사이트(도쿄)", srv_shanghai: "이 사이트(상하이)", srv_los_angeles: "이 사이트(로스앤젤레스)",
+  srv_nuremberg: "이 사이트(뉘른베르크)",
   gp_partial: "프로브 {n}개가 제한 시간 안에 응답하지 않았습니다.", rg_noanswer: "시간 안에 응답 없음",
   quota_short: "한도가 부족해요: 이번 확인에 {cost}개 지역이 필요하고 {left}개 남았어요. 약 {min}분 후 회복돼요",
 };

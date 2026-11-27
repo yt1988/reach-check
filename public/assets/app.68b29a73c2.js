@@ -191,9 +191,10 @@
   (() => {
     const GP = "https://api.globalping.io/v1";
     const CITIES = {
+      lax: { cc: "US", label: "srv_los_angeles" },
+      nue: { cc: "DE", label: "srv_nuremberg" },
       tyo: { cc: "JP", label: "srv_tokyo" },
-      sha: { cc: "CN", label: "srv_shanghai" },
-      lax: { cc: "US", label: "srv_los_angeles" }
+      sha: { cc: "CN", label: "srv_shanghai" }
     };
     const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
       id: "srv" + i,
