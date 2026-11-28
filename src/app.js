@@ -17,12 +17,11 @@ const CITIES = {
   tyo: { cc: "JP", label: "srv_tokyo" },
   sha: { cc: "CN", label: "srv_shanghai" },
 };
-const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
-  id: "srv" + i,
-  api: s.url.replace(/\/+$/, "") + "/v1/probe",
+const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => {
   // an entry without a city is from an older injection: two of them were Tokyo then Shanghai
-  ...(CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }),
-}));
+  const city = s.city || (i === 0 ? "tyo" : "sha");
+  return { id: "srv" + i, api: s.url.replace(/\/+$/, "") + "/v1/probe", city, ...(CITIES[city] || { cc: "", label: "" }) };
+});
 const FIRST = SERVERS[0] && SERVERS[0].id;
 // the i18n key each city's name lives under
 const CITY_NAME = { lax: "LosAngeles", nue: "Nuremberg", tyo: "Tokyo", sha: "Shanghai" };
@@ -30,6 +29,8 @@ const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").text
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const t = (k, v) => { let s = L[k] ?? k; if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+// the city a server's answer comes from, named in the verdict ("From Los Angeles, in 12 ms")
+const cityName = srv => t("city_" + (CITY_NAME[srv?.city] || "Tokyo"));
 // a sentence with a number in it: key_one, key_few… where the language has that form for n, else the key itself
 const PR = new Intl.PluralRules(D.lang), pk = (k, n) => `${k}_${PR.select(n)}` in L ? `${k}_${PR.select(n)}` : k;
 // advice strings: **bold** and `code`, with the values escaped before they go in
@@ -588,7 +589,7 @@ function srvRow(srv, s) {
       }
       const ips = v.ip ? [v.ip] : (v.addrs || []).map(a => a.ip);
       // the address the service resolved to, named by the city that saw it
-      if (ips.length) p.push(`<p class="m">${esc(t("city_" + CITY_NAME[srv.city] || "city_Tokyo"))} → ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " · " + esc(t("sv_cached")) : ""}</p>`);
+      if (ips.length) p.push(`<p class="m">${esc(cityName(srv))} → ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " · " + esc(t("sv_cached")) : ""}</p>`);
       more = `<div class="rg-more">${p.join("")}</div>`;
     }
   }
@@ -716,7 +717,7 @@ function verdict(s, rows) {
   if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
   // What our server read up close: which service answers, and exactly what's wrong with the certificate
   const sv = s.srvs?.[FIRST], pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
-  if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
+  if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
   if (pb === "chain") steps.push(tm("sv_step_chain"));
   else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
   else if (pb === "self") steps.push(tm("sv_step_self"));
@@ -742,11 +743,11 @@ function privVerdict(s, ip) {
 
 // UDP: what our server found is the whole answer
 function udpVerdict(s) {
-  const v = s.srvs?.[FIRST], port = s.t.port;
+  const v = s.srvs?.[FIRST], port = s.t.port, city = cityName(SERVERS[0]);
   if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
-  if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
-  if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
-  if (v.k === "silent") return { key: "u_silent", cls: "warn", title: t("u_silent"), sub: t("u_silent_sub", { port }), steps: [tm("u_silent_1"), tm("u_silent_2"), tm("u_silent_3")] };
+  if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms, city }), steps: [tm("u_ok_1")] };
+  if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port, city }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
+  if (v.k === "silent") return { key: "u_silent", cls: "warn", title: t("u_silent"), sub: t("u_silent_sub", { port, city }), steps: [tm("u_silent_1"), tm("u_silent_2"), tm("u_silent_3")] };
   if (v.k === "private") return privVerdict(s, srvPrivIp(v));
   if (v.k === "dns") return { key: "n_dns", cls: "bad", title: t("n_dns"), sub: "", steps: [tm("fd_1"), tm("fd_2"), tm("fd_3")] };
   return { key: "u_none", cls: "warn", title: t("u_none"), sub: srvStatus(v, s)[2] };

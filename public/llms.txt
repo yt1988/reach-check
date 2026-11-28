@@ -7,8 +7,8 @@
 > first-byte and download times per region. Each result is classed as a web answer, open but not HTTP, refused,
 > timed out, DNS failure, reset, TLS failure or no response, and the page names the likely cause and next steps
 > (port forwarding, firewalls, CGNAT, ports blocked by home broadband, Cloudflare's proxy ports, certificates,
-> blocking in mainland China). The browser also times two HTTPS requests itself, and 1ms.dog's server in Tokyo connects
-> once: it reads the service's greeting (SSH, SMTP…) or its TLS certificate chain, and checks UDP ports with a standard
+> blocking in mainland China). The browser also times two HTTPS requests itself, and 1ms.dog's servers in Los Angeles, Nuremberg, Tokyo
+> and Shanghai connect once each: they read the service's greeting (SSH, SMTP…) or its TLS certificate chain, and checks UDP ports with a standard
 > hello (QUIC, DNS, Minecraft Bedrock, Steam). It keeps no log; private addresses are never checked.
 
 - Page: https://reach.1ms.dog/ (also /zh-cn/, /zh-tw/, /ja/, /ko/, /es/, /fr/, /de/, /pt/, /ru/)

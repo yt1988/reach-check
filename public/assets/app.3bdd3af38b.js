@@ -196,12 +196,10 @@
       tyo: { cc: "JP", label: "srv_tokyo" },
       sha: { cc: "CN", label: "srv_shanghai" }
     };
-    const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => ({
-      id: "srv" + i,
-      api: s.url.replace(/\/+$/, "") + "/v1/probe",
-      // an entry without a city is from an older injection: two of them were Tokyo then Shanghai
-      ...CITIES[s.city] || (s.city ? {} : CITIES[i === 0 ? "tyo" : "sha"]) || { cc: "", label: "" }
-    }));
+    const SERVERS = servers(endpoints("ms-servers").reach).map((s, i) => {
+      const city = s.city || (i === 0 ? "tyo" : "sha");
+      return { id: "srv" + i, api: s.url.replace(/\/+$/, "") + "/v1/probe", city, ...CITIES[city] || { cc: "", label: "" } };
+    });
     const FIRST = SERVERS[0] && SERVERS[0].id;
     const CITY_NAME = { lax: "LosAngeles", nue: "Nuremberg", tyo: "Tokyo", sha: "Shanghai" };
     const L = window.L1MS || {}, D = JSON.parse(document.getElementById("data").textContent);
@@ -213,6 +211,7 @@
       if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]);
       return s;
     };
+    const cityName = (srv) => t("city_" + (CITY_NAME[srv == null ? void 0 : srv.city] || "Tokyo"));
     const PR = new Intl.PluralRules(D.lang), pk = (k, n) => `${k}_${PR.select(n)}` in L ? `${k}_${PR.select(n)}` : k;
     const tm = (k, v) => {
       const e = {};
@@ -1016,7 +1015,7 @@
             if ((_b = x.chain) == null ? void 0 : _b.length) p.push(`<ol class="chain">${x.chain.map((c) => `<li>${esc(c.subject)} <span class="m">\xB7 ${esc(t("sv_by", { issuer: c.issuer }))} \xB7 ${esc(t("sv_until", { date: c.until }))}</span></li>`).join("")}</ol>`);
           }
           const ips = v.ip ? [v.ip] : (v.addrs || []).map((a) => a.ip);
-          if (ips.length) p.push(`<p class="m">${esc(t("city_" + CITY_NAME[srv.city] || "city_Tokyo"))} \u2192 ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " \xB7 " + esc(t("sv_cached")) : ""}</p>`);
+          if (ips.length) p.push(`<p class="m">${esc(cityName(srv))} \u2192 ${ips.map(ipVal).join(esc(t("sep")))}${v.cached ? " \xB7 " + esc(t("sv_cached")) : ""}</p>`);
           more = `<div class="rg-more">${p.join("")}</div>`;
         }
       }
@@ -1144,7 +1143,7 @@
       });
       if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
       const sv = (_c = s.srvs) == null ? void 0 : _c[FIRST], pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
-      if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner }));
+      if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
       if (pb === "chain") steps.push(tm("sv_step_chain"));
       else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
       else if (pb === "self") steps.push(tm("sv_step_self"));
@@ -1179,11 +1178,11 @@
     }
     function udpVerdict(s) {
       var _a;
-      const v = (_a = s.srvs) == null ? void 0 : _a[FIRST], port = s.t.port;
+      const v = (_a = s.srvs) == null ? void 0 : _a[FIRST], port = s.t.port, city = cityName(SERVERS[0]);
       if (!v) return { title: t("v_wait"), sub: t("v_wait_srv") };
-      if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms }), steps: [tm("u_ok_1")] };
-      if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
-      if (v.k === "silent") return { key: "u_silent", cls: "warn", title: t("u_silent"), sub: t("u_silent_sub", { port }), steps: [tm("u_silent_1"), tm("u_silent_2"), tm("u_silent_3")] };
+      if (v.k === "answered") return { key: "u_ok", cls: "ok", title: t("u_ok"), sub: t("u_ok_sub", { ms: v.ms, city }), steps: [tm("u_ok_1")] };
+      if (v.k === "closed") return { key: "u_closed", cls: "bad", title: t("u_closed"), sub: t("u_closed_sub", { port, city }), steps: [tm("u_closed_1", { port }), tm("u_closed_2")] };
+      if (v.k === "silent") return { key: "u_silent", cls: "warn", title: t("u_silent"), sub: t("u_silent_sub", { port, city }), steps: [tm("u_silent_1"), tm("u_silent_2"), tm("u_silent_3")] };
       if (v.k === "private") return privVerdict(s, srvPrivIp(v));
       if (v.k === "dns") return { key: "n_dns", cls: "bad", title: t("n_dns"), sub: "", steps: [tm("fd_1"), tm("fd_2"), tm("fd_3")] };
       return { key: "u_none", cls: "warn", title: t("u_none"), sub: srvStatus(v, s)[2] };
