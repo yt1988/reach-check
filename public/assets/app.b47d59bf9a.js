@@ -995,14 +995,16 @@
       var _a;
       return s.t.isIp || !v ? [] : ((_a = v.addrs) == null ? void 0 : _a.length) ? v.addrs.map((a) => a.ip) : v.ip ? [v.ip] : [];
     };
-    const ASN_API = (() => {
+    const ASN = (() => {
       const m = document.querySelector('meta[name="asn"]');
       try {
-        return m && m.content ? new URL(m.content).origin + "/api/ip/" : "";
+        return m && m.content ? new URL(m.content).origin : "";
       } catch {
         return "";
       }
     })();
+    const ASN_API = ASN ? ASN + "/api/ip/" : "";
+    const SEP = " \xB7 ";
     const asnSeen = /* @__PURE__ */ new Map();
     let tinfoOpen = false;
     function startAsn(ip) {
@@ -1028,9 +1030,9 @@
         const d = asnSeen.get(ip);
         if (!d) startAsn(ip);
         const j = d == null ? void 0 : d.done, org = j ? j.name || j.holder || "" : "";
-        const place2 = j && j.cc ? `${flagImg(j.cc)}${esc(regionOf(j.cc))} \xB7 ` : "";
-        const who = `<span class="tinfo-w">${j ? `${place2}AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : ""}</span>`;
-        return `<p class="tinfo-i">${who}<span class="mono">${ipVal(ip)}</span></p>`;
+        const net = j ? `AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : "";
+        const who = !net ? "" : `${j.cc ? flagImg(j.cc) + esc(regionOf(j.cc)) + SEP : ""}${ASN ? `<a class="dv" href="${esc(`${ASN}/AS${j.asn}`)}" target="_blank" rel="noopener">${net}</a>` : net}`;
+        return `<p class="tinfo-i">${who}<span class="mono">${who ? SEP : ""}${ipVal(ip)}</span></p>`;
       });
       if (ips.length > 3) rows.push(`<button type="button" class="link tinfo-more" aria-expanded="${tinfoOpen}">${esc(t(tinfoOpen ? "addrs_less" : "addrs_more", { n: ips.length - 3 }))}</button>`);
       box.innerHTML = `<p class="tinfo-h m">${esc(t("addrs_h"))}</p>${rows.join("")}`;

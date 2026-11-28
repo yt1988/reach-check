@@ -41,6 +41,9 @@ test("the address panel's lookup comes from the shell's ASN tool, never a host o
   assert.match(app, /querySelector\('meta\[name="asn"\]'\)/);
   assert.match(app, /\/api\/ip\//);
   assert.ok(!app.includes("asn.1ms.dog"), "ASN Lookup's host must come from <meta name=\"asn\">");
+  // the network links to ASN Lookup's own page for the number; its /as/ path only redirects there
+  assert.match(app, /\$\{ASN\}\/AS\$\{j\.asn\}/);
+  assert.ok(!/\/as\/\$\{/.test(app), "ASN links must use /AS<number>, not the redirecting /as/<number>/");
 });
 
 test("the fields show what will be checked as soon as the target is read", () => {

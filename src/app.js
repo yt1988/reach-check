@@ -568,10 +568,12 @@ const srvIps = (s, v) => s.t.isIp || !v ? [] : v.addrs?.length ? v.addrs.map(a =
 // ---------- the target's addresses, with whose they are ----------
 // Each address is looked up once at ASN Lookup's API (its origin from the shell's <meta name="asn">, as its links are),
 // and kept: the run's addresses are the same ones its rows show. A failed lookup leaves the address alone.
-const ASN_API = (() => {
+const ASN = (() => {
   const m = document.querySelector('meta[name="asn"]');
-  try { return m && m.content ? new URL(m.content).origin + "/api/ip/" : ""; } catch { return ""; }
+  try { return m && m.content ? new URL(m.content).origin : ""; } catch { return ""; }
 })();
+const ASN_API = ASN ? ASN + "/api/ip/" : "";
+const SEP = " · ";               // parts the country, the network and the address in the panel, whatever the language
 const asnSeen = new Map();       // ip → { done: data | null }, or { p: true } while the lookup runs
 let tinfoOpen = false;
 function startAsn(ip) {
@@ -590,10 +592,12 @@ function drawTarget() {
     const d = asnSeen.get(ip);
     if (!d) startAsn(ip);
     const j = d?.done, org = j ? j.name || j.holder || "" : "";
-    const place = j && j.cc ? `${flagImg(j.cc)}${esc(regionOf(j.cc))} · ` : "";
-    // the cell stays even when the lookup knows nothing, so every address sits in the same column
-    const who = `<span class="tinfo-w">${j ? `${place}AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : ""}</span>`;
-    return `<p class="tinfo-i">${who}<span class="mono">${ipVal(ip)}</span></p>`;
+    // one line: flag, country, network, then the address, all read together. "AS13335 Cloudflare" is one link to ASN
+    // Lookup's own page for the number (not its /as/ path, which only redirects there); the address is its page for the
+    // IP. An address nobody knows is the address alone, unlinked.
+    const net = j ? `AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : "";
+    const who = !net ? "" : `${j.cc ? flagImg(j.cc) + esc(regionOf(j.cc)) + SEP : ""}${ASN ? `<a class="dv" href="${esc(`${ASN}/AS${j.asn}`)}" target="_blank" rel="noopener">${net}</a>` : net}`;
+    return `<p class="tinfo-i">${who}<span class="mono">${who ? SEP : ""}${ipVal(ip)}</span></p>`;
   });
   if (ips.length > 3) rows.push(`<button type="button" class="link tinfo-more" aria-expanded="${tinfoOpen}">${esc(t(tinfoOpen ? "addrs_less" : "addrs_more", { n: ips.length - 3 }))}</button>`);
   box.innerHTML = `<p class="tinfo-h m">${esc(t("addrs_h"))}</p>${rows.join("")}`;

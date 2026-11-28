@@ -89,10 +89,12 @@ code does; this says why, so that nobody re-runs an experiment that already fail
   `p` as the port.
 - **The addresses behind a name are the ones the run measured**: the probes' `resolvedAddress` and our servers'
   `addrs`, never a second resolver, so the panel under the table's heading names exactly the addresses that were
-  tried, and every row shows the address it used. Each address is looked up once at ASN Lookup's API (its origin from
-  the shell's `<meta name="asn">`, as its links are) for the country and network; a lookup that fails or knows nothing
-  leaves the address alone, and more than three are folded behind "N more". An IP target has no such lookups of its
-  own shown per row: the target is the address.
+  tried, and every row shows the address it used. Each is read on one line — flag, country, network, address, parted by
+  the same dot — with the network a link to ASN Lookup's `/AS<number>` (its own page for the number; `/as/<number>/`
+  only redirects there) and the address a link to `/ip/<ip>`. Both origins come from the shell's `<meta name="asn">`,
+  as the lookup does. A long network name wraps and the address goes on from there, never breaking itself; a lookup
+  that fails or knows nothing leaves the address alone, unlinked, and more than three are folded behind "N more". An
+  IP target has no such lookups of its own shown per row: the target is the address.
 - **Globalping's allowance is checked before a run**: `GET /v1/limits` gives what's left, and one outside check costs
   16. With less than that it isn't submitted at all (a run that starts and is cut off leaves a table of empty rows);
   this browser and our servers run alone, the legend, source and progress are hidden, and one line says for how long.

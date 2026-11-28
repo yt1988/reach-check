@@ -310,11 +310,11 @@ select option { background-color: var(--panel); color: var(--fg); }
 .tinfo { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border-radius: 8px; background: var(--soft); font-size: 12.5px; }
 .tinfo[hidden] { display: none; }
 .tinfo-h { margin: 0 0 1px; font-size: 11.5px; }
-.tinfo-i { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 12px; margin: 0; }
-/* inline, not flex, so the flag is in the label's own line box: an address nobody knows has no label at all, and its
-   line stays exactly as tall as the labelled ones (a flex label was 2px taller and nudged that address up) */
-.tinfo-w { min-width: 0; color: var(--muted); overflow-wrap: anywhere; }
-.tinfo-w .rf { width: 16px; height: 12px; border-radius: 2px; vertical-align: -1.5px; margin-right: 6px; }
+/* one address per line, read in one go: flag, country and network, then the address. A long network name wraps and the
+   address goes on from there; the address itself never breaks */
+.tinfo-i { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+.tinfo-i .rf { width: 16px; height: 12px; border-radius: 2px; vertical-align: -1.5px; margin-right: 5px; }
+.tinfo-i .mono { white-space: nowrap; }
 .tinfo-more { align-self: start; text-align: left; font-size: 12.5px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -385,7 +385,6 @@ select option { background-color: var(--panel); color: var(--fg); }
   .fact { flex-direction: row; align-items: baseline; gap: 12px; padding: 0; border: 0; }
   .fl { flex: 0 0 72px; }
   .sec-h .src { order: 3; flex-basis: 100%; }
-  .tinfo-i { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .v-sub { padding-left: 0; }
 }
 
