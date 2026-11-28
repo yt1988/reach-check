@@ -61,7 +61,7 @@ const ipVal = ip => { const u = tool("asn"); return u && ["public", "cf"].includ
 // repeat our answer: a UDP check has no region rows, and a private or CGNAT address is refused by every probe there too
 // (as ASN Lookup links skip private IPs). The host alone: Ping takes no port or path.
 function showPing(s) {
-  const u = s.udp || (s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host))) ? "" : tool("ping"), el = $("pingLink");
+  const u = s.udp || s.gpSkip || (s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host))) ? "" : tool("ping"), el = $("pingLink");
   el.hidden = !u;
   el.innerHTML = u ? `<a class="xl" href="${esc(u)}?t=${encodeURIComponent(s.t.host)}" target="_blank" rel="noopener">${esc(t("lk_ping"))}${EXT}</a>` : "";
 }
@@ -163,7 +163,10 @@ const POST_LIMIT = 8000;     // creating a Globalping measurement
 
 const ip4n = ip => ip.split(".").reduce((a, b) => a * 256 + +b, 0);
 const isV4 = s => /^\d{1,3}(\.\d{1,3}){3}$/.test(s);
-const isV6 = s => s.includes(":") && /^[0-9a-f:.]+$/i.test(s);
+const isV6 = s => {
+  if (!s.includes(":") || !/^[0-9a-f:.]+$/i.test(s)) return false;
+  try { new URL("http://[" + s + "]/"); return true; } catch { return false; }     // "1.2.3.4:22" is a host and port, not IPv6
+};
 const inCidr = (ip, cidr) => { const [n, b] = cidr.split("/"); const m = 2 ** (32 - b); return Math.floor(ip4n(ip) / m) === Math.floor(ip4n(n) / m); };
 function ipKind(ip) {
   if (isV4(ip)) {
@@ -182,25 +185,43 @@ function ipKind(ip) {
   return "";
 }
 
-// "nas.example.com", "nas.example.com:5001", "https://x.com/path", "[2001:db8::1]:8443", "1.2.3.4"
-function parseTarget(raw, portField) {
-  let s = raw.trim(), scheme = "", path = "/", host = "", port = 0;
-  const m = s.match(/^([a-z]+):\/\//i);
+// One target, however it is pasted: "nas.example.com", "nas.example.com:5001", "https://x.com:8443/path",
+// "[2001:db8::1]:8443", "1.2.3.4". Only the host and port are checked, so a path, query or fragment is dropped.
+// A port written in the input is marked explicit: the page puts it in the port field, where it stays editable.
+// A scheme without a port has none here either; the field's own value is used, then https 443 / http 80.
+// Anything else is refused rather than guessed at.
+function parseTarget(raw) {
+  let s = raw.trim(), scheme = "", host = "", port = 0, explicit = false;
+  const m = s.match(/^([a-z][a-z0-9+.-]*):\/\//i);
   if (m) {
     scheme = m[1].toLowerCase();
-    try { const u = new URL(s); host = u.hostname.replace(/^\[|\]$/g, ""); port = +u.port || (scheme === "https" ? 443 : 80); path = u.pathname + u.search; }
-    catch { return null; }
+    if (scheme !== "http" && scheme !== "https") return null;
+    let u; try { u = new URL(s); } catch { return null; }
+    if (!u.hostname) return null;
+    host = u.hostname.replace(/^\[|\]$/g, "");
+    // URL drops a default port (:443 for https), so read the port from what was written
+    const auth = s.slice(m[0].length).split(/[/?#]/, 1)[0].split("@").pop();
+    const pm = auth.match(/^\[[^\]]+\]:(\d+)$/) || auth.match(/^[^:\[\]]+:(\d+)$/);
+    if (pm) { port = +pm[1]; explicit = true; }
+    else if (u.port) { port = +u.port; explicit = true; }
   } else {
-    s = s.replace(/\/.*$/, p => { path = p; return ""; });
+    s = s.replace(/[/?#].*$/, "");       // a path, query or fragment is not part of what is checked
     const b = s.match(/^\[([^\]]+)\](?::(\d+))?$/);
-    if (b) { host = b[1]; port = +b[2] || 0; }
+    if (b) { host = b[1]; if (b[2] != null) { port = +b[2]; explicit = true; } }
     else if (isV6(s)) host = s;
-    else { const [h, p] = s.split(":"); host = h; port = +p || 0; }
+    else {
+      const i = s.lastIndexOf(":");
+      if (i >= 0) {
+        const p = s.slice(i + 1);
+        if (!/^\d{1,5}$/.test(p)) return null;
+        host = s.slice(0, i); port = +p; explicit = true;
+      } else host = s;
+    }
   }
-  if (+portField) port = +portField;
+  if (explicit && (port < 1 || port > 65535)) return null;
   host = host.toLowerCase();
   if (!host || !(isV4(host) || isV6(host) || /^[a-z0-9-]+(\.[a-z0-9-]+)+\.?$/i.test(host))) return null;
-  return { host, port, path: path || "/", scheme, isIp: isV4(host) || isV6(host) };
+  return { host, port, explicit, path: "/", scheme, isIp: isV4(host) || isV6(host) };
 }
 
 // ---------- page state ----------
@@ -253,6 +274,9 @@ $("port").addEventListener("keydown", e => {
 $("portList").addEventListener("mousedown", e => { const li = e.target.closest("li[data-port]"); if (li) { e.preventDefault(); pickPort(li.dataset.port); } });
 document.addEventListener("pointerdown", e => { if (!e.target.closest(".combo")) portOpen(false); });
 
+// The outside check's allowance, as last read: the check still runs when it is short, from our servers alone
+// (see start() and gp_skip), so the button is never disabled for it.
+let quota = null;
 async function loadQuota() {
   try {
     const j = await (await fetch(GP + "/limits")).json();
@@ -268,12 +292,11 @@ function nudgeQuota() {
 }
 $("go").addEventListener("click", e => { if ($("go").getAttribute("aria-disabled") === "true") { e.preventDefault(); nudgeQuota(); } });
 function showQuota(left, reset) {
-  if (state) state.quota = { left, reset };
+  quota = { left, reset };
   const cost = REGIONS.length;
   const min = Math.ceil(reset / 60);
   $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost })
     : left > 0 ? t("quota_short", { cost, left, min }) : t("quota_out", { min });
-  $("go").setAttribute("aria-disabled", left < cost ? "true" : "false");
 }
 
 // "Ask a friend": copies a link that runs the same check in the friend's browser
@@ -291,17 +314,25 @@ $("f").addEventListener("submit", e => { e.preventDefault(); start(); });
 
 function start() {
   const raw = $("target").value.trim();
-  const tg = parseTarget(raw, $("port").value);
+  const boxed = $("port").value.trim();
+  const tg = parseTarget(raw);
   if (!tg) { $("portNote").textContent = t("bad_target"); return; }
+  // a port the target names wins, and goes into the field where it can be changed; otherwise the field is the port
+  if (!tg.explicit && boxed && !(/^\d{1,5}$/.test(boxed) && +boxed >= 1 && +boxed <= 65535)) { $("portNote").textContent = t("bad_port"); return; }
+  if (tg.explicit) { $("port").value = tg.port; $("port").dispatchEvent(new Event("input")); }
   tg.raw = raw;
-  if (!tg.port) tg.port = preset?.port || 443;
+  if (!tg.port) tg.port = +boxed || (tg.scheme === "https" ? 443 : tg.scheme === "http" ? 80 : preset?.port || 443);
+  $("portNote").textContent = preset ? presetName(preset) : "";
   const udp = udpMode();
   const pr = PRESETS.find(p => p.port === tg.port && !p.udp);
   const proto = tg.scheme === "https" ? "HTTPS" : tg.scheme === "http" ? "HTTP" : pr ? pr.proto : [443, 8443, 5001].includes(tg.port) ? "HTTPS" : "HTTP";
   const web = tg.scheme ? true : pr ? pr.web : true;
   const id = ++run;
+  // the outside check needs REGIONS.length checks; with less than that left, don't spend them: our servers run alone
+  const gpSkip = !udp && SERVERS.length && quota && quota.left < REGIONS.length ? { min: Math.max(1, Math.ceil(quota.reset / 60)) } : null;
+  tinfoOpen = false;
   state = { id, t: tg, proto, web, whatKey: pr?.what || "", home: !!pr?.home, plainWeb: proto === "HTTP" && web && (!!pr || tg.scheme === "http"),
-    ipv: $("ipv").value, rows: REGIONS.map(() => null), gpDone: false, local: null, srvs: {}, udp, quota: state?.quota, ts: Date.now() };
+    ipv: $("ipv").value, rows: gpSkip ? [] : REGIONS.map(() => null), gpDone: false, gpSkip, local: null, srvs: {}, udp, ts: Date.now() };
   if (recv) { recv.remove(); recv = null; }
 
   const q = `?t=${encodeURIComponent(raw)}&p=${tg.port}${udp ? "&u=1" : ""}`;
@@ -313,8 +344,13 @@ function start() {
   $("shareBtn").hidden = true; $("inviteBtn").hidden = udp;
   drawRegions(); drawVerdict(); showPing(state);
 
-  const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
-  Promise.allSettled(jobs).then(() => { if (state.id === id) { $("go").setAttribute("aria-disabled", "false"); drawVerdict(); $("shareBtn").hidden = udp; if (!udp) loadQuota(); } });
+  const jobs = udp ? [runServer(state)] : gpSkip ? [runLocal(state), runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
+  Promise.allSettled(jobs).then(() => {
+    if (state.id !== id) return;
+    if (gpSkip) state.gpDone = true;
+    $("go").setAttribute("aria-disabled", "false"); drawRegions(); drawVerdict(); $("shareBtn").hidden = udp;
+    if (!udp) loadQuota();
+  });
 }
 
 // ---------- up close: our server in Tokyo ----------
@@ -483,6 +519,56 @@ async function runLocal(s) {
 
 // The addresses the probes connected to: what DNS gave them (or the IP that was typed)
 const dnsIps = s => [...new Set(s.rows.map(r => r?.res?.resolvedAddress).filter(Boolean))];
+// Every address this run actually reached, deduped and in the order seen: an IP input is one; a domain's come from
+// the probes and from our servers, never from a lookup of our own.
+const runIps = s => {
+  const out = [], add = ip => { if (ip && !out.includes(ip)) out.push(ip); };
+  if (s.t.isIp) add(s.t.host);
+  for (const r of s.rows) add(r?.res?.resolvedAddress);
+  for (const v of Object.values(s.srvs || {})) for (const a of v?.addrs || []) add(a.ip);
+  return out;
+};
+// The address a line reached, in its own small line under the name: one per probe, every address a server resolved.
+// An IP target reached the typed address on every line, so its rows show none.
+const ipLine = ips => ips.length ? `<span class="rg-ip mono">${ips.map(ipVal).join(esc(t("sep")))}</span>` : "";
+const probeIps = (s, i) => s.t.isIp ? [] : s.rows[i]?.res?.resolvedAddress ? [s.rows[i].res.resolvedAddress] : [];
+const srvIps = (s, v) => s.t.isIp || !v ? [] : v.addrs?.length ? v.addrs.map(a => a.ip) : v.ip ? [v.ip] : [];
+
+// ---------- the target's addresses, with whose they are ----------
+// Each address is looked up once at ASN Lookup's API (its origin from the shell's <meta name="asn">, as its links are),
+// and kept: the run's addresses are the same ones its rows show. A failed lookup leaves the address alone.
+const ASN_API = (() => {
+  const m = document.querySelector('meta[name="asn"]');
+  try { return m && m.content ? new URL(m.content).origin + "/api/ip/" : ""; } catch { return ""; }
+})();
+const asnSeen = new Map();       // ip → { done: data | null }, or { p: true } while the lookup runs
+let tinfoOpen = false;
+function startAsn(ip) {
+  if (!ASN_API || asnSeen.has(ip) || !["public", "cf"].includes(ipKind(ip))) return;
+  asnSeen.set(ip, { p: true });
+  const done = j => { asnSeen.set(ip, { done: j && j.asn ? j : null }); if (state) drawTarget(); };
+  fetch(ASN_API + encodeURIComponent(ip), { credentials: "omit" }).then(r => r.ok ? r.json() : null).then(done, () => done(null));
+}
+function drawTarget() {
+  const s = state, box = $("tInfo");
+  if (!box || !s) return;
+  const ips = runIps(s);
+  if (!ips.length) { box.hidden = true; box.innerHTML = ""; return; }
+  const shown = tinfoOpen ? ips : ips.slice(0, 3);
+  const rows = shown.map(ip => {
+    const d = asnSeen.get(ip);
+    if (!d) startAsn(ip);
+    const j = d?.done, org = j ? j.name || j.holder || "" : "";
+    const place = j && j.cc ? `${flagImg(j.cc)}${esc(regionOf(j.cc))} · ` : "";
+    // the cell stays even when the lookup knows nothing, so every address sits in the same column
+    const who = `<span class="tinfo-w">${j ? `${place}AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : ""}</span>`;
+    return `<p class="tinfo-i">${who}<span class="mono">${ipVal(ip)}</span></p>`;
+  });
+  if (ips.length > 3) rows.push(`<button type="button" class="link tinfo-more" aria-expanded="${tinfoOpen}">${esc(t(tinfoOpen ? "addrs_less" : "addrs_more", { n: ips.length - 3 }))}</button>`);
+  box.innerHTML = `<p class="tinfo-h m">${esc(t("addrs_h"))}</p>${rows.join("")}`;
+  box.hidden = false;
+}
+$("tInfo").addEventListener("click", e => { if (e.target.closest(".tinfo-more")) { tinfoOpen = !tinfoOpen; drawTarget(); } });
 
 // ---------- drawing ----------
 
@@ -505,11 +591,23 @@ function barOf(segs) {
 // and in the row's details
 const dot = (cls, text, busy) => `<span class="sdot ${cls}${busy ? " blink" : ""}" role="img" title="${esc(text)}" aria-label="${esc(text)}"></span>`;
 
-function drawRegions() {
+function drawRegions() { drawRows(); drawTarget(); }
+function drawRows() {
   const s = state; let html = "", g = "", first = true;
   $("table").classList.toggle("udp", !!s.udp);
+  $("table").classList.toggle("skip", !!s.gpSkip);
   $("tblH").textContent = t(s.udp ? "h_srv" : "h_regions");
   if (s.udp) { $("regions").innerHTML = srvRows(s); sizeBars(); $("gpProgress").textContent = ""; $("gpNote").hidden = true; return; }
+  // the outside check's allowance was too short, so this run is our servers and this browser only: no region rows,
+  // no probe legend or source, just the one line that says why
+  if (s.gpSkip) {
+    $("regions").innerHTML = localRow(s) + srvRows(s);
+    $("gpProgress").textContent = "";
+    $("gpNote").hidden = false;
+    $("gpNote").innerHTML = `<span class="m">${esc(t("gp_skip", { min: s.gpSkip.min }))}</span>`;
+    sizeBars();
+    return;
+  }
   // Bars for every probe that reached the port; one that stopped earlier is hatched and doesn't set the scale
   const span = r => r.res.status === "finished" ? r.res.timings.total : (r.res.timings.dns || 0) + r.res.timings.tcp + (r.res.timings.tls || 0);
   const drawn = r => r?.c && REACHED.has(r.c.k) && r.res.timings?.tcp != null;
@@ -518,7 +616,7 @@ function drawRegions() {
   // One line per region: name, a short status, the time bar, the total. A click opens the details: the full status,
   // the probe's network, the address it reached, each step's time, and trace route.
   REGIONS.forEach((x, i) => {
-    if (first) { first = false; html += localRow(s) + (s.shared && !Object.values(s.srvs||{}).some(v => v && v.k !== "down") ? "" : srvRows(s)); }
+    if (first) { first = false; html += localRow(s) + srvRows(s); }
     if (x.g !== g) { g = x.g; html += `<div class="grp">${esc(t("g_" + g))}</div>`; }
     const row = s.rows[i];
     let pl = dot("m", t("r_queue"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "", hot = false;
@@ -547,7 +645,7 @@ function drawRegions() {
     }
     const can = !!row?.c;
     html += `<div class="rg${row?.open ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}>` +
-      `<span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
+      `<span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}${ipLine(probeIps(s, i))}</span>${pl}${bar}${tot}${more}</div>`;
   });
   $("regions").innerHTML = html;
   sizeBars();
@@ -565,7 +663,12 @@ const chev = can => can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" 
 // Its details: the sentence, what the service said, the TLS handshake and certificate chain, the address it tried.
 // Our servers are one group: the heading goes above them once, and every server keeps its line from the first moment,
 // so the table's height never changes while the answers come in.
-const srvRows = s => (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + SERVERS.map(srv => srvRow(srv, s)).join("");
+const srvRows = s => {
+  // a shared result holds the servers that answered, not the ones that weren't asked
+  const list = SERVERS.filter(srv => !s.shared || s.srvs[srv.id]);
+  if (!list.length) return "";
+  return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + list.map(srv => srvRow(srv, s)).join("");
+};
 function srvRow(srv, s) {
   const v = s.srvs[srv.id];
   let pl = dot("m", t("r_testing"), true), bar = `<div class="bar"></div>`, tot = `<span class="rg-tot wait">–</span>`, more = "";
@@ -596,7 +699,7 @@ function srvRow(srv, s) {
   // a server that has not answered yet is still a known row: it is drawn, waiting, rather than appearing later
   const can = !!v && v.k !== "down";
   return `<div class="rg${s.srvOpen && can ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}>` +
-    `<span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
+    `<span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}${ipLine(srvIps(s, v))}</span>${pl}${bar}${tot}${more}</div>`;
 }
 
 // This browser is the table's first row; drawing it is drawing the table
@@ -648,9 +751,14 @@ function drawVerdict() {
   const cnOk = cn.filter(r => good(r.c, s)).length, l = s.local;
   const ms = l?.k === "ok" || l?.k === "answered" ? ` <span class="m">· ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
   const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
+  // with the outside check skipped, the first number is our servers' answer, not the regions'
+  const svs = SERVERS.map(srv => s.srvs?.[srv.id]).filter(v => v && !["limit", "down"].includes(v.k));
+  const svOk = svs.filter(v => ["ok", "warn"].includes(srvStatus(v, s)[0])).length;
   $("kpis").hidden = !!s.udp;
   $("kpis").innerHTML =
-    fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "") +
+    (s.gpSkip
+      ? fact("fa_srv", done ? t(pk("fa_ok", svs.length), { ok: svOk, n: svs.length }) : "…", done ? tone(svOk, svs.length) : "")
+      : fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "…", done ? tone(ok.length, rows.length) : "")) +
     fact("fa_you", l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "…",
       l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "", ms);
   const steps = v.steps || [];
@@ -667,6 +775,7 @@ const median = a => a.length ? a.slice().sort((x, y) => x - y)[Math.floor(a.leng
 
 function verdict(s, rows) {
   if (s.udp) return udpVerdict(s);
+  if (s.gpSkip) return srvOnlyVerdict(s);
   const total = REGIONS.length, port = s.t.port;
   const ips = dnsIps(s), allIps = s.t.isIp ? [s.t.host] : ips;
   const idx = r => s.rows.indexOf(r), rname = r => nameOf(REGIONS[idx(r)]);
@@ -716,11 +825,7 @@ function verdict(s, rows) {
   const slow = rows.filter(r => r.res.timings?.tcp > 1000);
   if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
   // What our server read up close: which service answers, and exactly what's wrong with the certificate
-  const sv = s.srvs?.[FIRST], pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
-  if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
-  if (pb === "chain") steps.push(tm("sv_step_chain"));
-  else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
-  else if (pb === "self") steps.push(tm("sv_step_self"));
+  const sv = s.srvs?.[FIRST], pb = srvSteps(s, steps);
   const cert = rows.find(r => r.res.tls && r.res.tls.authorized === false);
   if (cert && !["chain", "name", "self"].includes(pb)) steps.push(tm("cert_bad", { err: cert.res.tls.error || "" }));
   else if (!cert && (pb === "untrusted" || pb === "invalid")) steps.push(tm("cert_bad", { err: sv.tls.err || "" }));
@@ -733,6 +838,45 @@ function verdict(s, rows) {
   if (s.web && rows.some(r => r.c.k === "nottls")) steps.push(tm("nottls_web"));
   steps.push(...localSteps(s, ok.length ? (ok.length === rows.length ? "all" : "some") : "none"));
   return { key, ok: ok.length, n: rows.length, cls, title, sub, steps };
+}
+
+// What our first server read up close: the service's greeting, and exactly what is wrong with the certificate.
+// Returns the certificate's problem, which the caller still needs for the probe rows' certificate lines.
+function srvSteps(s, steps) {
+  const sv = s.srvs?.[FIRST], pb = sv?.tls && !sv.tls.ok ? sv.tls.problem : "";
+  if (sv?.svc && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
+  if (pb === "chain") steps.push(tm("sv_step_chain"));
+  else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
+  else if (pb === "self") steps.push(tm("sv_step_self"));
+  return pb;
+}
+
+// The outside check was skipped for want of allowance: our servers (and this browser) are the whole answer.
+function srvOnlyVerdict(s) {
+  const all = SERVERS.map(srv => ({ srv, v: s.srvs?.[srv.id] }));
+  const measured = all.filter(x => x.v && !["limit", "down"].includes(x.v.k));
+  if (!all.some(x => x.v)) return { title: t("v_wait"), sub: t("v_wait_srv") };
+  if (!measured.length) return { key: "v_srv_unrun", cls: "warn", title: t("v_srv_unrun"), sub: "", steps: localSteps(s, null) };
+  const priv = (s.t.isIp && ipKind(s.t.host) === "private" ? s.t.host : "") || measured.map(x => srvPrivIp(x.v)).find(Boolean);
+  if (priv) return privVerdict(s, priv);
+  const ok = measured.filter(x => ["ok", "warn"].includes(srvStatus(x.v, s)[0]));
+  const failed = measured.filter(x => !ok.includes(x));
+  const cls = !failed.length ? "ok" : ok.length ? "warn" : "bad";
+  const key = !failed.length ? "v_srv_all" : ok.length ? "v_srv_some" : "v_srv_none";
+  const title = !failed.length ? t("v_srv_all") : ok.length ? t("v_srv_some", { ok: ok.length, n: measured.length }) : t("v_srv_none");
+  const sub = !failed.length ? t("v_srv_all_sub", { n: measured.length })
+    : t("v_srv_fail", { list: list(failed.map(x => cityName(x.srv))) });
+  const steps = [];
+  srvSteps(s, steps);
+  if (!s.t.isIp && s.ipv === "6" && measured.every(x => x.v.k === "dns")) steps.push(tm("no_aaaa"));
+  if (failed.length) {
+    const kinds = {};
+    failed.forEach(x => { const k = x.v.k === "bad" ? "other" : x.v.k; kinds[k] = (kinds[k] || 0) + 1; });
+    const top = Object.entries(kinds).sort((a, b) => b[1] - a[1])[0]?.[0];
+    steps.push(...failSteps(top, s));
+  }
+  steps.push(...localSteps(s, ok.length ? (ok.length === measured.length ? "all" : "some") : "none"));
+  return { key, ok: ok.length, n: measured.length, cls, title, sub, steps };
 }
 
 function privVerdict(s, ip) {
@@ -820,21 +964,29 @@ function pack(s) {
     l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
     d: 0,
     s: srvPack(s.srvs?.[FIRST]),
+    S: SERVERS.map(srv => srvPack(s.srvs?.[srv.id]) || 0),
+    x: s.gpSkip ? s.gpSkip.min : 0,
   };
 }
 // what our server found, without what the link holds already or what only mattered at the time
 function srvPack(v) {
-  if (!v || ["limit", "down", "bad"].includes(v.k)) return 0;
+  if (!v || ["limit", "down"].includes(v.k)) return 0;
   const { host, port, mode, cached, which, retry, ...rest } = v;
   return rest;
 }
 function unpack(o) {
   const [host, port, path, scheme, ipv, proto, web, whatKey, home, plainWeb, raw] = o.t;
+  // the servers that answered, by id; a link made before there were four holds only the first, under s
+  const srvs = {};
+  if (Array.isArray(o.S)) SERVERS.forEach((srv, i) => { if (o.S[i]) srvs[srv.id] = o.S[i]; });
+  else if (o.s && FIRST) srvs[FIRST] = o.s;
   return {
     id: ++run, shared: true, t: { host, port, path, scheme, raw: raw || host, isIp: isV4(host) || isV6(host) }, ipv, proto, web: !!web, whatKey, home: !!home,
     plainWeb: !!plainWeb, ts: o.ts, gpDone: true, gpError: o.e || "",
-    rows: REGIONS.map((x, i) => {
-      const a = o.r[i]; if (!a) return null;
+    // no region rows in a link means the outside check was skipped for want of allowance
+    gpSkip: !o.r.length ? { min: o.x || 0 } : null,
+    rows: o.r.map(a => {
+      if (!a) return null;
       const [k, code, tg, fin, ip, city, network, asn, country, tls] = a, [dns, tcp, tlsT, firstByte, download, total] = tg;
       return { probe: { city, network, asn, country },
         res: { status: fin ? "finished" : "failed", statusCode: code, resolvedAddress: ip, timings: { dns, tcp, tls: tlsT, firstByte, download, total },
@@ -842,7 +994,7 @@ function unpack(o) {
         c: { k, code, tcp: tcp != null } };
     }),
     local: o.l ? { k: o.l[0], ms: o.l[1], warm: o.l[2] } : null,
-    srv: o.s || null,
+    srvs,
   };
 }
 const resultLink = async s => `${location.origin}${D.paths[D.lang]}r/${await encodeResult(pack(s))}`;
@@ -852,12 +1004,30 @@ const resultLink = async s => `${location.origin}${D.paths[D.lang]}r/${await enc
 // country code where it has more (Los Angeles, US); China's carriers by name
 const cardName = x => x.carrier ? t("c_" + x.carrier)
   : x.city && REGIONS.filter(r => r.cc === x.cc && !r.carrier).length > 1 ? `${t("city_" + x.city)}, ${x.cc}` : regionOf(x.cc);
+// What the card draws: every region when the outside check ran. When its allowance was short, only what did run,
+// this browser and our servers, each as its own line.
+function cardRows(s) {
+  if (!s.gpSkip) return REGIONS.map((x, i) => {
+    const row = s.rows[i], [cls] = row?.c ? rowStatus(row, s) : ["", ""];
+    return { name: cardName(x), cls, tot: row?.c && row.res.status === "finished" ? `${row.res.timings.total} ms` : row?.c ? "✕" : "–" };
+  });
+  const out = [], l = s.local;
+  if (l) out.push({ name: t("r_browser"), cls: { ok: "ok", answered: "warn", timeout: "bad", blocked: "m" }[l.k] || "",
+    tot: l.ms != null ? `${Math.round(l.ms)} ms` : "–" });
+  for (const srv of SERVERS) {
+    const v = s.srvs?.[srv.id];
+    if (!v || ["limit", "down"].includes(v.k)) continue;
+    const total = v.tcp != null ? v.tcp + (v.tlsMs || 0) : null;
+    out.push({ name: t("city_" + CITY_NAME[srv.city]), cls: srvStatus(v, s)[0], tot: total != null ? `${total} ms` : "✕" });
+  }
+  return out;
+}
 // The card's layout, measured the same way for its height and for drawing it, so that nothing is cut short with "…"
 // (tool contract, "Share card"): the verdict shrinks to fit, then takes two lines; what was checked goes right under it,
-// with the subtitle after it when there's room, else on its own lines; the regions take fewer columns when a name
+// with the subtitle after it when there's room, else on its own lines; the rows take fewer columns when a name
 // doesn't fit in a cell.
 const ROW = 46, TOT_W = 110;
-function cardLayout(ctx, kit, v, target) {
+function cardLayout(ctx, kit, v, target, rows) {
   const { W, P, F, fit, wrap } = kit, w = W - P * 2;
   let ts = fit(ctx, v.title, w, 46, 34), title = [v.title];
   if (ctx.measureText(v.title).width > w) { ts = 40; ctx.font = `700 40px ${F}`; title = wrap(ctx, v.title, w, 2); }
@@ -865,7 +1035,7 @@ function cardLayout(ctx, kit, v, target) {
   const tw = ctx.measureText(target + "   ").width;
   ctx.font = `400 26px ${F}`;
   const inline = v.sub && tw + ctx.measureText(v.sub).width <= w, sub = v.sub && !inline ? wrap(ctx, v.sub, w, 3) : [];
-  const names = REGIONS.map(cardName);
+  const names = rows.map(r => r.name);
   let cols = 1, ns = 24;
   out: for (const c of [3, 2]) for (const z of [24, 22]) {
     ctx.font = `500 ${z}px ${F}`;
@@ -873,10 +1043,11 @@ function cardLayout(ctx, kit, v, target) {
   }
   const tY = kit.top + 24, lineY = tY + (title.length - 1) * Math.round(ts * 1.2) + 52;
   const gridY = lineY + sub.length * 36 + 70;
-  return { title, ts, inline, sub, names, cols, ns, tY, lineY, gridY, H: gridY + Math.ceil(REGIONS.length / cols) * ROW + 60 };
+  return { title, ts, inline, sub, names, cols, ns, tY, lineY, gridY,
+    H: gridY + (names.length ? Math.ceil(names.length / cols) * ROW + 60 : 20) };
 }
 async function shareResult() {
-  const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter(r => r?.c));
+  const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter(r => r?.c)), rows = cardRows(s);
   const target = `${s.t.host}:${s.t.port}`;
   const mod = await import("/assets/share/share.js?v=11").catch(() => null);
   if (!mod) { window.msShareDown && window.msShareDown(); return; }
@@ -885,11 +1056,11 @@ async function shareResult() {
     lang: D.lang, name: t("app_name"), file: "reach-check", show: [], never: ["ip"],
     link: () => link, home: location.origin + D.paths[D.lang],
     text: () => `${v.title} · ${target}`,
-    height: (ctx, kit) => cardLayout(ctx, kit, v, target).H,
+    height: (ctx, kit) => cardLayout(ctx, kit, v, target, rows).H,
     ts: s.ts,
     draw: (ctx, kit) => {
       const { P, W, F, v: css, clip } = kit, col = c => css(c === "ok" ? "ok" : c === "warn" ? "warn" : c === "bad" ? "bad" : "muted");
-      const L = cardLayout(ctx, kit, v, target);
+      const L = cardLayout(ctx, kit, v, target, rows);
       ctx.fillStyle = col(v.cls); ctx.font = `700 ${L.ts}px ${F}`;
       L.title.forEach((line, i) => ctx.fillText(line, P, L.tY + i * Math.round(L.ts * 1.2)));
       ctx.fillStyle = css("fg"); ctx.font = `600 28px ${F}`; ctx.fillText(clip(ctx, target, W - P * 2), P, L.lineY);
@@ -898,12 +1069,11 @@ async function shareResult() {
       if (L.inline) ctx.fillText(v.sub, P + tw, L.lineY);
       L.sub.forEach((line, i) => ctx.fillText(line, P, L.lineY + (i + 1) * 36));
       const cw = (W - P * 2) / L.cols;
-      REGIONS.forEach((x, i) => {
-        const row = s.rows[i], cx = P + (i % L.cols) * cw, cy = L.gridY + Math.floor(i / L.cols) * ROW;
-        const [cls] = row?.c ? rowStatus(row, s) : ["", ""], tot = row?.c && row.res.status === "finished" ? `${row.res.timings.total} ms` : row?.c ? "✕" : "–";
-        ctx.fillStyle = col(cls); ctx.beginPath(); ctx.arc(cx + 9, cy - 8, 8, 0, Math.PI * 2); ctx.fill();
+      rows.forEach((r, i) => {
+        const cx = P + (i % L.cols) * cw, cy = L.gridY + Math.floor(i / L.cols) * ROW;
+        ctx.fillStyle = col(r.cls); ctx.beginPath(); ctx.arc(cx + 9, cy - 8, 8, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = css("fg"); ctx.font = `500 ${L.ns}px ${F}`; ctx.fillText(clip(ctx, L.names[i], cw - 28 - TOT_W), cx + 28, cy);
-        ctx.fillStyle = css("muted"); ctx.font = `500 22px ${F}`; ctx.textAlign = "right"; ctx.fillText(tot, cx + cw - 24, cy); ctx.textAlign = "left";
+        ctx.fillStyle = css("muted"); ctx.font = `500 22px ${F}`; ctx.textAlign = "right"; ctx.fillText(r.tot, cx + cw - 24, cy); ctx.textAlign = "left";
       });
     },
   }).open();

@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <script>{{prepaint}}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TEMP LOCAL PREVIEW ONLY -->
+<meta name="ms-servers" content="reach=lax@https://la.test,nue@https://nue.test,tyo@https://tyo.test,sha@https://sha.test">
+<meta name="asn" content="https://asn.1ms.dog">
 {{head}}
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/{{css}}">
@@ -75,6 +78,7 @@
   <!-- 3. the evidence: this browser, our server in Tokyo, then one line per region; details on demand (UDP: the server only) -->
   <section class="card sec" id="table" hidden>
     <div class="sec-h"><h3 id="tblH" data-i="h_regions"></h3><span id="pingLink" hidden></span><span class="src m">{{srcGp}}</span><span class="m prog" id="gpProgress"></span></div>
+    <div class="tinfo" id="tInfo" hidden></div>
     <div class="legend m">
       <span><i class="seg s-dns"></i><span data-i="lg_dns"></span></span><span><i class="seg s-tcp"></i><span data-i="lg_tcp"></span></span><span><i class="seg s-tls"></i><span data-i="lg_tls"></span></span><span><i class="seg s-fb"></i><span data-i="lg_fb"></span></span><span><i class="seg s-dl"></i><span data-i="lg_dl"></span></span>
     </div>

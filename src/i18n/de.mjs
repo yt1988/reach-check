@@ -235,4 +235,12 @@ lang_label: "Sprache", a_theme: "Design", th_system: "Design: System", th_light:
   srv_nuremberg: "Unser Server (Nürnberg)",
   gp_partial: "{n} Sonden antworteten nicht rechtzeitig.", rg_noanswer: "Keine Antwort rechtzeitig",
   quota_short: "Zu wenig Guthaben: Dieser Check braucht {cost} Regions-Checks, übrig sind {left}, wieder in etwa {min} Min.",
+
+  addrs_h: "Adressen des Ziels", addrs_more: "{n} weitere", addrs_less: "Weniger anzeigen", fa_srv: "Unsere Server",
+  bad_port: "Dieser Port ist ungültig: Bitte eine Zahl von 1 bis 65535 eingeben.",
+  gp_skip: "Das Globalping-Kontingent reicht nicht für den Check von außen; diesmal haben nur unsere Server geprüft. In etwa {min} Min. geht es wieder.",
+  v_srv_all: "Von unseren Servern erreichbar", v_srv_all_sub: "Alle {n} unserer Server haben sich verbunden.",
+  v_srv_some: "Von {ok} unserer {n} Server erreichbar", v_srv_none: "Von unseren Servern nicht erreichbar",
+  v_srv_fail: "Fehlgeschlagen: {list}.", v_srv_unrun: "Diesmal konnten unsere Server nicht prüfen",
+  share_desc_srv: "{ok} unserer {n} Server erreichen {target}",
 };

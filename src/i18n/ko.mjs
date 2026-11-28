@@ -223,4 +223,12 @@ lang_label: "언어", a_theme: "테마", th_system: "테마: 시스템", th_ligh
   srv_nuremberg: "이 사이트(뉘른베르크)",
   gp_partial: "프로브 {n}개가 제한 시간 안에 응답하지 않았습니다.", rg_noanswer: "시간 안에 응답 없음",
   quota_short: "한도가 부족해요: 이번 확인에 {cost}개 지역이 필요하고 {left}개 남았어요. 약 {min}분 후 회복돼요",
+
+  addrs_h: "대상 주소", addrs_more: "{n}개 더", addrs_less: "접기", fa_srv: "우리 서버",
+  bad_port: "포트가 올바르지 않아요. 1~65535 사이의 숫자를 입력하세요.",
+  gp_skip: "Globalping 한도가 이번 외부 확인에 부족해 우리 서버에서만 확인했어요. 약 {min}분 후에 회복돼요.",
+  v_srv_all: "우리 서버에서 연결할 수 있어요", v_srv_all_sub: "우리 서버 {n}대 모두 연결됐어요.",
+  v_srv_some: "우리 서버 {n}대 중 {ok}대에서 연결할 수 있어요", v_srv_none: "우리 서버에서 연결할 수 없어요",
+  v_srv_fail: "연결 실패: {list}.", v_srv_unrun: "이번에는 우리 서버에서 확인하지 못했어요",
+  share_desc_srv: "우리 서버 {n}대 중 {ok}대가 {target}에 연결돼요",
 };

@@ -234,4 +234,13 @@ lang_label: "Language", a_theme: "Theme", th_system: "Theme: system", th_light: 
   srv_nuremberg: "This site (Nuremberg)",
   gp_partial: "{n} probes did not return in time.", rg_noanswer: "No answer in time",
   quota_short: "Not enough allowance: this check needs {cost} region checks, {left} left, back in about {min} min",
+
+  // the target's addresses; a run where the outside check's allowance was short; our servers' own verdict
+  addrs_h: "Target addresses", addrs_more: "{n} more", addrs_less: "Show fewer", fa_srv: "Our servers",
+  bad_port: "That port isn't valid: enter a number from 1 to 65535.",
+  gp_skip: "Globalping's allowance isn't enough for the outside check, so this run covers our servers only; it comes back in about {min} min.",
+  v_srv_all: "Reachable from our servers", v_srv_all_sub: "All {n} of our servers connected.",
+  v_srv_some: "Reached from {ok} of our {n} servers", v_srv_none: "Our servers couldn't reach it",
+  v_srv_fail: "Failed: {list}.", v_srv_unrun: "Our servers couldn't check it this time",
+  share_desc_srv: "{ok} of our {n} servers reach {target}",
 };

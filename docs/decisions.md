@@ -76,3 +76,19 @@ code does; this says why, so that nobody re-runs an experiment that already fail
 - **On a touch screen the footer's GitHub link is 32px tall, its line box still 19px.** It is the footer's only
   independent link (the Globalping source is a link inside a sentence, which the contract exempts); `min-height: 32px`
   with a negative margin makes the target index-finger-sized without moving anything visible. (1ms-shell#93, item 5.)
+- **A pasted target is read by its parts.** A URL's path, query and fragment are not checked: `https://host:8443/a?b`
+  checks `host` on 8443. A port written in it fills the port field (visible and editable) and wins over the scheme;
+  without one, https means 443, http 80, and a bare host takes the service's own port. `host:port/path`, a bare host
+  and `[::1]:443` read the same way; what can't be read (`localhost`, `example.com:abc`, a port of 0 or 70000) is
+  refused rather than guessed at.
+- **The addresses behind a name are the ones the run measured**: the probes' `resolvedAddress` and our servers'
+  `addrs`, never a second resolver, so the panel under the table's heading names exactly the addresses that were
+  tried, and every row shows the address it used. Each address is looked up once at ASN Lookup's API (its origin from
+  the shell's `<meta name="asn">`, as its links are) for the country and network; a lookup that fails or knows nothing
+  leaves the address alone, and more than three are folded behind "N more". An IP target has no such lookups of its
+  own shown per row: the target is the address.
+- **Globalping's allowance is checked before a run**: `GET /v1/limits` gives what's left, and one outside check costs
+  16. With less than that it isn't submitted at all (a run that starts and is cut off leaves a table of empty rows);
+  this browser and our servers run alone, the legend, source and progress are hidden, and one line says for how long.
+  The verdict, the result link (its `r` empty, `x` the minutes) and the card cover only what ran, and the Worker's
+  preview titles carry the four `v_srv_*` verdicts. An allowance that can't be read keeps the old path.

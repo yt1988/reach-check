@@ -233,4 +233,12 @@ lang_label: "Idioma", a_theme: "Tema", th_system: "Tema: do sistema", th_light: 
   srv_nuremberg: "Nosso servidor (Nuremberg)",
   gp_partial: "{n} sondas não responderam a tempo.", rg_noanswer: "Sem resposta a tempo",
   quota_short: "Saldo insuficiente: este teste precisa de {cost} testes de região, restam {left}, volta em cerca de {min} min",
+
+  addrs_h: "Endereços do destino", addrs_more: "mais {n}", addrs_less: "Mostrar menos", fa_srv: "Nossos servidores",
+  bad_port: "Essa porta não é válida: digite um número de 1 a 65535.",
+  gp_skip: "A cota do Globalping não é suficiente para o teste externo, então desta vez só os nossos servidores testaram; ela volta em cerca de {min} min.",
+  v_srv_all: "Acessível a partir dos nossos servidores", v_srv_all_sub: "Todos os nossos {n} servidores conectaram.",
+  v_srv_some: "Acessível a partir de {ok} dos nossos {n} servidores", v_srv_none: "Inacessível a partir dos nossos servidores",
+  v_srv_fail: "Falharam: {list}.", v_srv_unrun: "Desta vez os nossos servidores não conseguiram testar",
+  share_desc_srv: "{ok} dos nossos {n} servidores alcançam {target}",
 };

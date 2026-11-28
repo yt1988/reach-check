@@ -306,6 +306,14 @@ select option { background-color: var(--panel); color: var(--fg); }
 .note { font-size: 12.5px; }
 .foot p { margin: 0; }
 
+/* the target's addresses: every address this run reached, with whose it is */
+.tinfo { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border-radius: 8px; background: var(--soft); font-size: 12.5px; }
+.tinfo[hidden] { display: none; }
+.tinfo-h { margin: 0 0 1px; font-size: 11.5px; }
+.tinfo-i { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 12px; margin: 0; }
+.tinfo-w { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--muted); overflow-wrap: anywhere; }
+.tinfo-w .rf { flex: none; width: 16px; height: 12px; border-radius: 2px; }
+.tinfo-more { align-self: start; text-align: left; font-size: 12.5px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend .seg { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
@@ -320,7 +328,10 @@ select option { background-color: var(--panel); color: var(--fg); }
 .rg { display: grid; grid-template-columns: 220px 14px minmax(0, 1fr) 70px; gap: 4px 12px; align-items: center; padding: 6px 4px 6px 18px; border-radius: 8px; min-height: 36px; font-size: 13.5px; }
 .rg[data-row] { cursor: pointer; }
 .rg[data-row]:hover, .rg.open { background: var(--soft); }
-.rg-name { display: flex; align-items: center; gap: 4px; min-width: 0; line-height: 1.3; }   /* long names (ru, de) wrap rather than lose their end */
+.rg-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-width: 0; line-height: 1.3; }   /* long names (ru, de) wrap rather than lose their end */
+/* the address this line reached: small, under the name, linked to who owns it */
+.rg-ip { flex: 0 0 100%; box-sizing: border-box; padding-left: 38px; margin-top: 1px; font-size: 11.5px; line-height: 1.2; color: var(--muted); overflow-wrap: anywhere; }
+.rg-ip .dv { color: inherit; }
 .chev { width: 14px; height: 14px; flex: none; color: var(--muted); fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
 .rg.open .chev { transform: rotate(90deg); }
 /* the status dot */
@@ -354,8 +365,9 @@ select option { background-color: var(--panel); color: var(--fg); }
 .sv-said { overflow-wrap: anywhere; }
 .chain { margin: 2px 0 0; padding-left: 18px; font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; }
 .chain li { overflow-wrap: anywhere; }
-/* UDP: the server alone, so no timing legend or probe source */
+/* UDP: the server alone, so no timing legend or probe source; likewise a run where the outside check was skipped */
 .udp .legend, .udp .sec-h .src, .udp .prog { display: none; }
+.skip .legend, .skip .sec-h .src, .skip .prog { display: none; }
 .tr { margin: 4px 0 0; padding: 10px 12px; background: var(--panel); border-radius: 8px; font: 12px/1.45 var(--f-num); overflow-x: auto; white-space: pre; }
 .blink { animation: blink 1.2s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: .45; } }
@@ -371,6 +383,7 @@ select option { background-color: var(--panel); color: var(--fg); }
   .fact { flex-direction: row; align-items: baseline; gap: 12px; padding: 0; border: 0; }
   .fl { flex: 0 0 72px; }
   .sec-h .src { order: 3; flex-basis: 100%; }
+  .tinfo-i { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .v-sub { padding-left: 0; }
 }
 

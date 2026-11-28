@@ -216,4 +216,12 @@ lang_label: "语言", a_theme: "主题", th_system: "主题：跟随系统", th_
   srv_nuremberg: "本站（纽伦堡）",
   gp_partial: "{n} 个探针未在限时内返回。", rg_noanswer: "未在限时内返回",
   quota_short: "额度不足：本次需要 {cost} 个地区次，当前还剩 {left} 个，约 {min} 分钟后恢复",
+
+  addrs_h: "目标地址", addrs_more: "还有 {n} 个", addrs_less: "收起", fa_srv: "本站服务器",
+  bad_port: "端口不对：请输入 1 到 65535 之间的数字。",
+  gp_skip: "Globalping 额度不够这次外部检测，本次只测本站服务器，约 {min} 分钟后恢复。",
+  v_srv_all: "本站服务器都能连上", v_srv_all_sub: "本站 {n} 台服务器都连上了。",
+  v_srv_some: "本站 {n} 台服务器中有 {ok} 台能连上", v_srv_none: "本站服务器都连不上",
+  v_srv_fail: "连不上：{list}。", v_srv_unrun: "这次没能从本站服务器检测",
+  share_desc_srv: "本站 {n} 台服务器中有 {ok} 台能连到 {target}",
 };

@@ -223,4 +223,12 @@ lang_label: "言語", a_theme: "テーマ", th_system: "テーマ：システム
   srv_nuremberg: "当サイト（ニュルンベルク）",
   gp_partial: "{n} 個のプローブが時間内に応答しませんでした。", rg_noanswer: "時間内に応答なし",
   quota_short: "利用枠が足りません：今回 {cost} 地域分が必要で、残り {left}、約 {min} 分で回復します",
+
+  addrs_h: "対象のアドレス", addrs_more: "残り {n} 件", addrs_less: "折りたたむ", fa_srv: "当サイトのサーバー",
+  bad_port: "ポートが正しくありません。1〜65535 の数字を入力してください。",
+  gp_skip: "Globalping の利用枠が今回の外部チェックに足りないため、当サイトのサーバーだけで確認しました。約 {min} 分後に回復します。",
+  v_srv_all: "当サイトのサーバーからは到達できます", v_srv_all_sub: "当サイトの {n} 台のサーバーすべてが接続できました。",
+  v_srv_some: "当サイトの {n} 台のうち {ok} 台から到達できます", v_srv_none: "当サイトのサーバーからは到達できません",
+  v_srv_fail: "接続できません: {list}。", v_srv_unrun: "今回は当サイトのサーバーから確認できませんでした",
+  share_desc_srv: "当サイトの {n} 台のうち {ok} 台から {target} に到達できます",
 };

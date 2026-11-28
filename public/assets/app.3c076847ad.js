@@ -265,7 +265,7 @@
       return u && ["public", "cf"].includes(ipKind(ip)) ? `<a class="dv" href="${esc(u)}ip/${esc(ip)}" target="_blank" rel="noopener" title="${esc(t("lk_asn"))}">${esc(ip)}</a>` : esc(ip);
     };
     function showPing(s) {
-      const u = s.udp || s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host)) ? "" : tool("ping"), el = $("pingLink");
+      const u = s.udp || s.gpSkip || s.t.isIp && ["private", "cgnat"].includes(ipKind(s.t.host)) ? "" : tool("ping"), el = $("pingLink");
       el.hidden = !u;
       el.innerHTML = u ? `<a class="xl" href="${esc(u)}?t=${encodeURIComponent(s.t.host)}" target="_blank" rel="noopener">${esc(t("lk_ping"))}${EXT}</a>` : "";
     }
@@ -478,7 +478,15 @@
     const POST_LIMIT = 8e3;
     const ip4n = (ip) => ip.split(".").reduce((a, b) => a * 256 + +b, 0);
     const isV4 = (s) => /^\d{1,3}(\.\d{1,3}){3}$/.test(s);
-    const isV6 = (s) => s.includes(":") && /^[0-9a-f:.]+$/i.test(s);
+    const isV6 = (s) => {
+      if (!s.includes(":") || !/^[0-9a-f:.]+$/i.test(s)) return false;
+      try {
+        new URL("http://[" + s + "]/");
+        return true;
+      } catch {
+        return false;
+      }
+    };
     const inCidr = (ip, cidr) => {
       const [n, b] = cidr.split("/");
       const m = 2 ** (32 - b);
@@ -500,39 +508,54 @@
       }
       return "";
     }
-    function parseTarget(raw, portField) {
-      let s = raw.trim(), scheme = "", path = "/", host = "", port = 0;
-      const m = s.match(/^([a-z]+):\/\//i);
+    function parseTarget(raw) {
+      let s = raw.trim(), scheme = "", host = "", port = 0, explicit = false;
+      const m = s.match(/^([a-z][a-z0-9+.-]*):\/\//i);
       if (m) {
         scheme = m[1].toLowerCase();
+        if (scheme !== "http" && scheme !== "https") return null;
+        let u;
         try {
-          const u = new URL(s);
-          host = u.hostname.replace(/^\[|\]$/g, "");
-          port = +u.port || (scheme === "https" ? 443 : 80);
-          path = u.pathname + u.search;
+          u = new URL(s);
         } catch {
           return null;
         }
+        if (!u.hostname) return null;
+        host = u.hostname.replace(/^\[|\]$/g, "");
+        const auth = s.slice(m[0].length).split(/[/?#]/, 1)[0].split("@").pop();
+        const pm = auth.match(/^\[[^\]]+\]:(\d+)$/) || auth.match(/^[^:\[\]]+:(\d+)$/);
+        if (pm) {
+          port = +pm[1];
+          explicit = true;
+        } else if (u.port) {
+          port = +u.port;
+          explicit = true;
+        }
       } else {
-        s = s.replace(/\/.*$/, (p) => {
-          path = p;
-          return "";
-        });
+        s = s.replace(/[/?#].*$/, "");
         const b = s.match(/^\[([^\]]+)\](?::(\d+))?$/);
         if (b) {
           host = b[1];
-          port = +b[2] || 0;
+          if (b[2] != null) {
+            port = +b[2];
+            explicit = true;
+          }
         } else if (isV6(s)) host = s;
         else {
-          const [h, p] = s.split(":");
-          host = h;
-          port = +p || 0;
+          const i = s.lastIndexOf(":");
+          if (i >= 0) {
+            const p = s.slice(i + 1);
+            if (!/^\d{1,5}$/.test(p)) return null;
+            host = s.slice(0, i);
+            port = +p;
+            explicit = true;
+          } else host = s;
         }
       }
-      if (+portField) port = +portField;
+      if (explicit && (port < 1 || port > 65535)) return null;
       host = host.toLowerCase();
       if (!host || !(isV4(host) || isV6(host) || /^[a-z0-9-]+(\.[a-z0-9-]+)+\.?$/i.test(host))) return null;
-      return { host, port, path: path || "/", scheme, isIp: isV4(host) || isV6(host) };
+      return { host, port, explicit, path: "/", scheme, isIp: isV4(host) || isV6(host) };
     }
     let preset = PRESETS[0], run = 0, state;
     const ports = () => PRESETS.filter((p) => !!p.udp === udpMode());
@@ -603,6 +626,7 @@
     document.addEventListener("pointerdown", (e) => {
       if (!e.target.closest(".combo")) portOpen(false);
     });
+    let quota = null;
     async function loadQuota() {
       try {
         const j = await (await fetch(GP + "/limits")).json();
@@ -632,11 +656,10 @@
       }
     });
     function showQuota(left, reset) {
-      if (state) state.quota = { left, reset };
+      quota = { left, reset };
       const cost = REGIONS.length;
       const min = Math.ceil(reset / 60);
       $("quota").textContent = left >= cost ? t(pk("quota_ok", left), { left, cost }) : left > 0 ? t("quota_short", { cost, left, min }) : t("quota_out", { min });
-      $("go").setAttribute("aria-disabled", left < cost ? "true" : "false");
     }
     let inviteUrl = "";
     $("inviteBtn").title = t("invite_tip");
@@ -657,18 +680,30 @@
     });
     function start() {
       const raw = $("target").value.trim();
-      const tg = parseTarget(raw, $("port").value);
+      const boxed = $("port").value.trim();
+      const tg = parseTarget(raw);
       if (!tg) {
         $("portNote").textContent = t("bad_target");
         return;
       }
+      if (!tg.explicit && boxed && !(/^\d{1,5}$/.test(boxed) && +boxed >= 1 && +boxed <= 65535)) {
+        $("portNote").textContent = t("bad_port");
+        return;
+      }
+      if (tg.explicit) {
+        $("port").value = tg.port;
+        $("port").dispatchEvent(new Event("input"));
+      }
       tg.raw = raw;
-      if (!tg.port) tg.port = (preset == null ? void 0 : preset.port) || 443;
+      if (!tg.port) tg.port = +boxed || (tg.scheme === "https" ? 443 : tg.scheme === "http" ? 80 : (preset == null ? void 0 : preset.port) || 443);
+      $("portNote").textContent = preset ? presetName(preset) : "";
       const udp = udpMode();
       const pr = PRESETS.find((p) => p.port === tg.port && !p.udp);
       const proto = tg.scheme === "https" ? "HTTPS" : tg.scheme === "http" ? "HTTP" : pr ? pr.proto : [443, 8443, 5001].includes(tg.port) ? "HTTPS" : "HTTP";
       const web = tg.scheme ? true : pr ? pr.web : true;
       const id = ++run;
+      const gpSkip = !udp && SERVERS.length && quota && quota.left < REGIONS.length ? { min: Math.max(1, Math.ceil(quota.reset / 60)) } : null;
+      tinfoOpen = false;
       state = {
         id,
         t: tg,
@@ -678,12 +713,12 @@
         home: !!(pr == null ? void 0 : pr.home),
         plainWeb: proto === "HTTP" && web && (!!pr || tg.scheme === "http"),
         ipv: $("ipv").value,
-        rows: REGIONS.map(() => null),
+        rows: gpSkip ? [] : REGIONS.map(() => null),
         gpDone: false,
+        gpSkip,
         local: null,
         srvs: {},
         udp,
-        quota: state == null ? void 0 : state.quota,
         ts: Date.now()
       };
       if (recv) {
@@ -700,14 +735,15 @@
       drawRegions();
       drawVerdict();
       showPing(state);
-      const jobs = udp ? [runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
+      const jobs = udp ? [runServer(state)] : gpSkip ? [runLocal(state), runServer(state)] : [runGlobalping(state), runLocal(state), runServer(state)];
       Promise.allSettled(jobs).then(() => {
-        if (state.id === id) {
-          $("go").setAttribute("aria-disabled", "false");
-          drawVerdict();
-          $("shareBtn").hidden = udp;
-          if (!udp) loadQuota();
-        }
+        if (state.id !== id) return;
+        if (gpSkip) state.gpDone = true;
+        $("go").setAttribute("aria-disabled", "false");
+        drawRegions();
+        drawVerdict();
+        $("shareBtn").hidden = udp;
+        if (!udp) loadQuota();
       });
     }
     async function runServer(s) {
@@ -911,6 +947,72 @@
       var _a;
       return (_a = r == null ? void 0 : r.res) == null ? void 0 : _a.resolvedAddress;
     }).filter(Boolean))];
+    const runIps = (s) => {
+      var _a;
+      const out = [], add = (ip) => {
+        if (ip && !out.includes(ip)) out.push(ip);
+      };
+      if (s.t.isIp) add(s.t.host);
+      for (const r of s.rows) add((_a = r == null ? void 0 : r.res) == null ? void 0 : _a.resolvedAddress);
+      for (const v of Object.values(s.srvs || {})) for (const a of (v == null ? void 0 : v.addrs) || []) add(a.ip);
+      return out;
+    };
+    const ipLine = (ips) => ips.length ? `<span class="rg-ip mono">${ips.map(ipVal).join(esc(t("sep")))}</span>` : "";
+    const probeIps = (s, i) => {
+      var _a, _b;
+      return s.t.isIp ? [] : ((_b = (_a = s.rows[i]) == null ? void 0 : _a.res) == null ? void 0 : _b.resolvedAddress) ? [s.rows[i].res.resolvedAddress] : [];
+    };
+    const srvIps = (s, v) => {
+      var _a;
+      return s.t.isIp || !v ? [] : ((_a = v.addrs) == null ? void 0 : _a.length) ? v.addrs.map((a) => a.ip) : v.ip ? [v.ip] : [];
+    };
+    const ASN_API = (() => {
+      const m = document.querySelector('meta[name="asn"]');
+      try {
+        return m && m.content ? new URL(m.content).origin + "/api/ip/" : "";
+      } catch {
+        return "";
+      }
+    })();
+    const asnSeen = /* @__PURE__ */ new Map();
+    let tinfoOpen = false;
+    function startAsn(ip) {
+      if (!ASN_API || asnSeen.has(ip) || !["public", "cf"].includes(ipKind(ip))) return;
+      asnSeen.set(ip, { p: true });
+      const done = (j) => {
+        asnSeen.set(ip, { done: j && j.asn ? j : null });
+        if (state) drawTarget();
+      };
+      fetch(ASN_API + encodeURIComponent(ip), { credentials: "omit" }).then((r) => r.ok ? r.json() : null).then(done, () => done(null));
+    }
+    function drawTarget() {
+      const s = state, box = $("tInfo");
+      if (!box || !s) return;
+      const ips = runIps(s);
+      if (!ips.length) {
+        box.hidden = true;
+        box.innerHTML = "";
+        return;
+      }
+      const shown = tinfoOpen ? ips : ips.slice(0, 3);
+      const rows = shown.map((ip) => {
+        const d = asnSeen.get(ip);
+        if (!d) startAsn(ip);
+        const j = d == null ? void 0 : d.done, org = j ? j.name || j.holder || "" : "";
+        const place2 = j && j.cc ? `${flagImg(j.cc)}${esc(regionOf(j.cc))} \xB7 ` : "";
+        const who = `<span class="tinfo-w">${j ? `${place2}AS${esc(j.asn)}${org ? " " + esc(org) : ""}` : ""}</span>`;
+        return `<p class="tinfo-i">${who}<span class="mono">${ipVal(ip)}</span></p>`;
+      });
+      if (ips.length > 3) rows.push(`<button type="button" class="link tinfo-more" aria-expanded="${tinfoOpen}">${esc(t(tinfoOpen ? "addrs_less" : "addrs_more", { n: ips.length - 3 }))}</button>`);
+      box.innerHTML = `<p class="tinfo-h m">${esc(t("addrs_h"))}</p>${rows.join("")}`;
+      box.hidden = false;
+    }
+    $("tInfo").addEventListener("click", (e) => {
+      if (e.target.closest(".tinfo-more")) {
+        tinfoOpen = !tinfoOpen;
+        drawTarget();
+      }
+    });
     const failStage = (k) => ({ dns: "fs_dns", refused: "fs_refused", timeout: "fs_timeout", unreach: "fs_unreach", reset: "fs_reset", tls: "fs_tls", nothttp: "fs_nothttp", nottls: "fs_nottls", slow: "fs_slow" })[k];
     const SCALE_MS = 3e3;
     function barOf(segs) {
@@ -925,15 +1027,28 @@
     }
     const dot = (cls, text2, busy) => `<span class="sdot ${cls}${busy ? " blink" : ""}" role="img" title="${esc(text2)}" aria-label="${esc(text2)}"></span>`;
     function drawRegions() {
+      drawRows();
+      drawTarget();
+    }
+    function drawRows() {
       const s = state;
       let html = "", g = "", first = true;
       $("table").classList.toggle("udp", !!s.udp);
+      $("table").classList.toggle("skip", !!s.gpSkip);
       $("tblH").textContent = t(s.udp ? "h_srv" : "h_regions");
       if (s.udp) {
         $("regions").innerHTML = srvRows(s);
         sizeBars();
         $("gpProgress").textContent = "";
         $("gpNote").hidden = true;
+        return;
+      }
+      if (s.gpSkip) {
+        $("regions").innerHTML = localRow(s) + srvRows(s);
+        $("gpProgress").textContent = "";
+        $("gpNote").hidden = false;
+        $("gpNote").innerHTML = `<span class="m">${esc(t("gp_skip", { min: s.gpSkip.min }))}</span>`;
+        sizeBars();
         return;
       }
       const span = (r) => r.res.status === "finished" ? r.res.timings.total : (r.res.timings.dns || 0) + r.res.timings.tcp + (r.res.timings.tls || 0);
@@ -949,7 +1064,7 @@
       REGIONS.forEach((x, i) => {
         if (first) {
           first = false;
-          html += localRow(s) + (s.shared && !Object.values(s.srvs || {}).some((v) => v && v.k !== "down") ? "" : srvRows(s));
+          html += localRow(s) + srvRows(s);
         }
         if (x.g !== g) {
           g = x.g;
@@ -978,7 +1093,7 @@
           }
         }
         const can = !!(row == null ? void 0 : row.c);
-        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}</span>${pl}${bar}${tot}${more}</div>`;
+        html += `<div class="rg${(row == null ? void 0 : row.open) ? " open" : ""}"${can ? ` data-row="${i}" role="button" tabindex="0" aria-expanded="${!!row.open}"` : ""}><span class="rg-name">${can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>'}${flagImg(x.cc)}${esc(nameOf(x))}${ipLine(probeIps(s, i))}</span>${pl}${bar}${tot}${more}</div>`;
       });
       $("regions").innerHTML = html;
       sizeBars();
@@ -991,7 +1106,11 @@
       for (const el of $("regions").querySelectorAll("[data-w]")) el.style.width = el.dataset.w + "%";
     };
     const chev = (can) => can ? '<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>' : '<i class="chev"></i>';
-    const srvRows = (s) => (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + SERVERS.map((srv) => srvRow(srv, s)).join("");
+    const srvRows = (s) => {
+      const list2 = SERVERS.filter((srv) => !s.shared || s.srvs[srv.id]);
+      if (!list2.length) return "";
+      return (s.udp ? "" : `<div class="grp">${esc(t("h_srv"))}</div>`) + list2.map((srv) => srvRow(srv, s)).join("");
+    };
     function srvRow(srv, s) {
       var _a, _b;
       const v = s.srvs[srv.id];
@@ -1020,7 +1139,7 @@
         }
       }
       const can = !!v && v.k !== "down";
-      return `<div class="rg${s.srvOpen && can ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}</span>${pl}${bar}${tot}${more}</div>`;
+      return `<div class="rg${s.srvOpen && can ? " open" : ""}"${can ? ` data-row="srv" role="button" tabindex="0" aria-expanded="${!!s.srvOpen}"` : ""}><span class="rg-name">${chev(can)}${flagImg(srv.cc)}${esc(t(srv.label))}${ipLine(srvIps(s, v))}</span>${pl}${bar}${tot}${more}</div>`;
     }
     function drawLocal() {
       drawRegions();
@@ -1061,8 +1180,13 @@
       const cnOk = cn.filter((r) => good(r.c, s)).length, l = s.local;
       const ms = (l == null ? void 0 : l.k) === "ok" || (l == null ? void 0 : l.k) === "answered" ? ` <span class="m">\xB7 ${esc(t("lc_first"))} ${Math.round(l.ms)} ms</span>` : "";
       const fact = (label, val, cls, extra = "") => `<div class="fact"><span class="fl">${esc(t(label))}</span><span class="fv"><b class="${cls}">${esc(val)}</b>${extra}</span></div>`;
+      const svs = SERVERS.map((srv) => {
+        var _a;
+        return (_a = s.srvs) == null ? void 0 : _a[srv.id];
+      }).filter((v2) => v2 && !["limit", "down"].includes(v2.k));
+      const svOk = svs.filter((v2) => ["ok", "warn"].includes(srvStatus(v2, s)[0])).length;
       $("kpis").hidden = !!s.udp;
-      $("kpis").innerHTML = fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "\u2026", done ? tone(ok.length, rows.length) : "") + fact(
+      $("kpis").innerHTML = (s.gpSkip ? fact("fa_srv", done ? t(pk("fa_ok", svs.length), { ok: svOk, n: svs.length }) : "\u2026", done ? tone(svOk, svs.length) : "") : fact("fa_world", done && rows.length ? t(pk("fa_ok", ok.length), { ok: ok.length, n: rows.length }) : "\u2026", done ? tone(ok.length, rows.length) : "")) + fact(
         "fa_you",
         l ? t({ ok: "ks_ok", answered: "ks_ans", timeout: "ks_none", blocked: "ks_blocked" }[l.k]) : "\u2026",
         l ? { ok: "ok", answered: "warn", timeout: "bad", blocked: "" }[l.k] : "",
@@ -1081,6 +1205,7 @@
     function verdict(s, rows) {
       var _a, _b, _c, _d, _e;
       if (s.udp) return udpVerdict(s);
+      if (s.gpSkip) return srvOnlyVerdict(s);
       const total = REGIONS.length, port = s.t.port;
       const ips = dnsIps(s), allIps = s.t.isIp ? [s.t.host] : ips;
       const idx = (r) => s.rows.indexOf(r), rname = (r) => nameOf(REGIONS[idx(r)]);
@@ -1142,11 +1267,7 @@
         return ((_a2 = r.res.timings) == null ? void 0 : _a2.tcp) > 1e3;
       });
       if (slow.length && ok.length) steps.push(tm("slow", { list: list(slow.map(rname)) }));
-      const sv = (_c = s.srvs) == null ? void 0 : _c[FIRST], pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
-      if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
-      if (pb === "chain") steps.push(tm("sv_step_chain"));
-      else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
-      else if (pb === "self") steps.push(tm("sv_step_self"));
+      const sv = (_c = s.srvs) == null ? void 0 : _c[FIRST], pb = srvSteps(s, steps);
       const cert = rows.find((r) => r.res.tls && r.res.tls.authorized === false);
       if (cert && !["chain", "name", "self"].includes(pb)) steps.push(tm("cert_bad", { err: cert.res.tls.error || "" }));
       else if (!cert && (pb === "untrusted" || pb === "invalid")) steps.push(tm("cert_bad", { err: sv.tls.err || "" }));
@@ -1165,6 +1286,47 @@
       if (s.web && rows.some((r) => r.c.k === "nottls")) steps.push(tm("nottls_web"));
       steps.push(...localSteps(s, ok.length ? ok.length === rows.length ? "all" : "some" : "none"));
       return { key, ok: ok.length, n: rows.length, cls, title, sub, steps };
+    }
+    function srvSteps(s, steps) {
+      var _a;
+      const sv = (_a = s.srvs) == null ? void 0 : _a[FIRST], pb = (sv == null ? void 0 : sv.tls) && !sv.tls.ok ? sv.tls.problem : "";
+      if ((sv == null ? void 0 : sv.svc) && sv.banner && (sv.svc !== "http" || !s.web)) steps.push(tm("sv_step_svc", { svc: svcName(sv), banner: sv.banner, city: cityName(SERVERS[0]) }));
+      if (pb === "chain") steps.push(tm("sv_step_chain"));
+      else if (pb === "name") steps.push(tm("sv_step_name", { names: list(sv.tls.names || []), host: s.t.host }));
+      else if (pb === "self") steps.push(tm("sv_step_self"));
+      return pb;
+    }
+    function srvOnlyVerdict(s) {
+      var _a;
+      const all2 = SERVERS.map((srv) => {
+        var _a2;
+        return { srv, v: (_a2 = s.srvs) == null ? void 0 : _a2[srv.id] };
+      });
+      const measured = all2.filter((x) => x.v && !["limit", "down"].includes(x.v.k));
+      if (!all2.some((x) => x.v)) return { title: t("v_wait"), sub: t("v_wait_srv") };
+      if (!measured.length) return { key: "v_srv_unrun", cls: "warn", title: t("v_srv_unrun"), sub: "", steps: localSteps(s, null) };
+      const priv = (s.t.isIp && ipKind(s.t.host) === "private" ? s.t.host : "") || measured.map((x) => srvPrivIp(x.v)).find(Boolean);
+      if (priv) return privVerdict(s, priv);
+      const ok = measured.filter((x) => ["ok", "warn"].includes(srvStatus(x.v, s)[0]));
+      const failed = measured.filter((x) => !ok.includes(x));
+      const cls = !failed.length ? "ok" : ok.length ? "warn" : "bad";
+      const key = !failed.length ? "v_srv_all" : ok.length ? "v_srv_some" : "v_srv_none";
+      const title = !failed.length ? t("v_srv_all") : ok.length ? t("v_srv_some", { ok: ok.length, n: measured.length }) : t("v_srv_none");
+      const sub = !failed.length ? t("v_srv_all_sub", { n: measured.length }) : t("v_srv_fail", { list: list(failed.map((x) => cityName(x.srv))) });
+      const steps = [];
+      srvSteps(s, steps);
+      if (!s.t.isIp && s.ipv === "6" && measured.every((x) => x.v.k === "dns")) steps.push(tm("no_aaaa"));
+      if (failed.length) {
+        const kinds = {};
+        failed.forEach((x) => {
+          const k = x.v.k === "bad" ? "other" : x.v.k;
+          kinds[k] = (kinds[k] || 0) + 1;
+        });
+        const top = (_a = Object.entries(kinds).sort((a, b) => b[1] - a[1])[0]) == null ? void 0 : _a[0];
+        steps.push(...failSteps(top, s));
+      }
+      steps.push(...localSteps(s, ok.length ? ok.length === measured.length ? "all" : "some" : "none"));
+      return { key, ok: ok.length, n: measured.length, cls, title, sub, steps };
     }
     function privVerdict(s, ip) {
       const k = ip ? ipKind(ip) : "", first = ["cgnat", "fakeip"].includes(k) ? [tm("ip_" + k, { ip })] : [];
@@ -1300,16 +1462,26 @@
         }),
         l: s.local ? [s.local.k, n(s.local.ms), n(s.local.warm)] : 0,
         d: 0,
-        s: srvPack((_a = s.srvs) == null ? void 0 : _a[FIRST])
+        s: srvPack((_a = s.srvs) == null ? void 0 : _a[FIRST]),
+        S: SERVERS.map((srv) => {
+          var _a2;
+          return srvPack((_a2 = s.srvs) == null ? void 0 : _a2[srv.id]) || 0;
+        }),
+        x: s.gpSkip ? s.gpSkip.min : 0
       };
     }
     function srvPack(v) {
-      if (!v || ["limit", "down", "bad"].includes(v.k)) return 0;
+      if (!v || ["limit", "down"].includes(v.k)) return 0;
       const { host, port, mode, cached, which, retry, ...rest } = v;
       return rest;
     }
     function unpack2(o) {
       const [host, port, path, scheme, ipv, proto, web, whatKey, home, plainWeb, raw] = o.t;
+      const srvs = {};
+      if (Array.isArray(o.S)) SERVERS.forEach((srv, i) => {
+        if (o.S[i]) srvs[srv.id] = o.S[i];
+      });
+      else if (o.s && FIRST) srvs[FIRST] = o.s;
       return {
         id: ++run,
         shared: true,
@@ -1323,8 +1495,9 @@
         ts: o.ts,
         gpDone: true,
         gpError: o.e || "",
-        rows: REGIONS.map((x, i) => {
-          const a = o.r[i];
+        // no region rows in a link means the outside check was skipped for want of allowance
+        gpSkip: !o.r.length ? { min: o.x || 0 } : null,
+        rows: o.r.map((a) => {
           if (!a) return null;
           const [k, code, tg, fin, ip, city, network, asn, country, tls] = a, [dns, tcp, tlsT, firstByte, download, total] = tg;
           return {
@@ -1340,13 +1513,33 @@
           };
         }),
         local: o.l ? { k: o.l[0], ms: o.l[1], warm: o.l[2] } : null,
-        srv: o.s || null
+        srvs
       };
     }
     const resultLink = async (s) => `${location.origin}${D.paths[D.lang]}r/${await encodeResult(pack2(s))}`;
     const cardName = (x) => x.carrier ? t("c_" + x.carrier) : x.city && REGIONS.filter((r) => r.cc === x.cc && !r.carrier).length > 1 ? `${t("city_" + x.city)}, ${x.cc}` : regionOf(x.cc);
+    function cardRows(s) {
+      var _a;
+      if (!s.gpSkip) return REGIONS.map((x, i) => {
+        const row = s.rows[i], [cls] = (row == null ? void 0 : row.c) ? rowStatus(row, s) : ["", ""];
+        return { name: cardName(x), cls, tot: (row == null ? void 0 : row.c) && row.res.status === "finished" ? `${row.res.timings.total} ms` : (row == null ? void 0 : row.c) ? "\u2715" : "\u2013" };
+      });
+      const out = [], l = s.local;
+      if (l) out.push({
+        name: t("r_browser"),
+        cls: { ok: "ok", answered: "warn", timeout: "bad", blocked: "m" }[l.k] || "",
+        tot: l.ms != null ? `${Math.round(l.ms)} ms` : "\u2013"
+      });
+      for (const srv of SERVERS) {
+        const v = (_a = s.srvs) == null ? void 0 : _a[srv.id];
+        if (!v || ["limit", "down"].includes(v.k)) continue;
+        const total = v.tcp != null ? v.tcp + (v.tlsMs || 0) : null;
+        out.push({ name: t("city_" + CITY_NAME[srv.city]), cls: srvStatus(v, s)[0], tot: total != null ? `${total} ms` : "\u2715" });
+      }
+      return out;
+    }
     const ROW = 46, TOT_W = 110;
-    function cardLayout(ctx, kit, v, target) {
+    function cardLayout(ctx, kit, v, target, rows) {
       const { W, P, F, fit, wrap } = kit, w = W - P * 2;
       let ts = fit(ctx, v.title, w, 46, 34), title = [v.title];
       if (ctx.measureText(v.title).width > w) {
@@ -1358,7 +1551,7 @@
       const tw = ctx.measureText(target + "   ").width;
       ctx.font = `400 26px ${F}`;
       const inline = v.sub && tw + ctx.measureText(v.sub).width <= w, sub = v.sub && !inline ? wrap(ctx, v.sub, w, 3) : [];
-      const names = REGIONS.map(cardName);
+      const names = rows.map((r) => r.name);
       let cols = 1, ns = 24;
       out: for (const c of [3, 2]) for (const z of [24, 22]) {
         ctx.font = `500 ${z}px ${F}`;
@@ -1370,10 +1563,22 @@
       }
       const tY = kit.top + 24, lineY = tY + (title.length - 1) * Math.round(ts * 1.2) + 52;
       const gridY = lineY + sub.length * 36 + 70;
-      return { title, ts, inline, sub, names, cols, ns, tY, lineY, gridY, H: gridY + Math.ceil(REGIONS.length / cols) * ROW + 60 };
+      return {
+        title,
+        ts,
+        inline,
+        sub,
+        names,
+        cols,
+        ns,
+        tY,
+        lineY,
+        gridY,
+        H: gridY + (names.length ? Math.ceil(names.length / cols) * ROW + 60 : 20)
+      };
     }
     async function shareResult() {
-      const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c));
+      const s = state, link = await resultLink(s), v = verdict(s, s.rows.filter((r) => r == null ? void 0 : r.c)), rows = cardRows(s);
       const target = `${s.t.host}:${s.t.port}`;
       const mod = await import("/assets/share/share.js?v=11").catch(() => null);
       if (!mod) {
@@ -1390,11 +1595,11 @@
         link: () => link,
         home: location.origin + D.paths[D.lang],
         text: () => `${v.title} \xB7 ${target}`,
-        height: (ctx, kit) => cardLayout(ctx, kit, v, target).H,
+        height: (ctx, kit) => cardLayout(ctx, kit, v, target, rows).H,
         ts: s.ts,
         draw: (ctx, kit) => {
           const { P, W, F, v: css, clip } = kit, col = (c) => css(c === "ok" ? "ok" : c === "warn" ? "warn" : c === "bad" ? "bad" : "muted");
-          const L2 = cardLayout(ctx, kit, v, target);
+          const L2 = cardLayout(ctx, kit, v, target, rows);
           ctx.fillStyle = col(v.cls);
           ctx.font = `700 ${L2.ts}px ${F}`;
           L2.title.forEach((line, i) => ctx.fillText(line, P, L2.tY + i * Math.round(L2.ts * 1.2)));
@@ -1407,10 +1612,9 @@
           if (L2.inline) ctx.fillText(v.sub, P + tw, L2.lineY);
           L2.sub.forEach((line, i) => ctx.fillText(line, P, L2.lineY + (i + 1) * 36));
           const cw = (W - P * 2) / L2.cols;
-          REGIONS.forEach((x, i) => {
-            const row = s.rows[i], cx = P + i % L2.cols * cw, cy = L2.gridY + Math.floor(i / L2.cols) * ROW;
-            const [cls] = (row == null ? void 0 : row.c) ? rowStatus(row, s) : ["", ""], tot = (row == null ? void 0 : row.c) && row.res.status === "finished" ? `${row.res.timings.total} ms` : (row == null ? void 0 : row.c) ? "\u2715" : "\u2013";
-            ctx.fillStyle = col(cls);
+          rows.forEach((r, i) => {
+            const cx = P + i % L2.cols * cw, cy = L2.gridY + Math.floor(i / L2.cols) * ROW;
+            ctx.fillStyle = col(r.cls);
             ctx.beginPath();
             ctx.arc(cx + 9, cy - 8, 8, 0, Math.PI * 2);
             ctx.fill();
@@ -1420,7 +1624,7 @@
             ctx.fillStyle = css("muted");
             ctx.font = `500 22px ${F}`;
             ctx.textAlign = "right";
-            ctx.fillText(tot, cx + cw - 24, cy);
+            ctx.fillText(r.tot, cx + cw - 24, cy);
             ctx.textAlign = "left";
           });
         }

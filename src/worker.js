@@ -20,7 +20,8 @@ import ru from "./i18n/ru.mjs";
 // each language's strings by its folder ("" is English, at the root)
 const STR = { "": en, "zh-cn": zhCN, "zh-tw": zhTW, ja, ko, es, fr, de, pt, ru };
 // the verdicts a link may name: their titles take numbers only, so the Worker can fill them
-const TITLES = new Set(["v_all", "v_all_n", "v_cnfail", "v_cnonly", "v_part", "v_priv", "v_gpoff", "n_timeout", "n_refused", "n_dns",
+const TITLES = new Set(["v_all", "v_all_n", "v_cnfail", "v_cnonly", "v_part", "v_priv", "v_gpoff",
+  "v_srv_all", "v_srv_some", "v_srv_none", "v_srv_unrun", "n_timeout", "n_refused", "n_dns",
   "n_unreach", "n_reset", "n_tls", "n_nothttp", "n_nottls", "n_slow", "n_other"]);
 const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => k in v ? v[k] : m);
 // a sentence with a number in it: key_one, key_few… where the language has that form for n, else the key itself
@@ -48,7 +49,8 @@ async function shared(req, env, url, { slug }, r) {
   const home = "/" + (slug ? slug + "/" : ""), S = STR[slug];
   const [key, ok, n] = r.v, target = `${r.t[0]}:${r.t[1]}`;
   const title = `${fill(pick(S, slug, key, key === "v_part" ? ok : n), { ok, n })} · ${target}`;
-  const desc = fill(pick(S, slug, "share_desc", ok), { ok, n, target }) + " · " + S.app_name;
+  // a run without the outside check counts our servers, not regions
+  const desc = fill(pick(S, slug, key.startsWith("v_srv_") ? "share_desc_srv" : "share_desc", ok), { ok, n, target }) + " · " + S.app_name;
   const page = await env.ASSETS.fetch(new Request(new URL(home, url), { headers: req.headers }));
   if (!page.ok) return page;
   const attr = (val, name = "content") => ({ element: e => e.setAttribute(name, val) });
