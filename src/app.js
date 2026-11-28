@@ -274,6 +274,37 @@ $("port").addEventListener("keydown", e => {
 $("portList").addEventListener("mousedown", e => { const li = e.target.closest("li[data-port]"); if (li) { e.preventDefault(); pickPort(li.dataset.port); } });
 document.addEventListener("pointerdown", e => { if (!e.target.closest(".combo")) portOpen(false); });
 
+// A target is read the moment it lands, not only when the button is pressed: a pasted URL leaves the field as the bare
+// host, with its port beside it, so what will be checked is visible at once. Read on paste, when the field loses focus,
+// and again on submit; never on each keystroke, which would rewrite "https://" while it is being typed. A reading that
+// fails changes nothing, so the message on submit can explain a target it can't read.
+let autoPort = "";   // the last port this reading wrote into the field: a port the visitor typed is never overwritten
+const shownHost = h => isV6(h) ? `[${h}]` : h;
+// A field's reading: our own link (?t=…, as "ask a friend" makes) names its target in t and its port in p
+function targetReading(text, hostname) {
+  const s = text.trim();
+  let u; try { u = new URL(s); } catch { return { text: s, port: "" }; }
+  if (/^https?:$/.test(u.protocol) && u.hostname === hostname && u.searchParams.get("t")) return { text: u.searchParams.get("t"), port: u.searchParams.get("p") || "" };
+  return { text: s, port: "" };
+}
+function normalizeTargets() {
+  const box = $("target"), r = targetReading(box.value, location.hostname);
+  const p = r.text ? parseTarget(r.text) : null;
+  if (!p) return false;
+  const host = shownHost(p.host), port = p.explicit ? String(p.port) : r.port;
+  if (box.value !== host) {
+    box.value = host;
+    if (document.activeElement === box) box.setSelectionRange(host.length, host.length);
+  }
+  const pb = $("port"), cur = pb.value.trim();
+  if (port && (!cur || cur === autoPort)) {
+    autoPort = port; pb.value = port; pb.dispatchEvent(new Event("input"));
+  }
+  return true;
+}
+$("target").addEventListener("paste", () => setTimeout(normalizeTargets, 0));
+$("target").addEventListener("blur", () => normalizeTargets());
+
 // The outside check's allowance, as last read: the check still runs when it is short, from our servers alone
 // (see start() and gp_skip), so the button is never disabled for it.
 let quota = null;
@@ -313,13 +344,13 @@ $("inviteBtn").addEventListener("click", () => {
 $("f").addEventListener("submit", e => { e.preventDefault(); start(); });
 
 function start() {
+  normalizeTargets();     // a URL typed and submitted in one go is read here too, before the check reads the fields
   const raw = $("target").value.trim();
   const boxed = $("port").value.trim();
   const tg = parseTarget(raw);
   if (!tg) { $("portNote").textContent = t("bad_target"); return; }
-  // a port the target names wins, and goes into the field where it can be changed; otherwise the field is the port
+  // the target's own port is in the field by now, unless a port typed there was kept; the field is the port from here
   if (!tg.explicit && boxed && !(/^\d{1,5}$/.test(boxed) && +boxed >= 1 && +boxed <= 65535)) { $("portNote").textContent = t("bad_port"); return; }
-  if (tg.explicit) { $("port").value = tg.port; $("port").dispatchEvent(new Event("input")); }
   tg.raw = raw;
   if (!tg.port) tg.port = +boxed || (tg.scheme === "https" ? 443 : tg.scheme === "http" ? 80 : preset?.port || 443);
   $("portNote").textContent = preset ? presetName(preset) : "";

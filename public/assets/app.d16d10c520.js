@@ -626,6 +626,38 @@
     document.addEventListener("pointerdown", (e) => {
       if (!e.target.closest(".combo")) portOpen(false);
     });
+    let autoPort = "";
+    const shownHost = (h) => isV6(h) ? `[${h}]` : h;
+    function targetReading(text2, hostname) {
+      const s = text2.trim();
+      let u;
+      try {
+        u = new URL(s);
+      } catch {
+        return { text: s, port: "" };
+      }
+      if (/^https?:$/.test(u.protocol) && u.hostname === hostname && u.searchParams.get("t")) return { text: u.searchParams.get("t"), port: u.searchParams.get("p") || "" };
+      return { text: s, port: "" };
+    }
+    function normalizeTargets() {
+      const box = $("target"), r = targetReading(box.value, location.hostname);
+      const p = r.text ? parseTarget(r.text) : null;
+      if (!p) return false;
+      const host = shownHost(p.host), port = p.explicit ? String(p.port) : r.port;
+      if (box.value !== host) {
+        box.value = host;
+        if (document.activeElement === box) box.setSelectionRange(host.length, host.length);
+      }
+      const pb = $("port"), cur = pb.value.trim();
+      if (port && (!cur || cur === autoPort)) {
+        autoPort = port;
+        pb.value = port;
+        pb.dispatchEvent(new Event("input"));
+      }
+      return true;
+    }
+    $("target").addEventListener("paste", () => setTimeout(normalizeTargets, 0));
+    $("target").addEventListener("blur", () => normalizeTargets());
     let quota = null;
     async function loadQuota() {
       try {
@@ -679,6 +711,7 @@
       start();
     });
     function start() {
+      normalizeTargets();
       const raw = $("target").value.trim();
       const boxed = $("port").value.trim();
       const tg = parseTarget(raw);
@@ -689,10 +722,6 @@
       if (!tg.explicit && boxed && !(/^\d{1,5}$/.test(boxed) && +boxed >= 1 && +boxed <= 65535)) {
         $("portNote").textContent = t("bad_port");
         return;
-      }
-      if (tg.explicit) {
-        $("port").value = tg.port;
-        $("port").dispatchEvent(new Event("input"));
       }
       tg.raw = raw;
       if (!tg.port) tg.port = +boxed || (tg.scheme === "https" ? 443 : tg.scheme === "http" ? 80 : (preset == null ? void 0 : preset.port) || 443);

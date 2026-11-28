@@ -43,6 +43,30 @@ test("the address panel's lookup comes from the shell's ASN tool, never a host o
   assert.ok(!app.includes("asn.1ms.dog"), "ASN Lookup's host must come from <meta name=\"asn\">");
 });
 
+test("the fields show what will be checked as soon as the target is read", () => {
+  const hostFn = part(/^const shownHost = (.+);$/m)[1];
+  const readFn = part(/^function targetReading\(text, hostname\) \{[\s\S]*?\n\}$/m)[0];
+  const { shownHost, targetReading } = Function(`const isV4 = ${isV4}; ${isV6}; const shownHost = ${hostFn}; ${readFn}; return { shownHost, targetReading };`)();
+  // one of our own links names the target in t, and its port in p
+  assert.deepEqual(targetReading("https://reach.1ms.dog/zh-cn/?t=https%3A%2F%2Flinux.do%2F&p=8443", "reach.1ms.dog"),
+    { text: "https://linux.do/", port: "8443" });
+  assert.deepEqual(targetReading("https://reach.1ms.dog/?t=linux.do", "reach.1ms.dog"), { text: "linux.do", port: "" });
+  // any other URL is read as itself; so is a bare host, and host:port (which URL parses as a protocol, not an address)
+  assert.deepEqual(targetReading("https://example.com:8443/a?b=1", "reach.1ms.dog"), { text: "https://example.com:8443/a?b=1", port: "" });
+  assert.deepEqual(targetReading("example.com:5001/path", "reach.1ms.dog"), { text: "example.com:5001/path", port: "" });
+  assert.deepEqual(targetReading("  nas.example.com  ", "reach.1ms.dog"), { text: "nas.example.com", port: "" });
+  // and a t that is empty is not a target either
+  assert.deepEqual(targetReading("https://reach.1ms.dog/?t=", "reach.1ms.dog"), { text: "https://reach.1ms.dog/?t=", port: "" });
+  // what goes back into the field: the bare host, bracketed only for IPv6
+  assert.equal(shownHost("example.com"), "example.com");
+  assert.equal(shownHost("2001:db8::1"), "[2001:db8::1]");
+  // read on paste, on leaving the field and on submit; a port typed there is kept
+  assert.match(app, /addEventListener\("paste", \(\) => setTimeout\(normalizeTargets, 0\)\)/);
+  assert.match(app, /addEventListener\("blur", \(\) => normalizeTargets\(\)\)/);
+  assert.match(app, /function start\(\) \{\n  normalizeTargets\(\)/);
+  assert.match(app, /cur === autoPort/);
+});
+
 test("a result link can name our servers' verdicts, so its preview title is built", () => {
   const worker = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
   for (const k of ["v_srv_all", "v_srv_some", "v_srv_none", "v_srv_unrun"]) assert.ok(worker.includes(`"${k}"`), k);

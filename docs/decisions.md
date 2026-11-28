@@ -81,6 +81,12 @@ code does; this says why, so that nobody re-runs an experiment that already fail
   without one, https means 443, http 80, and a bare host takes the service's own port. `host:port/path`, a bare host
   and `[::1]:443` read the same way; what can't be read (`localhost`, `example.com:abc`, a port of 0 or 70000) is
   refused rather than guessed at.
+- **A pasted target is read at once**, not only on submit: the address field keeps the bare host and the port field
+  gets the port it named, on paste, on leaving the field and again before a check — never on each keystroke, which
+  would rewrite `https://` as it is being typed. A reading that fails leaves the text exactly as typed, and the message
+  on submit explains it. A port the visitor typed is never overwritten by a later reading (the page remembers the last
+  port it filled itself); a URL of our own with `?t=` (an "ask a friend" link) is read as the target it names, with its
+  `p` as the port.
 - **The addresses behind a name are the ones the run measured**: the probes' `resolvedAddress` and our servers'
   `addrs`, never a second resolver, so the panel under the table's heading names exactly the addresses that were
   tried, and every row shows the address it used. Each address is looked up once at ASN Lookup's API (its origin from
