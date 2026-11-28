@@ -23,7 +23,7 @@ lang_label: "Язык", a_theme: "Тема", th_system: "Тема: как в с�
 
   sep: ", ",
   g_cn: "Материковый Китай", g_apac: "Азия и Океания", g_emea: "Европа, Ближний Восток и Африка", g_am: "Америка",
-    city_Tokyo: "Токио", city_London: "Лондон", city_Frankfurt: "Франкфурт", city_LosAngeles: "Лос-Анджелес", city_Nuremberg: "Нюрнберг", city_NewYork: "Нью-Йорк", city_SaoPaulo: "Сан-Паулу",
+    city_Tokyo: "Токио", city_London: "Лондон", city_Frankfurt: "Франкфурт", city_LosAngeles: "Лос-Анджелес", city_Nuremberg: "Нюрнберг", city_Shanghai: "Шанхай", city_NewYork: "Нью-Йорк", city_SaoPaulo: "Сан-Паулу",
   p_web: "Сайт", p_web_http: "Сайт (HTTP)", p_dsm: "Synology DSM", p_rdp: "Удалённый рабочий стол",
   what_ssh: "SSH", what_rdp: "удалённого рабочего стола", what_mc: "сервера Minecraft",
 
